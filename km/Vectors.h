@@ -11,7 +11,6 @@ public:
 
 	vectors() 
 	{
-
 	}
 
 	vectors(int samples, int features, double* data)
@@ -33,5 +32,8 @@ public:
 
 	}
 
+	void genfromtxt(FILE* some_file)
+	{
 
+	   }
 };

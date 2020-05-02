@@ -26,7 +26,5 @@ namespace test
 			Assert::AreEqual(some_vector.n_samples, 2);
 			Assert::AreEqual(some_vector.coords, data);
 		}
-
-
 	};
 }
