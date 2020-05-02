@@ -8,13 +8,12 @@ namespace test
 	TEST_CLASS(test)
 	{
 	public:
-		
 		TEST_METHOD(TestMethod1)
 		{
 			Assert::AreNotEqual(1, 2);
 		}
 
-		TEST_METHOD(TestMethod21)
+		TEST_METHOD(TestMethod2)
 		{
 			Assert::AreEqual(1, 1);
 		}
