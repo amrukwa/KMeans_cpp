@@ -29,14 +29,11 @@ public:
 	}
 
 	~vectors()
-	{
-
-	}
+	{}
 
 	void genfromtxt(std::ifstream &datafile)
 	{
 		get_dimensions(&n_features, &n_samples, datafile);
-
 	 }
 };
 
