@@ -33,10 +33,23 @@ public:
 	~vectors()
 	{}
 
+	void load_the_data(std::ifstream& datafile)
+	{
+		for (int y = 0; y < n_samples; y++)
+		{
+			for (int x = 0; x < n_features; x++)
+			{
+				datafile >> coords[y * n_features + x];
+
+			}
+		}
+	}
+
 	void genfromtxt(std::ifstream &datafile)
 	{
 		get_dimensions(&n_features, &n_samples, datafile);
 		coords = (double*)malloc(n_features* n_samples * sizeof(double));
+		load_the_data(datafile);
 	 }
 };
 
