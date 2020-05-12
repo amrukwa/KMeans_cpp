@@ -5,8 +5,6 @@
 
 void get_dimensions(int* n_features, int* n_samples, std::ifstream& datafile);
 
-void check_if_data(char first, char second);
-
 void add_space(char c, int* n_features, int * n_samples);
 
 class vectors
@@ -54,36 +52,10 @@ void get_dimensions(int* n_features, int* n_samples, std::ifstream &datafile)
 	while (c != EOF)
 	{
 		add_space(c, n_features, n_samples);
-		char b = c;
 		datafile >> std::noskipws >> c;
-		check_if_data(b, c);
 	}
-
 	*n_features = *n_features / *n_samples;
 	datafile.seekg(0);
-}
-
-
-void check_if_data(char first, char second)
-{
-	if (first == ' ' || first == '\n' || first == '.')
-	{
-		if (second == ' ' || second == '\n' || second == '.')
-		{
-			printf("Check whitespace characters and dots.\n");
-			exit(1);
-		}
-	}
-	else if (first == ',')
-	{
-		printf("Change commas into dots\n");
-		exit(1);
-	}
-	else if (second == EOF && first != '\n')
-	{
-		printf("No newline at the end of file.");
-		exit(1);
-	}
 }
 
 void add_space(char c, int* n_features, int* n_samples)
