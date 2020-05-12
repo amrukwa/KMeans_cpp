@@ -5,13 +5,13 @@
 
 void get_dimensions(int* n_features, int* n_samples, std::ifstream& datafile);
 
-void check_if_data(char first, char second, int x, int y);
+void check_if_data(char first, char second);
 
 class vectors
 {
 public:
-	int n_samples;
-	int n_features;
+	int n_samples = 0;
+	int n_features = 0;
 	double* coords;
 
 	vectors() = default;
@@ -41,8 +41,6 @@ public:
 
 void get_dimensions(int* n_features, int* n_samples, std::ifstream &datafile)
 {
-	int x = 0;
-	int y = 0;
 	char c;
 	if (!datafile)
 	{
@@ -54,20 +52,19 @@ void get_dimensions(int* n_features, int* n_samples, std::ifstream &datafile)
 	{
 		if (c == ' ')
 		{
-			x++;
+			*n_features+= *n_features;
 		}
 		else if (c == '\n')
 		{
-			x++;
-			y++;
+			*n_features += *n_features;
+			*n_samples += *n_samples;
 		}
 		char b = c;
 		datafile >> std::noskipws >> c;
 		check_if_data(b, c);
 	}
 
-	*n_features = x / y;
-	*n_samples = y;
+	*n_features = *n_features / *n_samples;
 	datafile.seekg(0);
 }
 
