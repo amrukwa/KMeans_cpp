@@ -87,12 +87,9 @@ void check_if_data(char first, char second)
 		printf("Change commas into dots\n");
 		exit(1);
 	}
-	else if (second == EOF)
+	else if (second == EOF && first != '\n')
 	{
-		if (first != '\n')
-		{
-			printf("No newline at the end of file.");
-			exit(1);
-		}
+		printf("No newline at the end of file.");
+		exit(1);
 	}
 }
