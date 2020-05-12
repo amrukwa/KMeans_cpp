@@ -63,7 +63,7 @@ void get_dimensions(int* n_features, int* n_samples, std::ifstream &datafile)
 		}
 		char b = c;
 		datafile >> std::noskipws >> c;
-		check_if_data(b, c, x, y);
+		check_if_data(b, c);
 	}
 
 	*n_features = x / y;
@@ -71,14 +71,10 @@ void get_dimensions(int* n_features, int* n_samples, std::ifstream &datafile)
 	datafile.seekg(0);
 }
 
-void check_if_data(char first, char second, int x, int y)
+
+void check_if_data(char first, char second)
 {
-	if (x == 0 && y != 0)
-	{
-		printf("Check the first line.\n");
-		exit(1);
-	}
-	else if (first == ' ' || first == '\n' || first == '.')
+	if (first == ' ' || first == '\n' || first == '.')
 	{
 		if (second == ' ' || second == '\n' || second == '.')
 		{
