@@ -5,6 +5,8 @@
 
 void get_dimensions(int* n_features, int* n_samples, std::ifstream& datafile);
 
+void check_if_data(char first, char second, int x, int y);
+
 class vectors
 {
 public:
@@ -61,5 +63,40 @@ void get_dimensions(int* n_features, int* n_samples, std::ifstream &datafile)
 		}
 		char b = c;
 		datafile >> std::noskipws >> c;
+		check_if_data(b, c, x, y);
+	}
+
+	*n_features = x / y;
+	*n_samples = y;
+	datafile.seekg(0);
+}
+
+void check_if_data(char first, char second, int x, int y)
+{
+	if (x == 0 && y != 0)
+	{
+		printf("Check the first line.\n");
+		exit(1);
+	}
+	else if (first == ' ' || first == '\n' || first == '.')
+	{
+		if (second == ' ' || second == '\n' || second == '.')
+		{
+			printf("Check whitespace characters and dots.\n");
+			exit(1);
+		}
+	}
+	else if (first == ',')
+	{
+		printf("Change commas into dots\n");
+		exit(1);
+	}
+	else if (second == EOF)
+	{
+		if (first != '\n')
+		{
+			printf("No newline at the end of file.");
+			exit(1);
+		}
 	}
 }
