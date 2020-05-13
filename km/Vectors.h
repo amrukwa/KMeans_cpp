@@ -50,7 +50,6 @@ public:
 			{
 				n_features += 1;
 			}
-
 		}
 		n_features /= n_samples;
 		datafile.seekg(0, std::ios::beg);
