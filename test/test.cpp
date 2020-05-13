@@ -28,7 +28,12 @@ namespace test
 
 		void check_matrix_filling(vectors* some_vector, double* data, int i, int j)
 		{
-			Assert::AreEqual(some_vector->coords[i * 3 + j], data[i * 3 + j]);
+			Assert::AreEqual(some_vector->coords[i * some_vector->n_features + j], data[i * some_vector->n_features + j]);
+		}
+
+		void check_loading_data(vectors some_vector, int i, int j)
+		{
+			Assert::AreEqual(some_vector.coords[i * some_vector.n_features + j], double(i * some_vector.n_features + j));
 		}
 
 		TEST_METHOD(Test_matrix_is_filled)
@@ -58,6 +63,20 @@ namespace test
 			Assert::AreEqual(some_vector.n_features, 2);
 			Assert::AreEqual(some_vector.n_samples, 3);
 			datafile.close();
+		}
+
+		TEST_METHOD(Test_loading_data)
+		{
+			std::ifstream datafile("C:/Users/amruk/Documents/kmeans_cpp/data.txt");
+			vectors some_vector(datafile);
+			datafile.close();
+			for (int i = 0; i < some_vector.n_samples; i++)
+			{
+				for (int j = 0; j < some_vector.n_features; j++)
+				{
+					check_loading_data(some_vector, i, j);
+				}
+			}
 		}
 	};
 }

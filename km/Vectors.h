@@ -1,7 +1,6 @@
 # include <iostream>
 #include<fstream>
 # include <cstdlib>
-# include <string>
 #pragma once
 
 
@@ -31,6 +30,10 @@ public:
 	vectors(std::ifstream& datafile)
 	{
 		get_dimensions(datafile);
+		coords = (double*)malloc(n_samples*n_features*sizeof(double));
+		datafile.clear();
+		datafile.seekg(0, std::ios::beg);
+		load_data(datafile);
 	}
 
 	~vectors()
@@ -52,11 +55,22 @@ public:
 			}
 		}
 		n_features /= n_samples;
-		datafile.seekg(0, std::ios::beg);
+	}
+
+	void load_data(std::ifstream& datafile)
+	{
+		double c=1;
+		for (int i = 0; i < n_samples; i++)
+		{
+			for (int j = 0; j < n_features; j++)
+			{
+				datafile >> coords[i*n_features+j];
+			}
+		}
 	}
 
 	void shape()
 	{
-		std::cout << n_samples << "," << n_features << std::endl;
+		std::cout << "("<<n_samples << "," << n_features<<")" << std::endl;
 	}
 };
