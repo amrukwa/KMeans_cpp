@@ -50,5 +50,14 @@ namespace test
 				}
 			}
 		}
+
+		TEST_METHOD(Test_getting_dimensions)
+		{
+			std::ifstream datafile("C:/Users/amruk/Documents/kmeans_cpp/data.txt");
+			vectors some_vector(datafile);
+			Assert::AreEqual(some_vector.n_features, 2);
+			Assert::AreEqual(some_vector.n_samples, 3);
+			datafile.close();
+		}
 	};
 }

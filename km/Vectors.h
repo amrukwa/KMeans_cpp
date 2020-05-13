@@ -1,11 +1,9 @@
 # include <iostream>
 #include<fstream>
 # include <cstdlib>
+# include <string>
 #pragma once
 
-void get_dimensions(int* n_features, int* n_samples, std::ifstream& datafile);
-
-void add_space(char c, int* n_features, int * n_samples);
 
 class vectors
 {
@@ -30,56 +28,36 @@ public:
 		coords = v1.coords;
 	}
 
+	vectors(std::ifstream& datafile)
+	{
+		get_dimensions(datafile);
+	}
+
 	~vectors()
 	{}
 
-	void load_the_data(std::ifstream& datafile)
+	void get_dimensions(std::ifstream& datafile)
 	{
-		for (int y = 0; y < n_samples; y++)
+		char c;
+		while (datafile.get(c))
 		{
-			for (int x = 0; x < n_features; x++)
+			if (c == '\n')
 			{
-				datafile >> coords[y * n_features + x];
-
+				n_samples += 1;
+				n_features += 1;
 			}
+			else if (c == ' ')
+			{
+				n_features += 1;
+			}
+
 		}
+		n_features /= n_samples;
+		datafile.seekg(0, std::ios::beg);
 	}
 
-	void genfromtxt(std::ifstream &datafile)
+	void shape()
 	{
-		get_dimensions(&n_features, &n_samples, datafile);
-		coords = (double*)malloc(n_features* n_samples * sizeof(double));
-		load_the_data(datafile);
-	 }
+		std::cout << n_samples << "," << n_features << std::endl;
+	}
 };
-
-void get_dimensions(int* n_features, int* n_samples, std::ifstream &datafile)
-{
-	char c;
-	if (!datafile)
-	{
-		std::cout << "Cannot open file.\n";
-		exit(1);
-	}
-	datafile >> std::noskipws >> c;
-	while (c != EOF)
-	{
-		add_space(c, n_features, n_samples);
-		datafile >> std::noskipws >> c;
-	}
-	*n_features = *n_features / *n_samples;
-	datafile.seekg(0);
-}
-
-void add_space(char c, int* n_features, int* n_samples)
-{
-	if (c == ' ')
-	{
-		*n_features += *n_features;
-	}
-	else if (c == '\n')
-	{
-		*n_features += *n_features;
-		*n_samples += *n_samples;
-	}
-}
