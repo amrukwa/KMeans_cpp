@@ -1,8 +1,8 @@
 # include <iostream>
 #include<fstream>
 # include <cstdlib>
+# include <string>
 #pragma once
-
 
 class vectors
 {
@@ -80,8 +80,6 @@ public:
 	{
 		std::cout << "("<<n_samples << "," << n_features<<")" << std::endl;
 	}
-
-	friend void operator<<(std::ostream& out, const vectors& some_vector);
 };
 
 vectors std_base(int dimension)
@@ -114,4 +112,54 @@ void operator<<(std::ostream& out, const vectors& some_vector)
 		}
 		std::cout << std::endl;
 	}
+}
+
+double Euclidean_distance(const vectors& some_vector1, const vectors& some_vector2, int row1, int row2)
+{
+	double distance = 0;
+	for (int i = 0; i < some_vector1.n_features; i++)
+	{
+		double distance_for_axis = some_vector1.coords[row1 * some_vector1.n_features + i] - some_vector2.coords[row2 * some_vector2.n_features + i];
+		distance = distance + distance_for_axis * distance_for_axis;
+	}
+	distance = sqrt(distance);
+	return distance;
+}
+
+double cityblock_distance(const vectors& some_vector1, const vectors& some_vector2, int row1, int row2)
+{
+	double distance = 0;
+	for (int i = 0; i < some_vector1.n_features; i++)
+	{
+		double distance_for_axis = some_vector1.coords[row1 * some_vector1.n_features + i] - some_vector2.coords[row2 * some_vector2.n_features + i];
+		if (distance_for_axis < 0)
+		{
+			distance_for_axis = 0 - distance_for_axis;
+		}
+		distance = distance + distance_for_axis;
+	}
+	return distance;
+}
+
+double distance(const vectors& some_vector1, const vectors& some_vector2, int row1, int row2, std::string metric = "Euclidean")
+{
+	if (some_vector1.n_features != some_vector2.n_features)
+	{
+		std::cout << "The vector dimensionality is inequal.";
+		exit(1);
+	}
+	double distance = 0;
+	if (metric == "Euclidean")
+	{
+		distance = Euclidean_distance(some_vector1, some_vector2, row1, row2);
+	}
+	//else if (metric == "correlation")
+	/*{
+
+	}*/
+	else if (metric == "cityblock")
+	{
+		distance = cityblock_distance(some_vector1, some_vector2, row1, row2);
+	}
+	return distance;
 }
