@@ -20,6 +20,13 @@ public:
 		coords = data;
 	}
 
+	vectors(int square_dim)
+	{
+		n_features = square_dim;
+		n_samples = square_dim;
+		coords = (double*)malloc(n_samples * n_features * sizeof(double));
+	}
+
 	vectors(const vectors& v1)
 	{
 		n_samples = v1.n_samples;
@@ -73,4 +80,38 @@ public:
 	{
 		std::cout << "("<<n_samples << "," << n_features<<")" << std::endl;
 	}
+
+	friend void operator<<(std::ostream& out, const vectors& some_vector);
 };
+
+vectors std_base(int dimension)
+{
+	vectors diagonal(dimension);
+	for (int i = 0; i < diagonal.n_samples; i++)
+	{
+		for (int j = 0; j < diagonal.n_features; j++)
+		{
+			if (i == j)
+			{
+				diagonal.coords[i * diagonal.n_features + j] = 1.0;
+			}
+			else
+			{
+				diagonal.coords[i * diagonal.n_features + j] = 0.0;
+			}
+		}
+	}
+	return diagonal;
+}
+
+void operator<<(std::ostream& out, const vectors& some_vector)
+{
+	for (int i = 0; i < some_vector.n_samples; i++)
+	{
+		for (int j = 0; j < some_vector.n_features; j++)
+		{
+			out << some_vector.coords[i * some_vector.n_features + j] << ' ';
+		}
+		std::cout << std::endl;
+	}
+}

@@ -7,5 +7,6 @@ int main()
 	vectors some_vectors(datafile);
 	datafile.close();
 	some_vectors.shape();
+	std::cout << some_vectors;
 	return 0;
 }
