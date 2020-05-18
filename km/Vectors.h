@@ -45,7 +45,8 @@ public:
 	}
 
 	~vectors()
-	{}
+	{
+	}
 
 	void get_dimensions(std::ifstream& datafile)
 	{
@@ -98,6 +99,31 @@ public:
 	}
 
 };
+
+bool operator==(const vectors& vector1, const vectors& vector2)
+{
+	if (vector1.n_features != vector2.n_features)
+	{
+		return false;
+	}
+
+	if (vector1.n_samples != vector2.n_samples)
+	{
+		return false;
+	}
+
+	for (int i = 0; i < vector1.n_samples; i++)
+	{
+		for (int j = 0; j < vector1.n_features; j++)
+		{
+			if (vector1.coords[i * vector1.n_features + j] != vector2.coords[i * vector1.n_features + j])
+			{
+				return false;
+			}
+		}
+	}
+	return true;
+}
 
 vectors std_base(int dimension)
 {

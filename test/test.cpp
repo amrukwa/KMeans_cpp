@@ -72,29 +72,6 @@ namespace test
 			}
 		}
 
-		TEST_METHOD(Test_getting_dimensions)
-		{
-			std::ifstream datafile("C:/Users/amruk/Documents/kmeans_cpp/data.txt");
-			vectors some_vector(datafile);
-			Assert::AreEqual(some_vector.n_features, 2);
-			Assert::AreEqual(some_vector.n_samples, 3);
-			datafile.close();
-		}
-
-		TEST_METHOD(Test_loading_data)
-		{
-			std::ifstream datafile("C:/Users/amruk/Documents/kmeans_cpp/data.txt");
-			vectors some_vector(datafile);
-			datafile.close();
-			for (int i = 0; i < some_vector.n_samples; i++)
-			{
-				for (int j = 0; j < some_vector.n_features; j++)
-				{
-					check_loading_data(some_vector, i, j);
-				}
-			}
-		}
-
 		TEST_METHOD(Test_diagonal_matrix)
 		{
 			vectors diagonal = std_base(2);
@@ -107,16 +84,43 @@ namespace test
 					check_for_ones(diagonal, i, j);
 				}
 			}
+			free(diagonal.coords);
+		}
+
+		TEST_METHOD(Test_dimensions_equality)
+		{
+			vectors d2 = std_base(2);
+			vectors d3 = std_base(3);
+			Assert::AreEqual(int(d2 == d3), 0);
+			Assert::AreEqual(int(d2 == d2), 1);
+		}
+
+		TEST_METHOD(Test_data_equality)
+		{
+			double* data;
+			data = (double*)malloc(sizeof(double) * 4);
+			for (int i = 0; i < 4; i++)
+			{
+				data[i] = double(i);
+			}
+			vectors d2 = std_base(2);
+			vectors d1(2, 2, data);
+			Assert::AreEqual(int(d2 == d1), 0);
+			free(data);
 		}
 
 		TEST_METHOD(Test_mean_of_row)
 		{
-			std::ifstream datafile("C:/Users/amruk/Documents/kmeans_cpp/data.txt");
-			vectors some_vector(datafile);
-			datafile.close();
-			for (int i = 0; i < some_vector.n_samples; i++)
+			double* data;
+			data = (double*)malloc(sizeof(double) * 4);
+			for (int i = 0; i < 4; i++)
 			{
-				check_mean_of_row(some_vector, i);
+				data[i] = double(i);
+			}
+			vectors d1(2, 2, data);
+			for (int i = 0; i < d1.n_samples; i++)
+			{
+				check_mean_of_row(d1, i);
 			}
 		}
 	};
