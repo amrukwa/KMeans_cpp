@@ -8,7 +8,6 @@ namespace test
 	TEST_CLASS(test)
 	{
 	public:
-
 		void check_matrix_filling(vectors* some_vector, double* data, int i, int j)
 		{
 			Assert::AreEqual(some_vector->coords[i * some_vector->n_features + j], data[i * some_vector->n_features + j]);
@@ -148,9 +147,7 @@ namespace test
 					check_matrix_filling(&d1, data2, i, j);
 				}
 			}
-
 		}
-
 
 		TEST_METHOD(Test_standardizing) // Check!
 		{
@@ -169,6 +166,5 @@ namespace test
 			vectors d1(2, 2, data1);
 			vectors d2 = standarise(d1);
 		}
-
 	};
 }

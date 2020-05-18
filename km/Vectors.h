@@ -131,7 +131,6 @@ public:
 		{
 			coords[i * n_features + column] /= value;
 		}
-
 	}
 };
 
