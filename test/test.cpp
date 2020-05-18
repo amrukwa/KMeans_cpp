@@ -47,6 +47,11 @@ namespace test
 				Assert::AreEqual(some_vector.coords[i * some_vector.n_features + j], 0.0);
 			}
 		}
+
+		void check_mean_of_row(vectors some_vector, int i)
+		{
+			Assert::AreEqual(some_vector.mean_of_vector(i), 0.5 + 2*i);
+		}
 		TEST_METHOD(Test_matrix_is_filled)
 		{
 			double* data = (double*)malloc(6 * sizeof(double));
@@ -101,6 +106,17 @@ namespace test
 				{
 					check_for_ones(diagonal, i, j);
 				}
+			}
+		}
+
+		TEST_METHOD(Test_mean_of_row)
+		{
+			std::ifstream datafile("C:/Users/amruk/Documents/kmeans_cpp/data.txt");
+			vectors some_vector(datafile);
+			datafile.close();
+			for (int i = 0; i < some_vector.n_samples; i++)
+			{
+				check_mean_of_row(some_vector, i);
 			}
 		}
 	};

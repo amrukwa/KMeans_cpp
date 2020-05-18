@@ -2,6 +2,7 @@
 #include<fstream>
 # include <cstdlib>
 # include <string>
+#include <math.h>
 #pragma once
 
 class vectors
@@ -80,6 +81,22 @@ public:
 	{
 		std::cout << "("<<n_samples << "," << n_features<<")" << std::endl;
 	}
+
+	double mean_of_vector(int row) 
+	{
+		if (row >= n_features)
+		{
+			std::cout << "Invalid index.";
+			exit(1);
+		}
+		double sum = 0;
+		for (int i = 0; i < n_features; i++)
+		{
+			sum += coords[row * n_features + i];
+		}
+		return sum / n_features;
+	}
+
 };
 
 vectors std_base(int dimension)
