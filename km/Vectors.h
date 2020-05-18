@@ -83,25 +83,25 @@ public:
 		std::cout << "("<<n_samples << "," << n_features<<")" << std::endl;
 	}
 
-	double sum(int row)
+	double sum_of_column(int column)
 	{
-		if (row >= n_features)
+		if (column >= n_samples)
 		{
 			std::cout << "Invalid index.";
 			exit(1);
 		}
 		double sum = 0;
-		for (int i = 0; i < n_features; i++)
+		for (int i = 0; i < n_samples; i++)
 		{
-			sum += coords[row * n_features + i];
+			sum += coords[i* n_features + column];
 		}
 		return sum;
 	}
 
-	void mean_of_vector(int row, double* mean) 
+	void mean(int column, double* mean) 
 	{
-		double s = sum(row);
-		*mean =  s / n_features;
+		double s = sum_of_column(column);
+		*mean =  s / n_samples;
 	}
 
 	void substract(double value)
@@ -112,25 +112,52 @@ public:
 		}
 	}
 
-	void substract(double value, int row)
+	void substract(double value, int column)
 	{
-		for (int i = 0; i < n_features; i++)
+		for (int i = 0; i < n_samples; i++)
 		{
-			coords[row*n_features+i] -= value;
+			coords[i * n_features + column] -= value;
 		}
 	}
+
+	void divide(double value, int column)
+	{
+		if (value == 0)
+		{
+			std::cout << "Division by 0.";
+			exit(0);
+		}
+		for (int i = 0; i < n_samples; i++)
+		{
+			coords[i * n_features + column] /= value;
+		}
+
+	}
 };
+
+double length_of_column(const vectors& v1, int column)
+{
+	double distance = 0;
+	for (int i = 0; i < v1.n_samples; i++)
+	{
+		double distance_for_axis = v1.coords[i* v1.n_features + column];
+		distance = distance + distance_for_axis * distance_for_axis;
+	}
+	distance = sqrt(distance);
+	return distance;
+}
 
 vectors standarise(const vectors& v1)
 {
 	vectors temp(v1);
 	double mean;
-	double s;
-	for (int i = 0; i < temp.n_samples; i++)
+	double std_dev;
+	for (int i = 0; i < temp.n_features; i++)
 	{
-		temp.mean_of_vector(i, &mean);
+		temp.mean(i, &mean);
 		temp.substract(mean, i);
-		s = temp.sum(i);
+		std_dev = length_of_column(temp, i);
+		temp.divide(std_dev, i);
 	}
 	return temp;
 }

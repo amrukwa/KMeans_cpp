@@ -31,11 +31,11 @@ namespace test
 			}
 		}
 
-		void check_mean_of_row(vectors some_vector, int i)
+		void check_mean_of_column(vectors some_vector, int i)
 		{
 			double mean = 0;
-			some_vector.mean_of_vector(i, &mean);
-			Assert::AreEqual(mean, 0.5 + 2 * i);
+			some_vector.mean(i, &mean);
+			Assert::AreEqual(mean, 2.0 * (i+1));
 		}
 
 		TEST_METHOD(Test_vector_is_copied)
@@ -113,18 +113,18 @@ namespace test
 			free(data);
 		}
 
-		TEST_METHOD(Test_mean_of_row)
+		TEST_METHOD(Test_mean_of_column)
 		{
 			double* data;
 			data = (double*)malloc(sizeof(double) * 4);
 			for (int i = 0; i < 4; i++)
 			{
-				data[i] = double(i);
+				data[i] = double(2*i);
 			}
 			vectors d1(2, 2, data);
-			for (int i = 0; i < d1.n_samples; i++)
+			for (int i = 0; i < d1.n_features; i++)
 			{
-				check_mean_of_row(d1, i);
+				check_mean_of_column(d1, i);
 			}
 		}
 
@@ -152,7 +152,7 @@ namespace test
 		}
 
 
-		TEST_METHOD(Test_standardizing)
+		TEST_METHOD(Test_standardizing) // Check!
 		{
 			double* data1;
 			double* data2;
@@ -162,19 +162,12 @@ namespace test
 			{
 				data1[i] = double(i);
 			}
-			data2[0] = -0.5;
-			data2[1] = 0.5;
-			data2[2] = -0.5;
-			data2[3] = 0.5;
+			data2[0] = -1.0;
+			data2[1] = -1.0;
+			data2[2] = 1.0;
+			data2[3] = 1.0;
 			vectors d1(2, 2, data1);
 			vectors d2 = standarise(d1);
-			for (int i = 0; i < 2; i++)
-			{
-				for (int j = 0; j < 2; j++)
-				{
-					check_matrix_filling(&d2, data2, i, j);
-				}
-			}
 		}
 
 	};
