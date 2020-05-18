@@ -5,6 +5,7 @@
 #include <math.h>
 #pragma once
 
+
 class vectors
 {
 public:
@@ -45,8 +46,7 @@ public:
 	}
 
 	~vectors()
-	{
-	}
+	{}
 
 	void get_dimensions(std::ifstream& datafile)
 	{
@@ -83,7 +83,7 @@ public:
 		std::cout << "("<<n_samples << "," << n_features<<")" << std::endl;
 	}
 
-	double mean_of_vector(int row) 
+	double sum(int row)
 	{
 		if (row >= n_features)
 		{
@@ -95,10 +95,45 @@ public:
 		{
 			sum += coords[row * n_features + i];
 		}
-		return sum / n_features;
+		return sum;
 	}
 
+	void mean_of_vector(int row, double* mean) 
+	{
+		double s = sum(row);
+		*mean =  s / n_features;
+	}
+
+	void substract(double value)
+	{
+		for (int i = 0; i < n_features * n_samples; i++)
+		{
+			coords[i] -= value;
+		}
+	}
+
+	void substract(double value, int row)
+	{
+		for (int i = 0; i < n_features; i++)
+		{
+			coords[row*n_features+i] -= value;
+		}
+	}
 };
+
+vectors standarise(const vectors& v1)
+{
+	vectors temp(v1);
+	double mean;
+	double s;
+	for (int i = 0; i < temp.n_samples; i++)
+	{
+		temp.mean_of_vector(i, &mean);
+		temp.substract(mean, i);
+		s = temp.sum(i);
+	}
+	return temp;
+}
 
 bool operator==(const vectors& vector1, const vectors& vector2)
 {

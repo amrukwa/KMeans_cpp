@@ -8,23 +8,6 @@ namespace test
 	TEST_CLASS(test)
 	{
 	public:
-		TEST_METHOD(Test_vector_is_copied)
-		{
-			double* data = (double*)malloc(20 * sizeof(double));
-			vectors some_vector(2, 10, data);
-			vectors other_vector = some_vector;
-			Assert::AreEqual(some_vector.coords, other_vector.coords);
-			Assert::AreEqual(some_vector.n_samples, other_vector.n_samples);
-			Assert::AreEqual(some_vector.n_features, other_vector.n_features);
-		}
-
-		TEST_METHOD(Test_dimensions_are_assigned)
-		{
-			double* data = (double*)malloc(20*sizeof(double));
-			vectors some_vector(2, 10, data);
-			Assert::AreEqual(some_vector.n_features, 10);
-			Assert::AreEqual(some_vector.n_samples, 2);
-		}
 
 		void check_matrix_filling(vectors* some_vector, double* data, int i, int j)
 		{
@@ -50,8 +33,29 @@ namespace test
 
 		void check_mean_of_row(vectors some_vector, int i)
 		{
-			Assert::AreEqual(some_vector.mean_of_vector(i), 0.5 + 2*i);
+			double mean = 0;
+			some_vector.mean_of_vector(i, &mean);
+			Assert::AreEqual(mean, 0.5 + 2 * i);
 		}
+
+		TEST_METHOD(Test_vector_is_copied)
+		{
+			double* data = (double*)malloc(20 * sizeof(double));
+			vectors some_vector(2, 10, data);
+			vectors other_vector(some_vector);
+			Assert::AreEqual(some_vector.coords, other_vector.coords);
+			Assert::AreEqual(some_vector.n_samples, other_vector.n_samples);
+			Assert::AreEqual(some_vector.n_features, other_vector.n_features);
+		}
+
+		TEST_METHOD(Test_dimensions_are_assigned)
+		{
+			double* data = (double*)malloc(20*sizeof(double));
+			vectors some_vector(2, 10, data);
+			Assert::AreEqual(some_vector.n_features, 10);
+			Assert::AreEqual(some_vector.n_samples, 2);
+		}
+
 		TEST_METHOD(Test_matrix_is_filled)
 		{
 			double* data = (double*)malloc(6 * sizeof(double));
@@ -123,5 +127,55 @@ namespace test
 				check_mean_of_row(d1, i);
 			}
 		}
+
+		TEST_METHOD(Test_substracting_value)
+		{
+			double* data1;
+			double* data2;
+			data1 = (double*)malloc(sizeof(double) * 4);
+			data2 = (double*)malloc(sizeof(double) * 4);
+			for (int i = 0; i < 4; i++)
+			{
+				data1[i] = double(i);
+				data2[i] = double(i-1);
+			}
+			vectors d1(2, 2, data1);
+			d1.substract(1);
+			for (int i = 0; i < 2; i++)
+			{
+				for (int j = 0; j < 2; j++)
+				{
+					check_matrix_filling(&d1, data2, i, j);
+				}
+			}
+
+		}
+
+
+		TEST_METHOD(Test_standardizing)
+		{
+			double* data1;
+			double* data2;
+			data1 = (double*)malloc(sizeof(double) * 4);
+			data2 = (double*)malloc(sizeof(double) * 4);
+			for (int i = 0; i < 4; i++)
+			{
+				data1[i] = double(i);
+			}
+			data2[0] = -0.5;
+			data2[1] = 0.5;
+			data2[2] = -0.5;
+			data2[3] = 0.5;
+			vectors d1(2, 2, data1);
+			vectors d2 = standarise(d1);
+			for (int i = 0; i < 2; i++)
+			{
+				for (int j = 0; j < 2; j++)
+				{
+					check_matrix_filling(&d2, data2, i, j);
+				}
+			}
+		}
+
 	};
 }
