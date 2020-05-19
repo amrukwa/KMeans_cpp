@@ -136,7 +136,7 @@ public:
 	vectors transpose()
 	{
 		double* data;
-		data = (double*)malloc(sizeof(double) * size_t(n_features * n_samples));
+		data = (double*)malloc(sizeof(double) * size_t(double(n_features) * n_samples));
 		for (int i = 0; i < n_samples; i++)
 		{
 			for (int j = 0; j < n_features; j++)
