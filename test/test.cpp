@@ -33,8 +33,8 @@ namespace test
 		void check_mean_of_column(vectors some_vector, int i)
 		{
 			double mean = 0;
-			some_vector.mean(i, &mean);
-			Assert::AreEqual(mean, 2.0 * (i+1));
+			mean = some_vector.mean(i);
+			Assert::AreEqual(mean, 2.0 * (double(i)+1.0));
 		}
 
 		TEST_METHOD(Test_vector_is_copied)
@@ -149,7 +149,7 @@ namespace test
 			}
 		}
 
-		TEST_METHOD(Test_standardizing) // Check!
+		TEST_METHOD(Test_substracting_from_col)
 		{
 			double* data1;
 			double* data2;
@@ -159,12 +159,54 @@ namespace test
 			{
 				data1[i] = double(i);
 			}
-			data2[0] = -1.0;
-			data2[1] = -1.0;
+			data2[0] = 0;
+			data2[1] = 0;
+			data2[2] = 2;
+			data2[3] = 2;
+			vectors d1(2, 2, data1);
+			d1.substract(1, 1);
+			for (int i = 0; i < 2; i++)
+			{
+				for (int j = 0; j < 2; j++)
+				{
+					check_matrix_filling(&d1, data2, i, j);
+				}
+			}
+		}
+
+		TEST_METHOD(Test_division)
+		{
+			double* data1;
+			double* data2;
+			data1 = (double*)malloc(sizeof(double) * 4);
+			data2 = (double*)malloc(sizeof(double) * 4);
+			for (int i = 0; i < 4; i++)
+			{
+				data1[i] = double(i);
+				data2[i] = double(i) / 2;
+			}
+			data2[0] = 0;
+			data2[1] = 1.0/3;
 			data2[2] = 1.0;
 			data2[3] = 1.0;
 			vectors d1(2, 2, data1);
-			vectors d2 = standarise(d1);
+			d1.divide(2, 0);
+			d1.divide(3, 1);
+			for (int i = 0; i < 2; i++)
+			{
+				for (int j = 0; j < 2; j++)
+				{
+					check_matrix_filling(&d1, data2, i, j);
+				}
+			}
+		}
+
+		TEST_METHOD(Test_column_length)
+		{
+			vectors d1 = std_base(2);
+			d1.substract(1, 1);
+			Assert::AreEqual(length_of_column(d1, 0), 1.0);
+			Assert::AreEqual(length_of_column(d1, 1), 1.0);
 		}
 	};
 }

@@ -98,10 +98,10 @@ public:
 		return sum;
 	}
 
-	void mean(int column, double* mean) 
+	double mean(int column) 
 	{
 		double s = sum_of_column(column);
-		*mean =  s / n_samples;
+		return s / n_samples;
 	}
 
 	void substract(double value)
@@ -153,7 +153,7 @@ vectors standarise(const vectors& v1)
 	double std_dev;
 	for (int i = 0; i < temp.n_features; i++)
 	{
-		temp.mean(i, &mean);
+		mean  = temp.mean(i);
 		temp.substract(mean, i);
 		std_dev = length_of_column(temp, i);
 		temp.divide(std_dev, i);
