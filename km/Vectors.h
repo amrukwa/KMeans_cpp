@@ -98,7 +98,28 @@ public:
 		return sum;
 	}
 
-	double mean(int column) 
+	double sum_of_row(int row)
+	{
+		if (row >= n_features)
+		{
+			std::cout << "Invalid index.";
+			exit(1);
+		}
+		double sum = 0;
+		for (int i = 0; i < n_features; i++)
+		{
+			sum += coords[row * n_features + i];
+		}
+		return sum;
+	}
+
+	double mean_of_row(int row)
+	{
+		double s = sum_of_column(row);
+		return s / n_features;
+	}
+
+	double mean_of_column(int column) 
 	{
 		double s = sum_of_column(column);
 		return s / n_samples;
@@ -168,7 +189,7 @@ vectors standarise(const vectors& v1)
 	double std_dev;
 	for (int i = 0; i < temp.n_features; i++)
 	{
-		mean  = temp.mean(i);
+		mean  = temp.mean_of_column(i);
 		temp.substract(mean, i);
 		std_dev = length_of_column(temp, i);
 		temp.divide(std_dev, i);
@@ -258,9 +279,15 @@ vectors operator*(const vectors& A, const vectors& B)
 	return C;
 }
 
-double row_product(double** d1, double** d2, int dimension) //for rayleigh quotient :(
+double row_product(double* d1, double* d2, int dimension) //for rayleigh quotient :(
 {
-	return 0;
+	double prod = 0;
+	for (int i = 0; i < dimension; i++)
+	{
+		prod += d1[i] * d2[i];
+		std::cout << prod << std::endl;
+	}
+	return prod;
 }
 
 double correlation_distance(const vectors& some_vector1, const vectors& some_vector2, int row1, int row2)

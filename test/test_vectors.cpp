@@ -33,7 +33,7 @@ namespace test
 		void check_mean_of_column(vectors some_vector, int i)
 		{
 			double mean = 0;
-			mean = some_vector.mean(i);
+			mean = some_vector.mean_of_column(i);
 			Assert::AreEqual(mean, 2.0 * (double(i)+1.0));
 		}
 
@@ -249,10 +249,20 @@ namespace test
 		}
 
 
-		/*TEST_METHOD(Test_vector_multiplication)
+		TEST_METHOD(Test_vector_multiplication)
 		{
-
-		}*/
+		double* data;
+		data = (double*)malloc(sizeof(double) * 6);
+		data[0] = 1;
+		data[1] = 1;
+		data[2] = 1;
+		data[3] = double(3) / 5;
+		data[4] = 0;
+		data[5] = double(4) / 5;
+		vectors v(2, 3, data);
+		double dot = row_product(v.coords, v.coords+v.n_features, v.n_features);
+		Assert::AreEqual(double(7)/ 5, dot);
+		}
 
 		/*TEST_METHOD(Test_linear_transformation)
 		{
@@ -318,5 +328,26 @@ namespace test
 				}
 			}
 		}
+
+
+		/*TEST_METHOD(Test_distance)
+		{
+
+		}*/
+
+		/*TEST_METHOD(Test_correlation_distance)
+		{
+
+		}*/
+
+		/*TEST_METHOD(Test_Euclidean_distance)
+		{
+
+		}*/
+
+		/*TEST_METHOD(Test_cityblock_distance)
+		{
+
+		}*/
 	};
 }
