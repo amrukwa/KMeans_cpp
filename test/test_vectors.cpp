@@ -259,9 +259,35 @@ namespace test
 
 		}*/
 
-		/*TEST_METHOD(Test_transpose)
+		TEST_METHOD(Test_transpose)
 		{
-
-		}*/
+			double* d1;
+			d1 = (double*)malloc(sizeof(double) * 6);
+			double* d2;
+			d2 = (double*)malloc(sizeof(double) * 6);
+			d1[0] = -1;
+			d1[1] = 3;
+			d1[2] = 4;
+			d1[3] = -2;
+			d1[4] = 5;
+			d1[5] = 0;
+			d2[0] = -1;
+			d2[1] = 4;
+			d2[2] = 5;
+			d2[3] = 3;
+			d2[4] = -2;
+			d2[5] = 0;
+			vectors A(3, 2, d1);
+			vectors B = A.transpose();
+			Assert::AreEqual(B.n_features, 3);
+			Assert::AreEqual(B.n_samples, 2);
+			for (int i = 0; i < B.n_samples; i++)
+			{
+				for (int j = 0; j < B.n_features; j++)
+				{
+					check_matrix_filling(&B, d2, i, j);
+				}
+			}
+		}
 	};
 }

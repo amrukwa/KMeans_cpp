@@ -26,7 +26,7 @@ public:
 	{
 		n_features = square_dim;
 		n_samples = square_dim;
-		coords = (double*)malloc(n_samples * n_features * sizeof(double));
+		coords = (double*)malloc(size_t(n_samples * n_features) * sizeof(double));
 	}
 
 	vectors(const vectors& v1)
@@ -135,7 +135,17 @@ public:
 
 	vectors transpose()
 	{
-
+		double* data;
+		data = (double*)malloc(sizeof(double) * size_t(n_features * n_samples));
+		for (int i = 0; i < n_samples; i++)
+		{
+			for (int j = 0; j < n_features; j++)
+			{
+				data[n_samples * j + i] = coords[n_features * i + j];
+			}
+		}
+		vectors temp(n_features, n_samples, data);
+		return temp;
 	}
 };
 
