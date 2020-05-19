@@ -254,10 +254,17 @@ void operator<<(std::ostream& out, const vectors& some_vector)
 	}
 }
 
-double* operator*(const vectors& A, double** x)
+double* operator*(const vectors& A, double* x)
 {
 	static double* ptr;
-	ptr = (double*)malloc(sizeof(double)*A.n_samples);
+	ptr = (double*)calloc(A.n_samples, sizeof(double));
+	for (int i = 0; i < A.n_samples; i++)
+	{
+		for (int j = 0; j < A.n_features; j++)
+		{
+			ptr[i] += A.coords[i * A.n_features + j] * x[j];
+		}
+	}
 	return ptr;
 }
 

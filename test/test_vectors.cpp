@@ -209,7 +209,6 @@ namespace test
 			Assert::AreEqual(length_of_column(d1, 1), 1.0);
 		}
 
-
 		TEST_METHOD(Test_matrix_multiplication)
 		{
 			double* d1;
@@ -248,7 +247,6 @@ namespace test
 			}
 		}
 
-
 		TEST_METHOD(Test_vector_multiplication)
 		{
 		double* data;
@@ -264,10 +262,37 @@ namespace test
 		Assert::AreEqual(double(7)/ 5, dot);
 		}
 
-		/*TEST_METHOD(Test_linear_transformation)
+		TEST_METHOD(Test_linear_transformation)
 		{
-
-		}*/
+		double* data;
+		data = (double*)malloc(sizeof(double) * 9);
+		data[0] = 1;
+		data[1] = 2;
+		data[2] = 3;
+		data[3] = 3;
+		data[4] = 2;
+		data[5] = 1;
+		data[6] = 1;
+		data[7] = 2;
+		data[8] = 3;
+		vectors v(3, 3, data);
+		double* d;
+		d = (double*)malloc(sizeof(double) * 3);
+		d[0] = 4;
+		d[1] = 5;
+		d[2] = 6;
+		double* c;
+		c = (double*)malloc(sizeof(double) * 3);
+		c[0] = 32;
+		c[1] = 28;
+		c[2] = 32;
+		double* e;
+		e = (double*)malloc(sizeof(double) * 3);
+		e = v * d;
+		Assert::AreEqual(c[0], e[0]);
+		Assert::AreEqual(c[1], e[1]);
+		Assert::AreEqual(c[2], e[2]);
+		}
 
 		TEST_METHOD(Test_transpose)
 		{
