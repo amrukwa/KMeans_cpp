@@ -354,25 +354,39 @@ namespace test
 			}
 		}
 
+		TEST_METHOD(Test_distance)
+		{
+			double* data;
+			double dist;
+			data = (double*)malloc(sizeof(double) * 6);
+			for (int i = 0; i < 6; i++)
+			{
+				data[i] = double(i) + 1;
+			}
+			vectors v(2, 3, data);
+			dist = distance(v, v, 0, 1);
+			Assert::AreEqual(3 * sqrt(3), dist);
+		}
 
-		/*TEST_METHOD(Test_distance)
+
+		TEST_METHOD(Test_cityblock_distance)
+		{
+		double* data;
+			double dist;
+			data = (double*)malloc(sizeof(double) * 6);
+			for (int i = 0; i < 6; i++)
+			{
+				data[i] = double(i) + 1;
+			}
+			vectors v(2, 3, data);
+			dist = distance(v, v, 0, 1, "cityblock");
+			Assert::AreEqual(9.0, dist);
+		}
+
+
+		TEST_METHOD(Test_correlation_distance)
 		{
 
-		}*/
-
-		/*TEST_METHOD(Test_correlation_distance)
-		{
-
-		}*/
-
-		/*TEST_METHOD(Test_Euclidean_distance)
-		{
-
-		}*/
-
-		/*TEST_METHOD(Test_cityblock_distance)
-		{
-
-		}*/
+		}
 	};
 }
