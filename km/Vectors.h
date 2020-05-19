@@ -132,6 +132,11 @@ public:
 			coords[i * n_features + column] /= value;
 		}
 	}
+
+	vectors transpose()
+	{
+
+	}
 };
 
 double length_of_column(const vectors& v1, int column)
@@ -161,6 +166,26 @@ vectors standarise(const vectors& v1)
 	return temp;
 }
 
+vectors std_base(int dimension)
+{
+	vectors diagonal(dimension);
+	for (int i = 0; i < diagonal.n_samples; i++)
+	{
+		for (int j = 0; j < diagonal.n_features; j++)
+		{
+			if (i == j)
+			{
+				diagonal.coords[i * diagonal.n_features + j] = 1.0;
+			}
+			else
+			{
+				diagonal.coords[i * diagonal.n_features + j] = 0.0;
+			}
+		}
+	}
+	return diagonal;
+}
+
 bool operator==(const vectors& vector1, const vectors& vector2)
 {
 	if (vector1.n_features != vector2.n_features)
@@ -186,26 +211,6 @@ bool operator==(const vectors& vector1, const vectors& vector2)
 	return true;
 }
 
-vectors std_base(int dimension)
-{
-	vectors diagonal(dimension);
-	for (int i = 0; i < diagonal.n_samples; i++)
-	{
-		for (int j = 0; j < diagonal.n_features; j++)
-		{
-			if (i == j)
-			{
-				diagonal.coords[i * diagonal.n_features + j] = 1.0;
-			}
-			else
-			{
-				diagonal.coords[i * diagonal.n_features + j] = 0.0;
-			}
-		}
-	}
-	return diagonal;
-}
-
 void operator<<(std::ostream& out, const vectors& some_vector)
 {
 	for (int i = 0; i < some_vector.n_samples; i++)
@@ -216,6 +221,47 @@ void operator<<(std::ostream& out, const vectors& some_vector)
 		}
 		std::cout << std::endl;
 	}
+}
+
+double* operator*(const vectors& A, double** x)
+{
+	static double* ptr;
+	ptr = (double*)malloc(sizeof(double)*A.n_samples);
+	return ptr;
+}
+
+vectors operator*(const vectors& A, const vectors& B)
+{
+	double* c;
+	c = (double*)calloc(size_t(B.n_features * A.n_samples), sizeof(double*));
+	for (int i = 0; i < A.n_samples; i++)
+	{
+		for (int j = 0; j < B.n_features; j++)
+		{
+			for (int k = 0; k < A.n_features; k++)
+			{
+				c[B.n_features * i + j] += A.coords[i * A.n_features + k]* B.coords[k * B.n_features + j];
+			}
+		}
+	}
+	vectors C(A.n_samples, B.n_features, c);
+	return C;
+}
+
+double row_product(double** d1, double** d2, int dimension) //for rayleigh quotient :(
+{
+	return 0;
+}
+
+double correlation_distance(const vectors& some_vector1, const vectors& some_vector2, int row1, int row2)
+{
+	double distance = 0;
+	for (int i = 0; i < some_vector1.n_features; i++)
+	{
+		//double distance_for_axis = some_vector1.coords[row1 * some_vector1.n_features + i] - some_vector2.coords[row2 * some_vector2.n_features + i];
+		//distance = distance + distance_for_axis * distance_for_axis;
+	}
+	return distance;
 }
 
 double Euclidean_distance(const vectors& some_vector1, const vectors& some_vector2, int row1, int row2)
@@ -257,10 +303,10 @@ double distance(const vectors& some_vector1, const vectors& some_vector2, int ro
 	{
 		distance = Euclidean_distance(some_vector1, some_vector2, row1, row2);
 	}
-	//else if (metric == "correlation")
-	/*{
-
-	}*/
+	else if (metric == "correlation")
+	{
+		distance = correlation_distance(some_vector1, some_vector2, row1, row2);
+	}
 	else if (metric == "cityblock")
 	{
 		distance = cityblock_distance(some_vector1, some_vector2, row1, row2);
