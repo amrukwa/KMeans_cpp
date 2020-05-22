@@ -383,8 +383,22 @@ namespace test
 			Assert::AreEqual(9.0, dist);
 		}
 
-
+		// double* substract(double value, int row) const
 		TEST_METHOD(Test_correlation_distance)
+		{
+			double* data;
+			double dist;
+			data = (double*)malloc(sizeof(double) * 6);
+			for (int i = 0; i < 6; i++)
+			{
+				data[i] = double(i) + 1;
+			}
+			vectors v(2, 3, data);
+			dist = distance(v, v, 0, 1, "correlation");
+			Assert::AreEqual(0.0, dist);
+		}
+
+		TEST_METHOD(Test_standardised_correlation)
 		{
 
 		}

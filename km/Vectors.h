@@ -113,9 +113,30 @@ public:
 		return sum;
 	}
 
+	double sum_of_row(int row) const
+	{
+		if (row >= n_features)
+		{
+			std::cout << "Invalid index.";
+			exit(1);
+		}
+		double sum = 0;
+		for (int i = 0; i < n_features; i++)
+		{
+			sum += coords[row * n_features + i];
+		}
+		return sum;
+	}
+
 	double mean_of_row(int row)
 	{
 		double s = sum_of_column(row);
+		return s / n_features;
+	}
+
+	double mean_of_row(int row) const
+	{
+		double s = sum_of_row(row);
 		return s / n_features;
 	}
 
@@ -139,6 +160,17 @@ public:
 		{
 			coords[i * n_features + column] -= value;
 		}
+	}
+	
+	double* substract(double value, int row) const
+	{
+		static double* ptr;
+		ptr = (double*)malloc(n_features* sizeof(double));
+		for (int i = 0; i < n_features; i++)
+		{
+			ptr[i] = coords[row * n_features + i] - value;
+		}
+		return ptr;
 	}
 
 	void divide(double value, int column)
@@ -176,6 +208,18 @@ double length_of_column(const vectors& v1, int column)
 	for (int i = 0; i < v1.n_samples; i++)
 	{
 		double distance_for_axis = v1.coords[i* v1.n_features + column];
+		distance = distance + distance_for_axis * distance_for_axis;
+	}
+	distance = sqrt(distance);
+	return distance;
+}
+
+double length_of_row(const vectors& v1, int row)
+{
+	double distance = 0;
+	for (int i = 0; i < v1.n_features; i++)
+	{
+		double distance_for_axis = v1.coords[row * v1.n_features + i];
 		distance = distance + distance_for_axis * distance_for_axis;
 	}
 	distance = sqrt(distance);
@@ -297,14 +341,37 @@ double row_product(double* d1, double* d2, int dimension) //for rayleigh quotien
 	return prod;
 }
 
-double correlation_distance(const vectors& some_vector1, const vectors& some_vector2, int row1, int row2)
+double row_product(const vectors& v1, const vectors& v2, int row1, int row2)
+{
+	return 0;
+}
+
+double correlation_distance(const vectors& v1, const vectors& v2, int row1, int row2)
 {
 	double distance = 0;
-	for (int i = 0; i < some_vector1.n_features; i++)
-	{
-		//double distance_for_axis = some_vector1.coords[row1 * some_vector1.n_features + i] - some_vector2.coords[row2 * some_vector2.n_features + i];
-		//distance = distance + distance_for_axis * distance_for_axis;
-	}
+	double* u;
+	double* v;
+	double denom;
+	double mean_u = v1.mean_of_row(row1);
+	double mean_v = v2.mean_of_row(row2);
+	u = v1.substract(mean_u, row1);
+	v = v2.substract(mean_v, row2);
+	distance = row_product(u, v, v1.n_features);
+	denom = row_product(u, u, v1.n_features)* row_product(v, v, v2.n_features);
+	distance = 1 - distance/denom;
+	free(u);
+	free(v);
+	return distance;
+}
+
+double standarised_correlation(const vectors& v1, const vectors& v2, int row1, int row2)
+{
+	double distance;
+	double dot;
+	double denom;
+	dot = row_product(v1.coords + row1 * v1.n_features, v2.coords + row2 * v2.n_features, v1.n_features);
+	denom = length_of_row(v1, row1) * length_of_row(v2, row2);
+	distance = 1 - dot/denom;
 	return distance;
 }
 
@@ -335,7 +402,7 @@ double cityblock_distance(const vectors& some_vector1, const vectors& some_vecto
 	return distance;
 }
 
-double distance(const vectors& some_vector1, const vectors& some_vector2, int row1, int row2, std::string metric = "Euclidean")
+double distance(const vectors& some_vector1, const vectors& some_vector2, int row1, int row2, std::string metric = "Euclidean", std::string standarised = "NO")
 {
 	if (some_vector1.n_features != some_vector2.n_features)
 	{
@@ -347,13 +414,25 @@ double distance(const vectors& some_vector1, const vectors& some_vector2, int ro
 	{
 		distance = Euclidean_distance(some_vector1, some_vector2, row1, row2);
 	}
-	else if (metric == "correlation")
-	{
-		distance = correlation_distance(some_vector1, some_vector2, row1, row2);
-	}
 	else if (metric == "cityblock")
 	{
 		distance = cityblock_distance(some_vector1, some_vector2, row1, row2);
+	}
+	else if (metric == "correlation")
+	{
+		if (standarised == "YES")
+		{
+			distance = standarised_correlation(some_vector1, some_vector2, row1, row2);
+		}
+		else
+		{
+			distance = correlation_distance(some_vector1, some_vector2, row1, row2);
+		}
+	}
+	else
+	{
+		std::cout << "Unknown distance metric.";
+		exit(1);
 	}
 	return distance;
 }
