@@ -369,7 +369,6 @@ namespace test
 			Assert::AreEqual(3 * sqrt(3), dist);
 		}
 
-
 		TEST_METHOD(Test_cityblock_distance)
 		{
 			double* data;
@@ -384,7 +383,26 @@ namespace test
 			Assert::AreEqual(9.0, dist);
 		}
 
-		// double* substract(double value, int row) const
+		TEST_METHOD(Test_substracted_vector)
+		{
+			double* data1;
+			double* data2;
+			data1 = (double*)malloc(sizeof(double) * 4);
+			data2 = (double*)malloc(sizeof(double) * 2);
+			for (int i = 0; i < 4; i++)
+			{
+				data1[i] = double(i);
+			}
+			data2[0] = 1;
+			data2[1] = 2;
+			const vectors d1(2, 2, data1);
+			double* ptr = d1.substract(1, 1);
+			for (int i = 0; i < 2; i++)
+			{
+					Assert::AreEqual(ptr[i], data2[i]);
+			}
+		}
+
 		TEST_METHOD(Test_correlation_distance)
 		{
 			double* data;
@@ -396,12 +414,7 @@ namespace test
 			}
 			vectors v(2, 3, data);
 			dist = distance(v, v, 0, 1, "correlation");
-			Assert::AreEqual(0.0, dist);
-		}
-
-		TEST_METHOD(Test_standardised_correlation)
-		{
-
+			Assert::AreEqual(2.22044605e-16, dist);
 		}
 	};
 }

@@ -177,6 +177,7 @@ public:
 		{
 			ptr[i] = coords[row * n_features + i] - value;
 		}
+
 		return ptr;
 	}
 
@@ -245,7 +246,6 @@ vectors standarise(const vectors& v1)
 		std_dev = length_of_column(temp, i)/sqrt(temp.n_samples);
 		temp.divide(std_dev, i);
 	}
-
 	return temp;
 }
 
@@ -372,17 +372,6 @@ double correlation_distance(const vectors& v1, const vectors& v2, int row1, int 
 	return distance;
 }
 
-double standarised_correlation(const vectors& v1, const vectors& v2, int row1, int row2)
-{
-	double distance;
-	double dot;
-	double denom;
-	dot = row_product(v1.coords + row1 * v1.n_features, v2.coords + row2 * v2.n_features, v1.n_features);
-	denom = length_of_row(v1, row1) * length_of_row(v2, row2);
-	distance = 1 - dot/denom;
-	return distance;
-}
-
 double Euclidean_distance(const vectors& some_vector1, const vectors& some_vector2, int row1, int row2)
 {
 	double distance = 0;
@@ -410,7 +399,7 @@ double cityblock_distance(const vectors& some_vector1, const vectors& some_vecto
 	return distance;
 }
 
-double distance(const vectors& some_vector1, const vectors& some_vector2, int row1, int row2, std::string metric = "Euclidean", std::string standarised = "NO")
+double distance(const vectors& some_vector1, const vectors& some_vector2, int row1, int row2, std::string metric = "Euclidean")
 {
 	if (some_vector1.n_features != some_vector2.n_features)
 	{
@@ -428,14 +417,7 @@ double distance(const vectors& some_vector1, const vectors& some_vector2, int ro
 	}
 	else if (metric == "correlation")
 	{
-		if (standarised == "YES")
-		{
-			distance = standarised_correlation(some_vector1, some_vector2, row1, row2);
-		}
-		else
-		{
-			distance = correlation_distance(some_vector1, some_vector2, row1, row2);
-		}
+		distance = correlation_distance(some_vector1, some_vector2, row1, row2);
 	}
 	else
 	{
