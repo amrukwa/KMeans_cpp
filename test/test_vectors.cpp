@@ -403,6 +403,18 @@ namespace test
 			}
 		}
 
+		TEST_METHOD(Test_length_row)
+		{
+			double* r;
+			r = (double*)malloc(sizeof(double) * 3);
+			r[0] = 0;
+			r[1] = 3;
+			r[2] = 4;
+			double prod = length_of_row(r, 3);
+			Assert::AreEqual(5.0, prod);
+			free(r);
+		}
+
 		TEST_METHOD(Test_correlation_distance)
 		{
 			double* data;

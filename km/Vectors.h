@@ -234,6 +234,18 @@ double length_of_row(const vectors& v1, int row)
 	return distance;
 }
 
+double length_of_row(double* v, int dimension)
+{
+	double distance = 0;
+	for (int i = 0; i < dimension; i++)
+	{
+		double distance_for_axis = v[i];
+		distance = distance + distance_for_axis * distance_for_axis;
+	}
+	distance = sqrt(distance);
+	return distance;
+}
+
 vectors standarise(const vectors& v1)
 {
 	vectors temp(v1);
@@ -338,20 +350,14 @@ vectors operator*(const vectors& A, const vectors& B)
 	return C;
 }
 
-double row_product(double* d1, double* d2, int dimension) //for rayleigh quotient :(
+double row_product(double* d1, double* d2, int dimension)
 {
 	double prod = 0;
 	for (int i = 0; i < dimension; i++)
 	{
 		prod += d1[i] * d2[i];
-		std::cout << prod << std::endl;
 	}
 	return prod;
-}
-
-double row_product(const vectors& v1, const vectors& v2, int row1, int row2)
-{
-	return 0;
 }
 
 double correlation_distance(const vectors& v1, const vectors& v2, int row1, int row2)
@@ -365,7 +371,7 @@ double correlation_distance(const vectors& v1, const vectors& v2, int row1, int 
 	u = v1.substract(mean_u, row1);
 	v = v2.substract(mean_v, row2);
 	distance = row_product(u, v, v1.n_features);
-	denom = row_product(u, u, v1.n_features)* row_product(v, v, v2.n_features);
+	denom = length_of_row(u, v1.n_features)* length_of_row(v, v2.n_features);
 	distance = 1 - distance/denom;
 	free(u);
 	free(v);
