@@ -85,7 +85,7 @@ public:
 
 	double sum_of_column(int column)
 	{
-		if (column >= n_samples)
+		if (column >= n_features)
 		{
 			std::cout << "Invalid index.";
 			exit(1);
@@ -100,7 +100,7 @@ public:
 
 	double sum_of_row(int row)
 	{
-		if (row >= n_features)
+		if (row >= n_samples)
 		{
 			std::cout << "Invalid index.";
 			exit(1);
@@ -235,7 +235,7 @@ vectors standarise(const vectors& v1)
 	{
 		mean  = temp.mean_of_column(i);
 		temp.substract(mean, i);
-		std_dev = length_of_column(temp, i);
+		std_dev = length_of_column(temp, i)/sqrt(temp.n_samples);
 		temp.divide(std_dev, i);
 	}
 	return temp;

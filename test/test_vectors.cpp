@@ -371,7 +371,7 @@ namespace test
 
 		TEST_METHOD(Test_cityblock_distance)
 		{
-		double* data;
+			double* data;
 			double dist;
 			data = (double*)malloc(sizeof(double) * 6);
 			for (int i = 0; i < 6; i++)
