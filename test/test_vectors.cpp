@@ -426,7 +426,36 @@ namespace test
 			}
 			vectors v(2, 3, data);
 			dist = distance(v, v, 0, 1, "correlation");
-			Assert::AreEqual(2.22044605e-16, dist);
+			Assert::AreEqual(2.22044605e-16, dist, 1e-24);
+		}
+
+
+		TEST_METHOD(Test_standardising)
+		{
+			double* data;
+			double dist;
+			data = (double*)malloc(sizeof(double) * 6);
+			for (int i = 0; i < 6; i++)
+			{
+				data[i] = double(i) + 1;
+			}
+			vectors v(2, 3, data);
+			double* c;
+			c = (double*)malloc(sizeof(double) * 6);
+			c[0] = -1;
+			c[1] = -1;
+			c[2] = -1;
+			c[3] = 1;
+			c[4] = 1;
+			c[5] = 1;
+			vectors d = standarise(v);
+			for (int i = 0; i < 2; i++)
+			{
+				for (int j = 0; j < 3; j++)
+				{
+					Assert::AreEqual(d.coords[i * d.n_features + j], c[i * d.n_features + j], 1e-4);
+				}
+			}
 		}
 	};
 }
