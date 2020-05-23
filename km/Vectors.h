@@ -33,7 +33,14 @@ public:
 	{
 		n_samples = v1.n_samples;
 		n_features = v1.n_features;
-		coords = v1.coords;
+		coords = (double*)malloc(sizeof(double) * n_features * n_samples);
+		for (int i = 0; i < n_samples; i++)
+		{
+			for (int j = 0; j < n_features; j++)
+			{
+				coords[i * n_features + j] = v1.coords[i * n_features + j];
+			}
+		}
 	}
 
 	vectors(std::ifstream& datafile)
@@ -238,6 +245,7 @@ vectors standarise(const vectors& v1)
 		std_dev = length_of_column(temp, i)/sqrt(temp.n_samples);
 		temp.divide(std_dev, i);
 	}
+
 	return temp;
 }
 
