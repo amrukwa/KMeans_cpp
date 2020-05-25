@@ -19,7 +19,14 @@ public:
 	{
 		n_features = features;
 		n_samples = samples;
-		coords = data;
+		coords = (double*)malloc(sizeof(double) * n_features * n_samples);
+		for (int i = 0; i < n_samples; i++)
+		{
+			for (int j = 0; j < n_features; j++)
+			{
+				coords[i*n_features+j] = data[i * n_features + j];
+			}
+		}
 	}
 
 	vectors(int square_dim)

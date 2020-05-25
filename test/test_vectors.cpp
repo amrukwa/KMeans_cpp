@@ -46,6 +46,7 @@ namespace test
 			Assert::AreEqual(0.0, other_vector.coords[0]);
 			Assert::AreEqual(some_vector.n_samples, other_vector.n_samples);
 			Assert::AreEqual(some_vector.n_features, other_vector.n_features);
+			free(data);
 		}
 
 		TEST_METHOD(Test_dimensions_are_assigned)
@@ -54,6 +55,7 @@ namespace test
 			vectors some_vector(2, 10, data);
 			Assert::AreEqual(some_vector.n_features, 10);
 			Assert::AreEqual(some_vector.n_samples, 2);
+			free(data);
 		}
 
 		TEST_METHOD(Test_matrix_is_filled)
@@ -74,6 +76,7 @@ namespace test
 					check_matrix_filling(&some_vector, data, i, j);
 				}
 			}
+			free(data);
 		}
 
 		TEST_METHOD(Test_diagonal_matrix)
@@ -88,7 +91,6 @@ namespace test
 					check_for_ones(diagonal, i, j);
 				}
 			}
-			free(diagonal.coords);
 		}
 
 		TEST_METHOD(Test_dimensions_equality)
@@ -126,6 +128,7 @@ namespace test
 			{
 				check_mean_of_column(d1, i);
 			}
+			free(data);
 		}
 
 		TEST_METHOD(Test_substracting_value)
@@ -148,6 +151,8 @@ namespace test
 					check_matrix_filling(&d1, data2, i, j);
 				}
 			}
+			free(data1);
+			free(data2);
 		}
 
 		TEST_METHOD(Test_substracting_from_col)
@@ -173,6 +178,8 @@ namespace test
 					check_matrix_filling(&d1, data2, i, j);
 				}
 			}
+			free(data1);
+			free(data2);
 		}
 
 		TEST_METHOD(Test_division)
@@ -200,6 +207,8 @@ namespace test
 					check_matrix_filling(&d1, data2, i, j);
 				}
 			}
+			free(data1);
+			free(data2);
 		}
 
 		TEST_METHOD(Test_column_length)
@@ -246,6 +255,9 @@ namespace test
 					check_matrix_filling(&C, d3, i, j);
 				}
 			}
+			free(d1);
+			free(d2);
+			free(d3);
 		}
 
 		TEST_METHOD(Test_vector_multiplication)
@@ -261,6 +273,7 @@ namespace test
 		vectors v(2, 3, data);
 		double dot = row_product(v.coords, v.coords+v.n_features, v.n_features);
 		Assert::AreEqual(double(7)/ 5, dot);
+		free(data);
 		}
 
 		TEST_METHOD(Test_linear_transformation)
@@ -293,6 +306,10 @@ namespace test
 		Assert::AreEqual(c[0], e[0]);
 		Assert::AreEqual(c[1], e[1]);
 		Assert::AreEqual(c[2], e[2]);
+		free(data);
+		free(d);
+		free(c);
+		free(e);
 		}
 
 		TEST_METHOD(Test_transpose)
@@ -324,6 +341,8 @@ namespace test
 					check_matrix_filling(&B, d2, i, j);
 				}
 			}
+			free(d1);
+			free(d2);
 		}
 
 		TEST_METHOD(Test_covariance)
@@ -353,6 +372,8 @@ namespace test
 					check_matrix_filling(&B, d2, i, j);
 				}
 			}
+			free(d1);
+			free(d2);
 		}
 
 		TEST_METHOD(Test_distance)
@@ -367,6 +388,7 @@ namespace test
 			vectors v(2, 3, data);
 			dist = distance(v, v, 0, 1);
 			Assert::AreEqual(3 * sqrt(3), dist);
+			free(data);
 		}
 
 		TEST_METHOD(Test_cityblock_distance)
@@ -381,6 +403,7 @@ namespace test
 			vectors v(2, 3, data);
 			dist = distance(v, v, 0, 1, "cityblock");
 			Assert::AreEqual(9.0, dist);
+			free(data);
 		}
 
 		TEST_METHOD(Test_substracted_vector)
@@ -401,6 +424,9 @@ namespace test
 			{
 					Assert::AreEqual(ptr[i], data2[i]);
 			}
+			free(ptr);
+			free(data1);
+			free(data2);
 		}
 
 		TEST_METHOD(Test_length_row)
@@ -427,6 +453,7 @@ namespace test
 			vectors v(2, 3, data);
 			dist = distance(v, v, 0, 1, "correlation");
 			Assert::AreEqual(2.22044605e-16, dist, 1e-24);
+			free(data);
 		}
 
 		TEST_METHOD(Test_standardising)
@@ -455,6 +482,7 @@ namespace test
 					Assert::AreEqual(d.coords[i * d.n_features + j], c[i * d.n_features + j], 1e-4);
 				}
 			}
+			free(data);
 		}
 	};
 }
