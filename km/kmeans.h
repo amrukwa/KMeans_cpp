@@ -3,7 +3,7 @@
 
 class kmeans {
 public:
-	vectors* centroids;
+	vectors centroids;
 	std::string metric;
 	int n_clusters;
 	std::string initialization;
@@ -23,18 +23,20 @@ public:
 
 	~kmeans() {}
 
-	kmeans(const kmeans& estim)
-	{
-		max_iter = estim.max_iter;
-		metric = estim.metric;
-		n_clusters = estim.n_clusters;
-		initialization = estim.initialization;
-		inertia = 0;
-		max_iter = estim.max_iter;
-		n_iter = 0;
-		centroids = new vectors(*(estim.centroids));
-	}
+	kmeans(const kmeans& estim) :
+		metric{ estim.metric },
+		n_clusters{ estim.n_clusters },
+		initialization{ estim.initialization },
+		inertia{ 0 },
+		max_iter{ estim.max_iter },
+		n_iter{ 0 },
+		centroids(estim.centroids)
+	{}
 
+	void fit(vectors data)
+	{
+
+	}
 private:
-	vectors* labels;
+	vectors labels;
 };

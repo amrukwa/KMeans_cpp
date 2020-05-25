@@ -29,6 +29,13 @@ public:
 		}
 	}
 
+	vectors(int samples, int features)
+	{
+		n_features = features;
+		n_samples = samples;
+		coords = (double*)malloc(sizeof(double) * n_features * n_samples);
+	}
+
 	vectors(int square_dim)
 	{
 		n_features = square_dim;
