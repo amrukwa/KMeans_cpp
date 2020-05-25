@@ -53,7 +53,9 @@ public:
 	}
 
 	~vectors()
-	{}
+	{
+		free(coords);
+	}
 
 	void get_dimensions(std::ifstream& datafile)
 	{

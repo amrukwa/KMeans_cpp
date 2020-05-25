@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "CppUnitTest.h"
-#include "Vectors.h"
+#include "kmeans.h"
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace test
@@ -428,7 +428,6 @@ namespace test
 			dist = distance(v, v, 0, 1, "correlation");
 			Assert::AreEqual(2.22044605e-16, dist, 1e-24);
 		}
-
 
 		TEST_METHOD(Test_standardising)
 		{
