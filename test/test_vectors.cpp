@@ -491,7 +491,7 @@ namespace test
 			kmeans k(2);
 			kmeans cpy(k);
 			k.centroids.coords[0] = 1;
-			Assert::AreEqual(0.0, cpy.centroids.coords[0]);
+			Assert::AreNotEqual(1.0, cpy.centroids.coords[0]);
 			Assert::AreEqual(1.0, k.centroids.coords[0]);
 		}
 

@@ -41,9 +41,43 @@ void random_init(vectors* centres, vectors x)
 	free(indices);
 }
 
+void first_centroid(vectors* centres, vectors x)
+{
+	srand(time(NULL));
+	int a = rand() % x.n_samples;
+	for (int i = 0; i < x.n_features; i++)
+	{
+		centres->coords[i] = x.coords[a * x.n_features + i];
+	}
+}
+
+int weighted_random(int range, double* weights)
+{
+	int index;
+	srand(time(NULL));
+	double val = (double)rand() / RAND_MAX;
+	double v = 0;
+	for (index = 0; index < range; index++)
+	{
+		v += weights[index];
+		if (val < v)
+		{
+			break;
+		}
+	}
+	return index;
+}
+
 void kpp_init(vectors* centres, vectors x)
 {
-
+	first_centroid(centres, x);
+	for (int i = 1; i < centres->n_samples; i++)
+	{
+		// calculate the dist to closest centre
+		// divide them all by the sum of it
+		// give them to weighted random
+		// get the row of this index to centroids
+	}
 }
 
 void initialize(vectors* centres, vectors x, std::string init)

@@ -8,5 +8,8 @@ int main()
 	datafile.close();
 	some_vectors.shape();
 	std::cout << some_vectors;
+	vectors c(3, 2);
+	first_centroid(&c, some_vectors);
+	std::cout << c;
 	return 0;
 }

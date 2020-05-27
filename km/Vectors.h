@@ -33,7 +33,7 @@ public:
 	{
 		n_features = features;
 		n_samples = samples;
-		coords = (double*)calloc(n_features * n_samples, sizeof(double));
+		coords = (double*)malloc(n_features * n_samples* sizeof(double));
 	}
 
 	vectors(int square_dim)
