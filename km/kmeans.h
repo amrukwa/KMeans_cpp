@@ -1,5 +1,5 @@
 #pragma once
-# include "Vectors.h"
+# include "initialization.h"
 
 class kmeans {
 public:
@@ -10,16 +10,18 @@ public:
 	double inertia;
 	int max_iter;
 	int n_iter;
+	vectors labels;
 
-	kmeans(int clusters_n, std::string metrics = "Euclidean", std::string init = "random", int iter = 1000)
-	{
-		n_clusters = clusters_n;
-		metric = metrics;
-		initialization = init;
-		max_iter = iter;
-		n_iter = 0;
-		inertia = 0;
-	}
+	kmeans(int clusters_n, std::string metrics = "Euclidean", std::string init = "random", int iter = 1000) :
+		centroids(1, 1),
+		labels(1, 1),
+		metric{ metrics },
+		n_clusters{ clusters_n },
+		initialization{ init },
+		inertia{ 0 },
+		max_iter{ iter },
+		n_iter{0}
+	{}
 
 	~kmeans() {}
 
@@ -30,13 +32,35 @@ public:
 		inertia{ 0 },
 		max_iter{ estim.max_iter },
 		n_iter{ 0 },
+		labels(1, 1),
 		centroids(estim.centroids)
 	{}
 
 	void fit(vectors data)
 	{
-
+		labels.change_size(1, data.n_samples);
+		centroids.change_size(n_clusters, data.n_features);
+		if (centroids.n_samples > data.n_samples)
+		{
+			std::cout << "Too many clusters desired.";
+			exit(1);
+		}
+		initialize(&centroids, data, initialization);
 	}
-private:
-	vectors labels;
+
+	vectors predict(vectors data)
+	{
+		if (data.n_features != centroids.n_features)
+		{
+			std::cout << "Incorrect dimensionality";
+			exit(1);
+		}
+		return labels;
+	}
+
+	vectors fit_predict(vectors data)
+	{
+		fit(data);
+		return predict(data);
+	}
 };

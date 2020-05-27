@@ -33,7 +33,7 @@ public:
 	{
 		n_features = features;
 		n_samples = samples;
-		coords = (double*)malloc(sizeof(double) * n_features * n_samples);
+		coords = (double*)calloc(n_features * n_samples, sizeof(double));
 	}
 
 	vectors(int square_dim)
@@ -167,6 +167,13 @@ public:
 	{
 		double s = sum_of_column(column);
 		return s / n_samples;
+	}
+
+	void change_size(int samples, int features)
+	{
+		n_samples = samples;
+		n_features = features;
+		coords = (double*)realloc(coords, n_samples * n_features * sizeof(double));
 	}
 
 	void substract(double value)

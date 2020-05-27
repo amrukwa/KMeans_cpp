@@ -484,5 +484,34 @@ namespace test
 			}
 			free(data);
 		}
+
+
+		TEST_METHOD(Test_kmeans_const)
+		{
+			kmeans k(2);
+			kmeans cpy(k);
+			k.centroids.coords[0] = 1;
+			Assert::AreEqual(0.0, cpy.centroids.coords[0]);
+			Assert::AreEqual(1.0, k.centroids.coords[0]);
+		}
+
+		TEST_METHOD(Test_random_kmeans_init)
+		{
+			double* a = (double*)malloc(sizeof(double)*6);
+			a[0] = 0;
+			a[1] = 1;
+			a[2] = 2;
+			a[3] = 3;
+			a[4] = 4;
+			a[5] = 5;
+			vectors x(6, 1, a);
+			vectors c(3, 1);
+			initialize(&c, x, "random");
+			Assert::IsNotNull(c.coords);
+			Assert::AreNotEqual(c.coords[0], c.coords[1]);
+			Assert::AreNotEqual(c.coords[1], c.coords[2]);
+			Assert::AreNotEqual(c.coords[0], c.coords[2]);
+			free(a);		
+		}
 	};
 }
