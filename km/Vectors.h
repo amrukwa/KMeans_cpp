@@ -106,6 +106,19 @@ public:
 		std::cout << "("<<n_samples << "," << n_features<<")" << std::endl;
 	}
 
+	double sum()
+	{
+		double sum = 0;
+		for (int i = 0; i < n_samples; i++)
+		{
+			for (int j = 0; j < n_features; j++)
+			{
+				sum += coords[i * n_features + j];
+			}
+		}
+		return sum;
+	}
+
 	double sum_of_column(int column)
 	{
 		if (column >= n_features)

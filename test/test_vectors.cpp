@@ -486,6 +486,19 @@ namespace test
 		}
 
 
+		TEST_METHOD(Test_sum)
+		{
+			double* data;
+			double s = 21.0;
+			data = (double*)malloc(sizeof(double) * 6);
+			for (int i = 0; i < 6; i++)
+			{
+				data[i] = double(i) + 1;
+			}
+			vectors v(2, 3, data);
+			double sum = v.sum();
+			Assert::AreEqual(s, sum);
+		}
 		TEST_METHOD(Test_kmeans_const)
 		{
 			kmeans k(2);
