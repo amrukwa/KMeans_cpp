@@ -45,7 +45,7 @@ public:
 			std::cout << "Too many clusters desired.";
 			exit(1);
 		}
-		initialize(&centroids, data, initialization);
+		initialize(&centroids, data, initialization, metric);
 	}
 
 	vectors predict(vectors data)
@@ -61,6 +61,6 @@ public:
 	vectors fit_predict(vectors data)
 	{
 		fit(data);
-		return predict(data);
+		return labels;
 	}
 };

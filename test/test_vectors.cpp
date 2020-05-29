@@ -182,6 +182,34 @@ namespace test
 			free(data2);
 		}
 
+		TEST_METHOD(Test_col_division)
+		{
+			double* data1;
+			double* data2;
+			data1 = (double*)malloc(sizeof(double) * 4);
+			data2 = (double*)malloc(sizeof(double) * 4);
+			for (int i = 0; i < 4; i++)
+			{
+				data1[i] = double(i);
+			}
+			data2[0] = 0;
+			data2[1] = 1.0/3;
+			data2[2] = 1.0;
+			data2[3] = 1.0;
+			vectors d1(2, 2, data1);
+			d1.divide(2, 0);
+			d1.divide(3, 1);
+			for (int i = 0; i < d1.n_samples; i++)
+			{
+				for (int j = 0; j < d1.n_features; j++)
+				{
+					check_matrix_filling(&d1, data2, i, j);
+				}
+			}
+			free(data1);
+			free(data2);
+		}
+
 		TEST_METHOD(Test_division)
 		{
 			double* data1;
@@ -193,13 +221,8 @@ namespace test
 				data1[i] = double(i);
 				data2[i] = double(i) / 2;
 			}
-			data2[0] = 0;
-			data2[1] = 1.0/3;
-			data2[2] = 1.0;
-			data2[3] = 1.0;
 			vectors d1(2, 2, data1);
-			d1.divide(2, 0);
-			d1.divide(3, 1);
+			d1.divide(2);
 			for (int i = 0; i < d1.n_samples; i++)
 			{
 				for (int j = 0; j < d1.n_features; j++)
@@ -485,7 +508,6 @@ namespace test
 			free(data);
 		}
 
-
 		TEST_METHOD(Test_sum)
 		{
 			double* data;
@@ -499,6 +521,80 @@ namespace test
 			double sum = v.sum();
 			Assert::AreEqual(s, sum);
 		}
+
+		TEST_METHOD(Test_min_dist)
+		{
+			double* d1 = (double*)malloc(sizeof(double)*3);
+			double* d2 = (double*)malloc(sizeof(double) * 9);
+			d1[0] = 1;
+			d1[1] = 1;
+			d1[2] = 1;
+			d2[0] = 3;
+			d2[1] = 5;
+			d2[2] = 7;
+			d2[3] = 0;
+			d2[4] = 0;
+			d2[5] = 0;
+			d2[6] = 7;
+			d2[7] = 8;
+			d2[8] = 9;
+			vectors v2(3, 3, d2);
+			vectors v1(1, 3, d1);
+			double dist = min_distance(v1, v2, 0);
+			Assert::AreEqual(sqrt(3), dist, 1e-4);
+			free(d1);
+			free(d2);
+		}
+
+
+		TEST_METHOD(Test_min_dist_ind)
+		{
+			double* d1 = (double*)malloc(sizeof(double) * 3);
+			double* d2 = (double*)malloc(sizeof(double) * 9);
+			d1[0] = 1;
+			d1[1] = 1;
+			d1[2] = 1;
+			d2[0] = 3;
+			d2[1] = 5;
+			d2[2] = 7;
+			d2[3] = 7;
+			d2[4] = 8;
+			d2[5] = 9;
+			d2[6] = 0;
+			d2[7] = 0;
+			d2[8] = 0;
+			vectors v2(3, 3, d2);
+			vectors v1(1, 3, d1);
+			double dist = min_distance(v1, v2, 0, 2);
+			Assert::AreEqual(sqrt(56), dist, 1e-4);
+			free(d1);
+			free(d2);
+		}
+
+		TEST_METHOD(Test_argmin_dist)
+		{
+			double* d1 = (double*)malloc(sizeof(double) * 3);
+			double* d2 = (double*)malloc(sizeof(double) * 9);
+			d1[0] = 1;
+			d1[1] = 1;
+			d1[2] = 1;
+			d2[0] = 3;
+			d2[1] = 5;
+			d2[2] = 7;
+			d2[3] = 0;
+			d2[4] = 0;
+			d2[5] = 0;
+			d2[6] = 7;
+			d2[7] = 8;
+			d2[8] = 9;
+			vectors v2(3, 3, d2);
+			vectors v1(1, 3, d1);
+			int ind = argmin_distance(v1, v2, 0);
+			Assert::AreEqual(1, ind);
+			free(d1);
+			free(d2);
+		}
+
 		TEST_METHOD(Test_kmeans_const)
 		{
 			kmeans k(2);
@@ -519,7 +615,7 @@ namespace test
 			a[5] = 5;
 			vectors x(6, 1, a);
 			vectors c(3, 1);
-			initialize(&c, x, "random");
+			initialize(&c, x, "random", "Euclidean");
 			Assert::IsNotNull(c.coords);
 			Assert::AreNotEqual(c.coords[0], c.coords[1]);
 			Assert::AreNotEqual(c.coords[1], c.coords[2]);

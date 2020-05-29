@@ -51,15 +51,15 @@ void first_centroid(vectors* centres, vectors x)
 	}
 }
 
-int weighted_random(int range, double* weights)
+int weighted_random(vectors weights)
 {
 	int index;
 	srand(time(NULL));
 	double val = (double)rand() / RAND_MAX;
 	double v = 0;
-	for (index = 0; index < range; index++)
+	for (index = 0; index < weights.n_samples; index++)
 	{
-		v += weights[index];
+		v += weights.coords[index];
 		if (val < v)
 		{
 			break;
@@ -68,19 +68,34 @@ int weighted_random(int range, double* weights)
 	return index;
 }
 
-void kpp_init(vectors* centres, vectors x)
+void next_centroid(vectors* centres, vectors x, vectors* weights, int c_index, std::string metric)
 {
-	first_centroid(centres, x);
-	for (int i = 1; i < centres->n_samples; i++)
+	// c_index is the index where next centroid will be appended
+	double distance;
+	for (int j = 0; j < x.n_samples; j++) // calculate the dist of vector to the closest centre and square it
 	{
-		// calculate the dist to closest centre
-		// divide them all by the sum of it
-		// give them to weighted random
-		// get the row of this index to centroids
+		weights->coords[j] = min_distance(x, *centres, j, c_index, metric);
+		weights->coords[j] = weights->coords[j] * weights->coords[j];
+	}
+	weights->divide( weights->sum());
+	int idx = weighted_random(*weights);
+	for (int i = 0; i < centres->n_features; i++)
+	{
+		centres->coords[c_index * centres->n_features + i] = x.coords[idx*x.n_features + i];
 	}
 }
 
-void initialize(vectors* centres, vectors x, std::string init)
+void kpp_init(vectors* centres, vectors x, std::string metric)
+{
+	vectors weights(x.n_samples, 1);
+	first_centroid(centres, x);
+	for (int i = 1; i < centres->n_samples; i++)
+	{
+		next_centroid(centres, x, &weights, i, metric);
+	}
+}
+
+void initialize(vectors* centres, vectors x, std::string init, std::string metric)
 {
 	if (init == "random")
 	{
@@ -89,7 +104,7 @@ void initialize(vectors* centres, vectors x, std::string init)
 
 	else if (init == "k++")
 	{
-		kpp_init(centres, x);
+		kpp_init(centres, x, metric);
 	}
 	else
 	{

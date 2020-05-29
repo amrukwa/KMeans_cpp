@@ -6,10 +6,14 @@ int main()
 	std::ifstream datafile("C:/Users/amruk/Documents/kmeans_cpp/data.txt");
 	vectors some_vectors(datafile);
 	datafile.close();
-	some_vectors.shape();
+	some_vectors.shape(); 
 	std::cout << some_vectors;
-	vectors c(3, 2);
-	first_centroid(&c, some_vectors);
+	std::cout << std::endl;
+	vectors st = standarise(some_vectors);
+	std::cout << st;
+	std::cout << std::endl;
+	vectors c(3, 4);
+	kpp_init(&c, st, "correlation");
 	std::cout << c;
 	return 0;
 }

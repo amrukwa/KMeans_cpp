@@ -109,12 +109,9 @@ public:
 	double sum()
 	{
 		double sum = 0;
-		for (int i = 0; i < n_samples; i++)
+		for (int i = 0; i < n_features*n_samples; i++)
 		{
-			for (int j = 0; j < n_features; j++)
-			{
-				sum += coords[i * n_features + j];
-			}
+			sum += coords[i];
 		}
 		return sum;
 	}
@@ -151,7 +148,7 @@ public:
 
 	double sum_of_row(int row) const
 	{
-		if (row >= n_features)
+		if (row >= n_samples)
 		{
 			std::cout << "Invalid index.";
 			exit(1);
@@ -227,6 +224,19 @@ public:
 		for (int i = 0; i < n_samples; i++)
 		{
 			coords[i * n_features + column] /= value;
+		}
+	}
+
+	void divide(double value)
+	{
+		if (value == 0)
+		{
+			std::cout << "Division by 0.";
+			exit(0);
+		}
+		for (int i = 0; i < n_features * n_samples; i++)
+		{
+			coords[i] /= value;
 		}
 	}
 
@@ -467,4 +477,54 @@ double distance(const vectors& some_vector1, const vectors& some_vector2, int ro
 		exit(1);
 	}
 	return distance;
+}
+
+double min_distance(const vectors& v1, const vectors& v2, int row1, std::string metric = "Euclidean")
+{
+	//calculates the distance to the closest member of v2 from row1 of v1 
+	double min_dist = distance(v1, v2, row1, 0, metric);
+	double cur_dist;
+	for (int i = 1; i < v2.n_samples; i++)
+	{
+		cur_dist = distance(v1, v2, row1, i, metric);
+		if (cur_dist < min_dist)
+		{
+			min_dist = cur_dist;
+		}
+	}
+	return min_dist;
+}
+
+double min_distance(const vectors& v1, const vectors& v2, int row1, int index, std::string metric = "Euclidean")
+{
+	//calculates the distance to the closest member of v2 (up to index, exclusively) from row1 of v1 
+	double min_dist = distance(v1, v2, row1, 0, metric);
+	double cur_dist;
+	for (int i = 1; i < index; i++)
+	{
+		cur_dist = distance(v1, v2, row1, i, metric);
+		if (cur_dist < min_dist)
+		{
+			min_dist = cur_dist;
+		}
+	}
+	return min_dist;
+}
+
+int argmin_distance(const vectors& v1, const vectors& v2, int row1, std::string metric = "Euclidean")
+{
+	//calculates the index of the closest member of v2 from row1 of v1 
+	double min_dist = distance(v1, v2, row1, 0, metric);
+	double cur_dist;
+	int index = 0;
+	for (int i = 1; i < v2.n_samples; i++)
+	{
+		cur_dist = distance(v1, v2, row1, i, metric);
+		if (cur_dist < min_dist)
+		{
+			min_dist = cur_dist;
+			index = i;
+		}
+	}
+	return index;
 }
