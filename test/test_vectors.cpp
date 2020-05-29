@@ -546,7 +546,6 @@ namespace test
 			free(d2);
 		}
 
-
 		TEST_METHOD(Test_min_dist_ind)
 		{
 			double* d1 = (double*)malloc(sizeof(double) * 3);
@@ -606,14 +605,11 @@ namespace test
 
 		TEST_METHOD(Test_random_kmeans_init)
 		{
-			double* a = (double*)malloc(sizeof(double)*6);
+			double* a = (double*)malloc(sizeof(double)*3);
 			a[0] = 0;
 			a[1] = 1;
 			a[2] = 2;
-			a[3] = 3;
-			a[4] = 4;
-			a[5] = 5;
-			vectors x(6, 1, a);
+			vectors x(3, 1, a);
 			vectors c(3, 1);
 			initialize(&c, x, "random", "Euclidean");
 			Assert::IsNotNull(c.coords);
@@ -621,6 +617,38 @@ namespace test
 			Assert::AreNotEqual(c.coords[1], c.coords[2]);
 			Assert::AreNotEqual(c.coords[0], c.coords[2]);
 			free(a);		
+		}
+
+		TEST_METHOD(Test_labeling)
+		{
+			double* x_d = (double*)malloc(sizeof(double) * 10);
+			double* c_d = (double*)malloc(sizeof(double) * 6);
+			c_d[0] = -3;
+			c_d[1] = -2; // 0
+			c_d[2] = -6;
+			c_d[3] = 3; // 1
+			c_d[4] = 5;
+			c_d[5] = 2; // 2
+
+			x_d[0] = -4;
+			x_d[1] = 0; // 0
+			x_d[2] = -5;
+			x_d[3] = 3; // 1
+			x_d[4] = 0;
+			x_d[5] = 0; // 0
+			x_d[6] = 4;
+			x_d[7] = 3; // 2
+			x_d[8] = 6;
+			x_d[9] = 1; // 2
+			vectors x(5, 2, x_d);
+			vectors c(3, 2, c_d);
+			vectors l(6, 1);
+			label_points(&l, x, c, "Euclidean");
+			Assert::AreEqual(0.0, l.coords[0]);
+			Assert::AreEqual(1.0, l.coords[1]);
+			Assert::AreEqual(0.0, l.coords[2]);
+			Assert::AreEqual(2.0, l.coords[3]);
+			Assert::AreEqual(2.0, l.coords[4]);
 		}
 	};
 }
