@@ -12,8 +12,5 @@ int main()
 	vectors st = standarise(some_vectors);
 	std::cout << st;
 	std::cout << std::endl;
-	vectors c(3, 4);
-	kpp_init(&c, st, "correlation");
-	std::cout << c;
 	return 0;
 }

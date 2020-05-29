@@ -1,6 +1,8 @@
 #pragma once
 # include "initialization.h"
 
+void label_points(vectors* labels, vectors x, vectors centroids, std::string metric);
+
 class kmeans {
 public:
 	vectors centroids;
@@ -46,6 +48,8 @@ public:
 			exit(1);
 		}
 		initialize(&centroids, data, initialization, metric);
+		// label
+		// loop calculate, label
 	}
 
 	vectors predict(vectors data)
@@ -55,6 +59,7 @@ public:
 			std::cout << "Incorrect dimensionality";
 			exit(1);
 		}
+		label_points(&labels, data, centroids, metric);
 		return labels;
 	}
 
@@ -64,3 +69,12 @@ public:
 		return labels;
 	}
 };
+
+
+void label_points(vectors* labels, vectors x, vectors centroids, std::string metric)
+{
+	for (int i = 0; i < x.n_samples; i++)
+	{
+		labels->coords[i] = argmin_distance(x, centroids, i, metric);
+	}
+}
