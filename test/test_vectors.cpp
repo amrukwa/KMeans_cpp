@@ -649,6 +649,55 @@ namespace test
 			Assert::AreEqual(0.0, l.coords[2]);
 			Assert::AreEqual(2.0, l.coords[3]);
 			Assert::AreEqual(2.0, l.coords[4]);
+			free(x_d);
+			free(c_d);
+		}
+
+		TEST_METHOD(Test_calc_centroids)
+		{
+			double* x_d = (double*)malloc(sizeof(double) * 10);
+			double* c_d = (double*)malloc(sizeof(double) * 6);
+			double* c_real = (double*)malloc(sizeof(double) * 6);
+			c_d[0] = -3;
+			c_d[1] = -2; // 0
+			c_d[2] = -6;
+			c_d[3] = 3; // 1
+			c_d[4] = 5;
+			c_d[5] = 2; // 2
+
+			x_d[0] = -4;
+			x_d[1] = 0; // 0
+			x_d[2] = -5;
+			x_d[3] = 3; // 1
+			x_d[4] = 0;
+			x_d[5] = 0; // 0
+			x_d[6] = 4;
+			x_d[7] = 3; // 2
+			x_d[8] = 6;
+			x_d[9] = 1; // 2
+
+			c_real[0] = -2;
+			c_real[1] = 0;
+			c_real[2] = -5;
+			c_real[3] = 3;
+			c_real[4] = 5;
+			c_real[5] = 2;
+
+			vectors x(5, 2, x_d);
+			vectors c(3, 2, c_d);
+			vectors l(6, 1);
+			label_points(&l, x, c, "Euclidean");
+			calculate_centroids(l, x, &c);
+			for (int i = 0; i < c.n_samples; i++)
+			{
+				for (int j = 0; j < c.n_features; j++)
+				{
+					check_matrix_filling(&c, c_real, i, j);
+				}
+			}
+			free(c_d);
+			free(c_real);
+			free(x_d);
 		}
 	};
 }
