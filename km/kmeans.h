@@ -40,7 +40,8 @@ public:
 
 	void fit(vectors data)
 	{
-		labels.change_size(1, data.n_samples);
+		// prev. labels
+		labels.change_size(data.n_samples, 1);
 		centroids.change_size(n_clusters, data.n_features);
 		if (centroids.n_samples > data.n_samples)
 		{
@@ -48,8 +49,12 @@ public:
 			exit(1);
 		}
 		initialize(&centroids, data, initialization, metric);
-		// label
-		// loop calculate, label
+		label_points(&labels, data, centroids, metric);
+		for (n_iter; n_iter < max_iter; n_iter++)
+		{
+
+		}
+		// loop calculate, label, compare
 	}
 
 	vectors predict(vectors data)
@@ -58,6 +63,10 @@ public:
 		{
 			std::cout << "Incorrect dimensionality";
 			exit(1);
+		}
+		if (data.n_samples != labels.n_samples)
+		{
+			labels.change_size(data.n_samples, 1);
 		}
 		label_points(&labels, data, centroids, metric);
 		return labels;

@@ -327,23 +327,23 @@ vectors std_base(int dimension)
 	return diagonal;
 }
 
-bool operator==(const vectors& vector1, const vectors& vector2)
+bool operator==(const vectors& v1, const vectors& v2)
 {
-	if (vector1.n_features != vector2.n_features)
+	if (v1.n_features != v2.n_features)
 	{
 		return false;
 	}
 
-	if (vector1.n_samples != vector2.n_samples)
+	if (v1.n_samples != v2.n_samples)
 	{
 		return false;
 	}
 
-	for (int i = 0; i < vector1.n_samples; i++)
+	for (int i = 0; i < v1.n_samples; i++)
 	{
-		for (int j = 0; j < vector1.n_features; j++)
+		for (int j = 0; j < v1.n_features; j++)
 		{
-			if (vector1.coords[i * vector1.n_features + j] != vector2.coords[i * vector1.n_features + j])
+			if (v1.coords[i * v1.n_features + j] != v2.coords[i * v1.n_features + j])
 			{
 				return false;
 			}
@@ -424,24 +424,24 @@ double correlation_distance(const vectors& v1, const vectors& v2, int row1, int 
 	return distance;
 }
 
-double Euclidean_distance(const vectors& some_vector1, const vectors& some_vector2, int row1, int row2)
+double Euclidean_distance(const vectors& v1, const vectors& v2, int row1, int row2)
 {
 	double distance = 0;
-	for (int i = 0; i < some_vector1.n_features; i++)
+	for (int i = 0; i < v1.n_features; i++)
 	{
-		double distance_for_axis = some_vector1.coords[row1 * some_vector1.n_features + i] - some_vector2.coords[row2 * some_vector2.n_features + i];
+		double distance_for_axis = v1.coords[row1 * v1.n_features + i] - v2.coords[row2 * v2.n_features + i];
 		distance = distance + distance_for_axis * distance_for_axis;
 	}
 	distance = sqrt(distance);
 	return distance;
 }
 
-double cityblock_distance(const vectors& some_vector1, const vectors& some_vector2, int row1, int row2)
+double cityblock_distance(const vectors& v1, const vectors& v2, int row1, int row2)
 {
 	double distance = 0;
-	for (int i = 0; i < some_vector1.n_features; i++)
+	for (int i = 0; i < v1.n_features; i++)
 	{
-		double distance_for_axis = some_vector1.coords[row1 * some_vector1.n_features + i] - some_vector2.coords[row2 * some_vector2.n_features + i];
+		double distance_for_axis = v1.coords[row1 * v1.n_features + i] - v2.coords[row2 * v2.n_features + i];
 		if (distance_for_axis < 0)
 		{
 			distance_for_axis = 0 - distance_for_axis;
@@ -451,9 +451,9 @@ double cityblock_distance(const vectors& some_vector1, const vectors& some_vecto
 	return distance;
 }
 
-double distance(const vectors& some_vector1, const vectors& some_vector2, int row1, int row2, std::string metric = "Euclidean")
+double distance(const vectors& v1, const vectors& v2, int row1, int row2, std::string metric = "Euclidean")
 {
-	if (some_vector1.n_features != some_vector2.n_features)
+	if (v1.n_features != v2.n_features)
 	{
 		std::cout << "The vector dimensionality is inequal.";
 		exit(1);
@@ -461,15 +461,15 @@ double distance(const vectors& some_vector1, const vectors& some_vector2, int ro
 	double distance = 0;
 	if (metric == "Euclidean")
 	{
-		distance = Euclidean_distance(some_vector1, some_vector2, row1, row2);
+		distance = Euclidean_distance(v1, v2, row1, row2);
 	}
 	else if (metric == "cityblock")
 	{
-		distance = cityblock_distance(some_vector1, some_vector2, row1, row2);
+		distance = cityblock_distance(v1, v2, row1, row2);
 	}
 	else if (metric == "correlation")
 	{
-		distance = correlation_distance(some_vector1, some_vector2, row1, row2);
+		distance = correlation_distance(v1, v2, row1, row2);
 	}
 	else
 	{
