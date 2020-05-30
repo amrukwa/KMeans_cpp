@@ -44,7 +44,6 @@ public:
 
 	void calculate_inertia(vectors data)
 	{
-
 	}
 
 	void fit(vectors data)
@@ -132,5 +131,4 @@ void calculate_centroids(vectors labels, vectors x, vectors* centroids)
 
 void fit_n()
 {
-
 }
