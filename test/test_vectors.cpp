@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "CppUnitTest.h"
 #include "kmeans.h"
+# include "pca.h"
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace test
@@ -726,6 +727,30 @@ namespace test
 			free(x);
 			free(c);
 			free(l);
+		}
+
+		TEST_METHOD(Test_centering)
+		{
+			double* d = (double*)malloc(sizeof(double) * 4);
+			d[0] = 0;
+			d[1] = 1;
+			d[2] = 2;
+			d[3] = 3;
+			vectors data(2, 2, d);
+			double* c = (double*)malloc(sizeof(double) * 4);
+			c[0] = -1;
+			c[1] = -1;
+			c[2] = 1;
+			c[3] = 1;
+			vectors centered = center(data);
+			for (int i = 0; i < centered.n_samples; i++)
+			{
+				for (int j = 0; j < centered.n_features; j++)
+				{
+					check_matrix_filling(&centered, c, i, j);
+				}
+			}
+			free(d);
 		}
 	};
 }
