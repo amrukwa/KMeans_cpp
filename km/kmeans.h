@@ -14,9 +14,8 @@ public:
 	int max_iter;
 	int n_iter;
 	vectors labels;
-	int n_init;
 
-	kmeans(int clusters_n, std::string metrics = "correlation", std::string init = "k++", int iter = 1000, int init_n = 10) :
+	kmeans(int clusters_n, std::string metrics = "correlation", std::string init = "k++", int iter = 1000) :
 		centroids(1, 1),
 		labels(1, 1),
 		metric{ metrics },
@@ -24,8 +23,7 @@ public:
 		initialization{ init },
 		inertia{ 0 },
 		max_iter{ iter },
-		n_iter{0},
-		n_init{ init_n }
+		n_iter{0}
 	{}
 
 	~kmeans() {}
@@ -38,18 +36,22 @@ public:
 		max_iter{ estim.max_iter },
 		n_iter{ 0 },
 		labels(1, 1),
-		centroids(estim.centroids),
-		n_init{estim.n_init}
+		centroids(estim.centroids)
 	{}
 
 	void calculate_inertia(vectors data)
 	{
+		
 	}
 
 	void fit(vectors data)
 	{
-		vectors prev_labels(data.n_samples, 1);
-		labels.change_size(data.n_samples, 1);
+		vectors prev_labels(1, data.n_samples);
+		//vectors cur_cent(n_clusters, data.n_features);
+		//vectors cur_l(data.n_samples, 1);
+		double cur_inertia;
+		int cur_iter;
+		labels.change_size(1, data.n_samples);
 		centroids.change_size(n_clusters, data.n_features);
 		if (centroids.n_samples > data.n_samples)
 		{
@@ -60,7 +62,7 @@ public:
 		label_points(&labels, data, centroids, metric);
 		for (n_iter; n_iter < max_iter; n_iter++)
 		{
-			for (int i = 0; i < labels.n_samples; i++)
+			for (int i = 0; i < labels.n_features; i++)
 			{
 				prev_labels.coords[i] = labels.coords[i];
 			}
@@ -81,9 +83,9 @@ public:
 			std::cout << "Incorrect dimensionality";
 			exit(1);
 		}
-		if (data.n_samples != labels.n_samples)
+		if (data.n_samples != labels.n_features)
 		{
-			labels.change_size(data.n_samples, 1);
+			labels.change_size(1, data.n_samples);
 		}
 		label_points(&labels, data, centroids, metric);
 		calculate_inertia(data);
@@ -127,8 +129,4 @@ void calculate_centroids(vectors labels, vectors x, vectors* centroids)
 			}
 		}
 	}
-}
-
-void fit_n()
-{
 }
