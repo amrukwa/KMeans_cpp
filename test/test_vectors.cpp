@@ -699,5 +699,33 @@ namespace test
 			free(c_real);
 			free(x_d);
 		}
+
+		TEST_METHOD(Test_inertia)
+		{
+			double* x = (double*)malloc(sizeof(double) * 9);
+			double* c = (double*)malloc(sizeof(double) * 6);
+			double* l = (double*)malloc(sizeof(double) * 3);
+			for (int i = 0; i < 9; i++)
+			{
+				x[i] = double(i) + 1;
+			}
+			vectors data(3, 3, x);
+			c[0] = 2;
+			c[1] = 3;
+			c[2] = 4;
+			c[3] = 10;
+			c[4] = 10;
+			c[5] = 10;
+			vectors centres(2, 3, c);
+			l[0] = 0;
+			l[1] = 0;
+			l[2] = 1;
+			vectors labels(1, 3, l);
+			double inertia = calculate_inertia(labels, data, centres, "Euclidean");
+			Assert::AreEqual(29.0, inertia);
+			free(x);
+			free(c);
+			free(l);
+		}
 	};
 }

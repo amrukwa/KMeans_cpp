@@ -3,6 +3,7 @@
 
 void label_points(vectors* labels, vectors x, vectors centroids, std::string metric);
 void calculate_centroids(vectors labels, vectors x, vectors* centroids);
+double calculate_inertia(vectors labels, vectors x, vectors centroids, std::string metric);
 
 class kmeans {
 public:
@@ -39,11 +40,6 @@ public:
 		centroids(estim.centroids)
 	{}
 
-	void calculate_inertia(vectors data)
-	{
-		
-	}
-
 	void fit(vectors data)
 	{
 		vectors prev_labels(1, data.n_samples);
@@ -73,7 +69,7 @@ public:
 				break;
 			}
 		}
-		calculate_inertia(data);
+		inertia = calculate_inertia(labels, data, centroids, metric);
 	}
 
 	vectors predict(vectors data)
@@ -88,7 +84,7 @@ public:
 			labels.change_size(1, data.n_samples);
 		}
 		label_points(&labels, data, centroids, metric);
-		calculate_inertia(data);
+		inertia = calculate_inertia(labels, data, centroids, metric);
 		return labels;
 	}
 
@@ -129,4 +125,16 @@ void calculate_centroids(vectors labels, vectors x, vectors* centroids)
 			}
 		}
 	}
+}
+
+double calculate_inertia(vectors labels, vectors x, vectors centroids, std::string metric)
+{
+	double inertia = 0;
+	double dist = 0;
+	for (int i = 0; i < x.n_samples; i++)
+	{
+		dist = distance(x, centroids, i, labels.coords[i], metric);
+		inertia += dist*dist;
+	}
+	return inertia;
 }
