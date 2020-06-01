@@ -4,6 +4,15 @@
 void label_points(vectors* labels, vectors x, vectors centroids, std::string metric);
 void calculate_centroids(vectors labels, vectors x, vectors* centroids);
 double calculate_inertia(vectors labels, vectors x, vectors centroids, std::string metric);
+void kmeans_algorithm(vectors* centroids,
+	vectors* labels,
+	std::string metric,
+	int n_clusters,
+	std::string initialization,
+	double* inertia,
+	int max_iter,
+	int* n_iter,
+	vectors x);
 
 class kmeans {
 public:
@@ -15,8 +24,9 @@ public:
 	int max_iter;
 	int n_iter;
 	vectors labels;
+	int n_init;
 
-	kmeans(int clusters_n, std::string metrics = "correlation", std::string init = "k++", int iter = 1000) :
+	kmeans(int clusters_n, std::string metrics = "correlation", std::string init = "k++", int iter = 1000, int init_n = 10) :
 		centroids(1, 1),
 		labels(1, 1),
 		metric{ metrics },
@@ -24,7 +34,8 @@ public:
 		initialization{ init },
 		inertia{ 0 },
 		max_iter{ iter },
-		n_iter{0}
+		n_iter{0},
+		n_init{init_n}
 	{}
 
 	~kmeans() {}
@@ -37,39 +48,46 @@ public:
 		max_iter{ estim.max_iter },
 		n_iter{ 0 },
 		labels(1, 1),
-		centroids(estim.centroids)
+		centroids(estim.centroids),
+		n_init{estim.n_init}
 	{}
 
 	void fit(vectors data)
 	{
-		vectors prev_labels(1, data.n_samples);
-		//vectors cur_cent(n_clusters, data.n_features);
-		//vectors cur_l(data.n_samples, 1);
-		double cur_inertia;
-		int cur_iter;
 		labels.change_size(1, data.n_samples);
 		centroids.change_size(n_clusters, data.n_features);
-		if (centroids.n_samples > data.n_samples)
+		vectors cur_cent(n_clusters, data.n_features);
+		vectors cur_l(1, data.n_samples);
+		double cur_inertia = 0;
+		int cur_iter = 0;
+		kmeans_algorithm(&centroids,
+			&labels,
+			metric,
+			n_clusters,
+			initialization,
+			&inertia,
+			max_iter,
+			&n_iter,
+			data);
+		for (int i = 1; i < n_init; i++)
 		{
-			std::cout << "Too many clusters desired.";
-			exit(1);
-		}
-		initialize(&centroids, data, initialization, metric);
-		label_points(&labels, data, centroids, metric);
-		for (n_iter; n_iter < max_iter; n_iter++)
-		{
-			for (int i = 0; i < labels.n_features; i++)
+			kmeans_algorithm(&cur_cent,
+				&cur_l,
+				metric,
+				n_clusters,
+				initialization,
+				&cur_inertia,
+				max_iter,
+				&cur_iter,
+				data);
+			if (cur_inertia < inertia)
 			{
-				prev_labels.coords[i] = labels.coords[i];
-			}
-			calculate_centroids(labels, data, &centroids);
-			label_points(&labels, data, centroids, metric);
-			if  (prev_labels == labels)
-			{
-				break;
+				inertia = cur_inertia;
+				n_iter = cur_iter;
+				labels = cur_l;
+				centroids = cur_cent;
 			}
 		}
-		inertia = calculate_inertia(labels, data, centroids, metric);
 	}
 
 	vectors predict(vectors data)
@@ -94,7 +112,6 @@ public:
 		return labels;
 	}
 };
-
 
 void label_points(vectors* labels, vectors x, vectors centroids, std::string metric)
 {
@@ -137,4 +154,39 @@ double calculate_inertia(vectors labels, vectors x, vectors centroids, std::stri
 		inertia += dist*dist;
 	}
 	return inertia;
+}
+
+void kmeans_algorithm(vectors* centroids, 
+	vectors* labels,
+	std::string metric,
+	int n_clusters,
+	std::string initialization,
+	double* inertia,
+	int max_iter,
+	int* n_iter,
+	vectors x)
+{
+	vectors prev_labels(1, x.n_samples);
+	if (centroids->n_samples > x.n_samples)
+	{
+		std::cout << "Too many clusters desired.";
+		exit(1);
+	}
+	initialize(centroids, x, initialization, metric);
+	label_points(labels, x, *centroids, metric);
+	*n_iter = 0;
+	for (*n_iter; *n_iter < max_iter; (*n_iter)++)
+	{
+		for (int i = 0; i < labels->n_features; i++)
+		{
+			prev_labels.coords[i] = labels->coords[i];
+		}
+		calculate_centroids(*labels, x, centroids);
+		label_points(labels, x, *centroids, metric);
+		if (prev_labels == *labels)
+		{
+			break;
+		}
+	}
+	*inertia = calculate_inertia(*labels, x, *centroids, metric);
 }
