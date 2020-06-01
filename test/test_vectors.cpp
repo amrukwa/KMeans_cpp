@@ -400,6 +400,38 @@ namespace test
 			free(d2);
 		}
 
+
+		TEST_METHOD(Test_cov)
+		{
+			double* d1;
+			d1 = (double*)malloc(sizeof(double) * 6);
+			double* d2;
+			d2 = (double*)malloc(sizeof(double) * 4);
+			d1[0] = -1;
+			d1[1] = 4;
+			d1[2] = 2;
+			d1[3] = 0;
+			d1[4] = 5;
+			d1[5] = 2;
+			d2[0] = 18;
+			d2[1] = -6;
+			d2[2] = -6;
+			d2[3] = 8;
+			vectors A(3, 2, d1);
+			vectors B = covariance_matrix(A);
+			Assert::AreEqual(B.n_features, 2);
+			Assert::AreEqual(B.n_samples, 2);
+			for (int i = 0; i < B.n_samples; i++)
+			{
+				for (int j = 0; j < B.n_features; j++)
+				{
+					check_matrix_filling(&B, d2, i, j);
+				}
+			}
+			free(d1);
+			free(d2);
+		}
+
 		TEST_METHOD(Test_distance)
 		{
 			double* data;
@@ -727,30 +759,6 @@ namespace test
 			free(x);
 			free(c);
 			free(l);
-		}
-
-		TEST_METHOD(Test_centering)
-		{
-			double* d = (double*)malloc(sizeof(double) * 4);
-			d[0] = 0;
-			d[1] = 1;
-			d[2] = 2;
-			d[3] = 3;
-			vectors data(2, 2, d);
-			double* c = (double*)malloc(sizeof(double) * 4);
-			c[0] = -1;
-			c[1] = -1;
-			c[2] = 1;
-			c[3] = 1;
-			vectors centered = center(data);
-			for (int i = 0; i < centered.n_samples; i++)
-			{
-				for (int j = 0; j < centered.n_features; j++)
-				{
-					check_matrix_filling(&centered, c, i, j);
-				}
-			}
-			free(d);
 		}
 	};
 }
