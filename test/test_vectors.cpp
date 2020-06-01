@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "CppUnitTest.h"
-#include "Vectors.h"
+#include "kmeans.h"
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace test
@@ -46,6 +46,7 @@ namespace test
 			Assert::AreEqual(0.0, other_vector.coords[0]);
 			Assert::AreEqual(some_vector.n_samples, other_vector.n_samples);
 			Assert::AreEqual(some_vector.n_features, other_vector.n_features);
+			free(data);
 		}
 
 		TEST_METHOD(Test_dimensions_are_assigned)
@@ -54,6 +55,7 @@ namespace test
 			vectors some_vector(2, 10, data);
 			Assert::AreEqual(some_vector.n_features, 10);
 			Assert::AreEqual(some_vector.n_samples, 2);
+			free(data);
 		}
 
 		TEST_METHOD(Test_matrix_is_filled)
@@ -74,6 +76,7 @@ namespace test
 					check_matrix_filling(&some_vector, data, i, j);
 				}
 			}
+			free(data);
 		}
 
 		TEST_METHOD(Test_diagonal_matrix)
@@ -88,7 +91,6 @@ namespace test
 					check_for_ones(diagonal, i, j);
 				}
 			}
-			free(diagonal.coords);
 		}
 
 		TEST_METHOD(Test_dimensions_equality)
@@ -126,6 +128,7 @@ namespace test
 			{
 				check_mean_of_column(d1, i);
 			}
+			free(data);
 		}
 
 		TEST_METHOD(Test_substracting_value)
@@ -148,6 +151,8 @@ namespace test
 					check_matrix_filling(&d1, data2, i, j);
 				}
 			}
+			free(data1);
+			free(data2);
 		}
 
 		TEST_METHOD(Test_substracting_from_col)
@@ -173,9 +178,11 @@ namespace test
 					check_matrix_filling(&d1, data2, i, j);
 				}
 			}
+			free(data1);
+			free(data2);
 		}
 
-		TEST_METHOD(Test_division)
+		TEST_METHOD(Test_col_division)
 		{
 			double* data1;
 			double* data2;
@@ -184,7 +191,6 @@ namespace test
 			for (int i = 0; i < 4; i++)
 			{
 				data1[i] = double(i);
-				data2[i] = double(i) / 2;
 			}
 			data2[0] = 0;
 			data2[1] = 1.0/3;
@@ -200,6 +206,32 @@ namespace test
 					check_matrix_filling(&d1, data2, i, j);
 				}
 			}
+			free(data1);
+			free(data2);
+		}
+
+		TEST_METHOD(Test_division)
+		{
+			double* data1;
+			double* data2;
+			data1 = (double*)malloc(sizeof(double) * 4);
+			data2 = (double*)malloc(sizeof(double) * 4);
+			for (int i = 0; i < 4; i++)
+			{
+				data1[i] = double(i);
+				data2[i] = double(i) / 2;
+			}
+			vectors d1(2, 2, data1);
+			d1.divide(2);
+			for (int i = 0; i < d1.n_samples; i++)
+			{
+				for (int j = 0; j < d1.n_features; j++)
+				{
+					check_matrix_filling(&d1, data2, i, j);
+				}
+			}
+			free(data1);
+			free(data2);
 		}
 
 		TEST_METHOD(Test_column_length)
@@ -246,6 +278,9 @@ namespace test
 					check_matrix_filling(&C, d3, i, j);
 				}
 			}
+			free(d1);
+			free(d2);
+			free(d3);
 		}
 
 		TEST_METHOD(Test_vector_multiplication)
@@ -261,6 +296,7 @@ namespace test
 		vectors v(2, 3, data);
 		double dot = row_product(v.coords, v.coords+v.n_features, v.n_features);
 		Assert::AreEqual(double(7)/ 5, dot);
+		free(data);
 		}
 
 		TEST_METHOD(Test_linear_transformation)
@@ -293,6 +329,10 @@ namespace test
 		Assert::AreEqual(c[0], e[0]);
 		Assert::AreEqual(c[1], e[1]);
 		Assert::AreEqual(c[2], e[2]);
+		free(data);
+		free(d);
+		free(c);
+		free(e);
 		}
 
 		TEST_METHOD(Test_transpose)
@@ -324,6 +364,8 @@ namespace test
 					check_matrix_filling(&B, d2, i, j);
 				}
 			}
+			free(d1);
+			free(d2);
 		}
 
 		TEST_METHOD(Test_covariance)
@@ -353,6 +395,8 @@ namespace test
 					check_matrix_filling(&B, d2, i, j);
 				}
 			}
+			free(d1);
+			free(d2);
 		}
 
 		TEST_METHOD(Test_distance)
@@ -367,6 +411,7 @@ namespace test
 			vectors v(2, 3, data);
 			dist = distance(v, v, 0, 1);
 			Assert::AreEqual(3 * sqrt(3), dist);
+			free(data);
 		}
 
 		TEST_METHOD(Test_cityblock_distance)
@@ -381,6 +426,7 @@ namespace test
 			vectors v(2, 3, data);
 			dist = distance(v, v, 0, 1, "cityblock");
 			Assert::AreEqual(9.0, dist);
+			free(data);
 		}
 
 		TEST_METHOD(Test_substracted_vector)
@@ -401,6 +447,9 @@ namespace test
 			{
 					Assert::AreEqual(ptr[i], data2[i]);
 			}
+			free(ptr);
+			free(data1);
+			free(data2);
 		}
 
 		TEST_METHOD(Test_length_row)
@@ -427,8 +476,8 @@ namespace test
 			vectors v(2, 3, data);
 			dist = distance(v, v, 0, 1, "correlation");
 			Assert::AreEqual(2.22044605e-16, dist, 1e-24);
+			free(data);
 		}
-
 
 		TEST_METHOD(Test_standardising)
 		{
@@ -456,6 +505,227 @@ namespace test
 					Assert::AreEqual(d.coords[i * d.n_features + j], c[i * d.n_features + j], 1e-4);
 				}
 			}
+			free(data);
+		}
+
+		TEST_METHOD(Test_sum)
+		{
+			double* data;
+			double s = 21.0;
+			data = (double*)malloc(sizeof(double) * 6);
+			for (int i = 0; i < 6; i++)
+			{
+				data[i] = double(i) + 1;
+			}
+			vectors v(2, 3, data);
+			double sum = v.sum();
+			Assert::AreEqual(s, sum);
+		}
+
+		TEST_METHOD(Test_min_dist)
+		{
+			double* d1 = (double*)malloc(sizeof(double)*3);
+			double* d2 = (double*)malloc(sizeof(double) * 9);
+			d1[0] = 1;
+			d1[1] = 1;
+			d1[2] = 1;
+			d2[0] = 3;
+			d2[1] = 5;
+			d2[2] = 7;
+			d2[3] = 0;
+			d2[4] = 0;
+			d2[5] = 0;
+			d2[6] = 7;
+			d2[7] = 8;
+			d2[8] = 9;
+			vectors v2(3, 3, d2);
+			vectors v1(1, 3, d1);
+			double dist = min_distance(v1, v2, 0);
+			Assert::AreEqual(sqrt(3), dist, 1e-4);
+			free(d1);
+			free(d2);
+		}
+
+		TEST_METHOD(Test_min_dist_ind)
+		{
+			double* d1 = (double*)malloc(sizeof(double) * 3);
+			double* d2 = (double*)malloc(sizeof(double) * 9);
+			d1[0] = 1;
+			d1[1] = 1;
+			d1[2] = 1;
+			d2[0] = 3;
+			d2[1] = 5;
+			d2[2] = 7;
+			d2[3] = 7;
+			d2[4] = 8;
+			d2[5] = 9;
+			d2[6] = 0;
+			d2[7] = 0;
+			d2[8] = 0;
+			vectors v2(3, 3, d2);
+			vectors v1(1, 3, d1);
+			double dist = min_distance(v1, v2, 0, 2);
+			Assert::AreEqual(sqrt(56), dist, 1e-4);
+			free(d1);
+			free(d2);
+		}
+
+		TEST_METHOD(Test_argmin_dist)
+		{
+			double* d1 = (double*)malloc(sizeof(double) * 3);
+			double* d2 = (double*)malloc(sizeof(double) * 9);
+			d1[0] = 1;
+			d1[1] = 1;
+			d1[2] = 1;
+			d2[0] = 3;
+			d2[1] = 5;
+			d2[2] = 7;
+			d2[3] = 0;
+			d2[4] = 0;
+			d2[5] = 0;
+			d2[6] = 7;
+			d2[7] = 8;
+			d2[8] = 9;
+			vectors v2(3, 3, d2);
+			vectors v1(1, 3, d1);
+			int ind = argmin_distance(v1, v2, 0);
+			Assert::AreEqual(1, ind);
+			free(d1);
+			free(d2);
+		}
+
+		TEST_METHOD(Test_kmeans_const)
+		{
+			kmeans k(2);
+			kmeans cpy(k);
+			k.centroids.coords[0] = 1;
+			Assert::AreNotEqual(1.0, cpy.centroids.coords[0]);
+			Assert::AreEqual(1.0, k.centroids.coords[0]);
+		}
+
+		TEST_METHOD(Test_random_kmeans_init)
+		{
+			double* a = (double*)malloc(sizeof(double)*3);
+			a[0] = 0;
+			a[1] = 1;
+			a[2] = 2;
+			vectors x(3, 1, a);
+			vectors c(3, 1);
+			initialize(&c, x, "random", "Euclidean");
+			Assert::IsNotNull(c.coords);
+			Assert::AreNotEqual(c.coords[0], c.coords[1]);
+			Assert::AreNotEqual(c.coords[1], c.coords[2]);
+			Assert::AreNotEqual(c.coords[0], c.coords[2]);
+			free(a);		
+		}
+
+		TEST_METHOD(Test_labeling)
+		{
+			double* x_d = (double*)malloc(sizeof(double) * 10);
+			double* c_d = (double*)malloc(sizeof(double) * 6);
+			c_d[0] = -3;
+			c_d[1] = -2; // 0
+			c_d[2] = -6;
+			c_d[3] = 3; // 1
+			c_d[4] = 5;
+			c_d[5] = 2; // 2
+
+			x_d[0] = -4;
+			x_d[1] = 0; // 0
+			x_d[2] = -5;
+			x_d[3] = 3; // 1
+			x_d[4] = 0;
+			x_d[5] = 0; // 0
+			x_d[6] = 4;
+			x_d[7] = 3; // 2
+			x_d[8] = 6;
+			x_d[9] = 1; // 2
+			vectors x(5, 2, x_d);
+			vectors c(3, 2, c_d);
+			vectors l(6, 1);
+			label_points(&l, x, c, "Euclidean");
+			Assert::AreEqual(0.0, l.coords[0]);
+			Assert::AreEqual(1.0, l.coords[1]);
+			Assert::AreEqual(0.0, l.coords[2]);
+			Assert::AreEqual(2.0, l.coords[3]);
+			Assert::AreEqual(2.0, l.coords[4]);
+			free(x_d);
+			free(c_d);
+		}
+
+		TEST_METHOD(Test_calc_centroids)
+		{
+			double* x_d = (double*)malloc(sizeof(double) * 10);
+			double* c_d = (double*)malloc(sizeof(double) * 6);
+			double* c_real = (double*)malloc(sizeof(double) * 6);
+			c_d[0] = -3;
+			c_d[1] = -2; // 0
+			c_d[2] = -6;
+			c_d[3] = 3; // 1
+			c_d[4] = 5;
+			c_d[5] = 2; // 2
+
+			x_d[0] = -4;
+			x_d[1] = 0; // 0
+			x_d[2] = -5;
+			x_d[3] = 3; // 1
+			x_d[4] = 0;
+			x_d[5] = 0; // 0
+			x_d[6] = 4;
+			x_d[7] = 3; // 2
+			x_d[8] = 6;
+			x_d[9] = 1; // 2
+
+			c_real[0] = -2;
+			c_real[1] = 0;
+			c_real[2] = -5;
+			c_real[3] = 3;
+			c_real[4] = 5;
+			c_real[5] = 2;
+
+			vectors x(5, 2, x_d);
+			vectors c(3, 2, c_d);
+			vectors l(6, 1);
+			label_points(&l, x, c, "Euclidean");
+			calculate_centroids(l, x, &c);
+			for (int i = 0; i < c.n_samples; i++)
+			{
+				for (int j = 0; j < c.n_features; j++)
+				{
+					check_matrix_filling(&c, c_real, i, j);
+				}
+			}
+			free(c_d);
+			free(c_real);
+			free(x_d);
+		}
+
+		TEST_METHOD(Test_inertia)
+		{
+			double* x = (double*)malloc(sizeof(double) * 9);
+			double* c = (double*)malloc(sizeof(double) * 6);
+			double* l = (double*)malloc(sizeof(double) * 3);
+			for (int i = 0; i < 9; i++)
+			{
+				x[i] = double(i) + 1;
+			}
+			vectors data(3, 3, x);
+			c[0] = 2;
+			c[1] = 3;
+			c[2] = 4;
+			c[3] = 10;
+			c[4] = 10;
+			c[5] = 10;
+			vectors centres(2, 3, c);
+			l[0] = 0;
+			l[1] = 0;
+			l[2] = 1;
+			vectors labels(1, 3, l);
+			double inertia = calculate_inertia(labels, data, centres, "Euclidean");
+			Assert::AreEqual(29.0, inertia);
+			free(x);
+			free(c);
+			free(l);
 		}
 	};
 }

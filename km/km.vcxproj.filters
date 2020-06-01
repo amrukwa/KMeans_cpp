@@ -23,5 +23,11 @@
     <ClInclude Include="Vectors.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="kmeans.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="initialization.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

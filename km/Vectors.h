@@ -19,7 +19,21 @@ public:
 	{
 		n_features = features;
 		n_samples = samples;
-		coords = data;
+		coords = (double*)malloc(sizeof(double) * n_features * n_samples);
+		for (int i = 0; i < n_samples; i++)
+		{
+			for (int j = 0; j < n_features; j++)
+			{
+				coords[i*n_features+j] = data[i * n_features + j];
+			}
+		}
+	}
+
+	vectors(int samples, int features)
+	{
+		n_features = features;
+		n_samples = samples;
+		coords = (double*)malloc(n_features * n_samples* sizeof(double));
 	}
 
 	vectors(int square_dim)
@@ -53,7 +67,9 @@ public:
 	}
 
 	~vectors()
-	{}
+	{
+		free(coords);
+	}
 
 	void get_dimensions(std::ifstream& datafile)
 	{
@@ -90,6 +106,16 @@ public:
 		std::cout << "("<<n_samples << "," << n_features<<")" << std::endl;
 	}
 
+	double sum()
+	{
+		double sum = 0;
+		for (int i = 0; i < n_features*n_samples; i++)
+		{
+			sum += coords[i];
+		}
+		return sum;
+	}
+
 	double sum_of_column(int column)
 	{
 		if (column >= n_features)
@@ -105,7 +131,7 @@ public:
 		return sum;
 	}
 
-	double sum_of_row(int row)
+	double sum_of_row(int row) const
 	{
 		if (row >= n_samples)
 		{
@@ -120,27 +146,6 @@ public:
 		return sum;
 	}
 
-	double sum_of_row(int row) const
-	{
-		if (row >= n_features)
-		{
-			std::cout << "Invalid index.";
-			exit(1);
-		}
-		double sum = 0;
-		for (int i = 0; i < n_features; i++)
-		{
-			sum += coords[row * n_features + i];
-		}
-		return sum;
-	}
-
-	double mean_of_row(int row)
-	{
-		double s = sum_of_column(row);
-		return s / n_features;
-	}
-
 	double mean_of_row(int row) const
 	{
 		double s = sum_of_row(row);
@@ -151,6 +156,13 @@ public:
 	{
 		double s = sum_of_column(column);
 		return s / n_samples;
+	}
+
+	void change_size(int samples, int features)
+	{
+		n_samples = samples;
+		n_features = features;
+		coords = (double*)realloc(coords, n_samples * n_features * sizeof(double));
 	}
 
 	void substract(double value)
@@ -191,6 +203,19 @@ public:
 		for (int i = 0; i < n_samples; i++)
 		{
 			coords[i * n_features + column] /= value;
+		}
+	}
+
+	void divide(double value)
+	{
+		if (value == 0)
+		{
+			std::cout << "Division by 0.";
+			exit(0);
+		}
+		for (int i = 0; i < n_features * n_samples; i++)
+		{
+			coords[i] /= value;
 		}
 	}
 
@@ -281,23 +306,23 @@ vectors std_base(int dimension)
 	return diagonal;
 }
 
-bool operator==(const vectors& vector1, const vectors& vector2)
+bool operator==(const vectors& v1, const vectors& v2)
 {
-	if (vector1.n_features != vector2.n_features)
+	if (v1.n_features != v2.n_features)
 	{
 		return false;
 	}
 
-	if (vector1.n_samples != vector2.n_samples)
+	if (v1.n_samples != v2.n_samples)
 	{
 		return false;
 	}
 
-	for (int i = 0; i < vector1.n_samples; i++)
+	for (int i = 0; i < v1.n_samples; i++)
 	{
-		for (int j = 0; j < vector1.n_features; j++)
+		for (int j = 0; j < v1.n_features; j++)
 		{
-			if (vector1.coords[i * vector1.n_features + j] != vector2.coords[i * vector1.n_features + j])
+			if (v1.coords[i * v1.n_features + j] != v2.coords[i * v1.n_features + j])
 			{
 				return false;
 			}
@@ -378,24 +403,24 @@ double correlation_distance(const vectors& v1, const vectors& v2, int row1, int 
 	return distance;
 }
 
-double Euclidean_distance(const vectors& some_vector1, const vectors& some_vector2, int row1, int row2)
+double Euclidean_distance(const vectors& v1, const vectors& v2, int row1, int row2)
 {
 	double distance = 0;
-	for (int i = 0; i < some_vector1.n_features; i++)
+	for (int i = 0; i < v1.n_features; i++)
 	{
-		double distance_for_axis = some_vector1.coords[row1 * some_vector1.n_features + i] - some_vector2.coords[row2 * some_vector2.n_features + i];
+		double distance_for_axis = v1.coords[row1 * v1.n_features + i] - v2.coords[row2 * v2.n_features + i];
 		distance = distance + distance_for_axis * distance_for_axis;
 	}
 	distance = sqrt(distance);
 	return distance;
 }
 
-double cityblock_distance(const vectors& some_vector1, const vectors& some_vector2, int row1, int row2)
+double cityblock_distance(const vectors& v1, const vectors& v2, int row1, int row2)
 {
 	double distance = 0;
-	for (int i = 0; i < some_vector1.n_features; i++)
+	for (int i = 0; i < v1.n_features; i++)
 	{
-		double distance_for_axis = some_vector1.coords[row1 * some_vector1.n_features + i] - some_vector2.coords[row2 * some_vector2.n_features + i];
+		double distance_for_axis = v1.coords[row1 * v1.n_features + i] - v2.coords[row2 * v2.n_features + i];
 		if (distance_for_axis < 0)
 		{
 			distance_for_axis = 0 - distance_for_axis;
@@ -405,9 +430,9 @@ double cityblock_distance(const vectors& some_vector1, const vectors& some_vecto
 	return distance;
 }
 
-double distance(const vectors& some_vector1, const vectors& some_vector2, int row1, int row2, std::string metric = "Euclidean")
+double distance(const vectors& v1, const vectors& v2, int row1, int row2, std::string metric = "Euclidean")
 {
-	if (some_vector1.n_features != some_vector2.n_features)
+	if (v1.n_features != v2.n_features)
 	{
 		std::cout << "The vector dimensionality is inequal.";
 		exit(1);
@@ -415,15 +440,15 @@ double distance(const vectors& some_vector1, const vectors& some_vector2, int ro
 	double distance = 0;
 	if (metric == "Euclidean")
 	{
-		distance = Euclidean_distance(some_vector1, some_vector2, row1, row2);
+		distance = Euclidean_distance(v1, v2, row1, row2);
 	}
 	else if (metric == "cityblock")
 	{
-		distance = cityblock_distance(some_vector1, some_vector2, row1, row2);
+		distance = cityblock_distance(v1, v2, row1, row2);
 	}
 	else if (metric == "correlation")
 	{
-		distance = correlation_distance(some_vector1, some_vector2, row1, row2);
+		distance = correlation_distance(v1, v2, row1, row2);
 	}
 	else
 	{
@@ -431,4 +456,54 @@ double distance(const vectors& some_vector1, const vectors& some_vector2, int ro
 		exit(1);
 	}
 	return distance;
+}
+
+double min_distance(const vectors& v1, const vectors& v2, int row1, std::string metric = "Euclidean")
+{
+	//calculates the distance to the closest member of v2 from row1 of v1 
+	double min_dist = distance(v1, v2, row1, 0, metric);
+	double cur_dist;
+	for (int i = 1; i < v2.n_samples; i++)
+	{
+		cur_dist = distance(v1, v2, row1, i, metric);
+		if (cur_dist < min_dist)
+		{
+			min_dist = cur_dist;
+		}
+	}
+	return min_dist;
+}
+
+double min_distance(const vectors& v1, const vectors& v2, int row1, int index, std::string metric = "Euclidean")
+{
+	//calculates the distance to the closest member of v2 (up to index, exclusively) from row1 of v1 
+	double min_dist = distance(v1, v2, row1, 0, metric);
+	double cur_dist;
+	for (int i = 1; i < index; i++)
+	{
+		cur_dist = distance(v1, v2, row1, i, metric);
+		if (cur_dist < min_dist)
+		{
+			min_dist = cur_dist;
+		}
+	}
+	return min_dist;
+}
+
+int argmin_distance(const vectors& v1, const vectors& v2, int row1, std::string metric = "Euclidean")
+{
+	//calculates the index of the closest member of v2 from row1 of v1 
+	double min_dist = distance(v1, v2, row1, 0, metric);
+	double cur_dist;
+	int index = 0;
+	for (int i = 1; i < v2.n_samples; i++)
+	{
+		cur_dist = distance(v1, v2, row1, i, metric);
+		if (cur_dist < min_dist)
+		{
+			min_dist = cur_dist;
+			index = i;
+		}
+	}
+	return index;
 }
