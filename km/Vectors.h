@@ -131,21 +131,6 @@ public:
 		return sum;
 	}
 
-	double sum_of_row(int row)
-	{
-		if (row >= n_samples)
-		{
-			std::cout << "Invalid index.";
-			exit(1);
-		}
-		double sum = 0;
-		for (int i = 0; i < n_features; i++)
-		{
-			sum += coords[row * n_features + i];
-		}
-		return sum;
-	}
-
 	double sum_of_row(int row) const
 	{
 		if (row >= n_samples)
@@ -159,12 +144,6 @@ public:
 			sum += coords[row * n_features + i];
 		}
 		return sum;
-	}
-
-	double mean_of_row(int row)
-	{
-		double s = sum_of_column(row);
-		return s / n_features;
 	}
 
 	double mean_of_row(int row) const
