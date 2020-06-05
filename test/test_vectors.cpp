@@ -822,6 +822,24 @@ namespace test
 			free(d);
 		}
 
+		TEST_METHOD(Test_deep_asignment)
+		{
+			double* d = (double*)malloc(sizeof(double) * 4);
+			d[0] = 1.0;
+			d[1] = 2.0;
+			d[2] = 3.0;
+			d[3] = 4.0;
+			vectors v2(3, 1);
+			vectors v1(2, 2, d);
+			v2 = v1;
+			v1.divide(2.0);
+			for (int i = 0; i < 4; i++)
+			{
+				Assert::AreEqual(2 * v1.coords[i], v2.coords[i]);
+			}
+			free(d);
+		}
+
 		/*TEST_METHOD(Test_power_method)
 		{
 			double* d2 = (double*)malloc(sizeof(double) * 4);
@@ -844,4 +862,3 @@ namespace test
 		}*/
 	};
 }
-

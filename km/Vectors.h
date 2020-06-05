@@ -71,6 +71,31 @@ public:
 		free(coords);
 	}
 
+	vectors& operator=(const vectors& v)
+	{
+		if (n_features != v.n_features || n_samples != v.n_samples)
+		{
+			n_features = v.n_features;
+			n_samples = v.n_samples;
+			if (this != NULL)
+			{
+				coords = (double*)realloc(coords, (n_features * n_samples) * sizeof(double));
+			}
+			else
+			{
+				coords = (double*)malloc(n_features * n_samples * sizeof(double));
+			}
+		}
+		for (int i = 0; i < n_samples; i++)
+		{
+			for (int j = 0; j < n_features; j++)
+			{
+				coords[i * n_features + j] = v.coords[i * n_features + j];
+			}
+		}
+		return *this;
+	}
+
 	void get_dimensions(std::ifstream& datafile)
 	{
 		char c;
@@ -269,6 +294,17 @@ double length_of_row(double* v, int dimension)
 	}
 	distance = sqrt(distance);
 	return distance;
+}
+
+void normalise(vectors* v)
+{
+	double n;
+	for (int i = 0; i < v->n_features; i++)
+	{
+		n = length_of_column(*v, i);
+		std::cout << n << std::endl;
+		v->divide(n, i);
+	}
 }
 
 vectors standarise(const vectors& v1)
@@ -506,4 +542,40 @@ int argmin_distance(const vectors& v1, const vectors& v2, int row1, std::string 
 		}
 	}
 	return index;
+}
+
+double abs(double a, double b)
+{
+	if (a - b > 0)
+		return a - b;
+	return b - a;
+
+}
+
+double biggest_difference(const vectors& v1, const vectors& v2)
+{
+	if (v1.n_features != v2.n_features)
+	{
+		std::cout << "Inequal dimensions";
+		exit(1);
+	}
+
+	if (v1.n_samples != v2.n_samples)
+	{
+		std::cout << "Inequal dimensions";
+		exit(1);
+	}
+
+	double diff = abs(v1.coords[0], v2.coords[0]);
+	double cur;
+	for (int i = 0; i < v1.n_features * v1.n_samples; i++)
+	{
+		cur = abs(v1.coords[i], v2.coords[i]);
+		if (cur > diff)
+		{
+			diff = cur;
+		}
+	}
+
+	return diff;
 }
