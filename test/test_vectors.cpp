@@ -760,5 +760,88 @@ namespace test
 			free(c);
 			free(l);
 		}
+
+
+		TEST_METHOD(Test_abs)
+		{
+			double a = 4;
+			double b = 7;
+			Assert::AreEqual(3.0, abs(a, b));
+		}
+
+		TEST_METHOD(Test_max_difference)
+		{
+			double* c = (double*)malloc(sizeof(double) * 4);
+			double* d = (double*)malloc(sizeof(double) * 4);
+			c[0] = 0;
+			d[0] = 1;
+			c[1] = 1;
+			d[1] = 1.1;
+			c[2] = -2;
+			d[2] = -2.01;
+			c[3] = 5;
+			d[3] = 6.2;
+			vectors vc(2, 2, c);
+			vectors vd(2, 2, d);
+			double diff = biggest_difference(vc, vd);
+			Assert::AreEqual(1.2, diff, 1e-9);
+		}
+
+		TEST_METHOD(Test_normalising)
+		{
+			double* d = (double*)malloc(sizeof(double) * 9);
+			double* c = (double*)malloc(sizeof(double) * 9);
+			d[0] = 4.0;
+			d[1] = 0.0;
+			d[2] = 1.0;
+			d[3] = 3.0;
+			d[4] = 12.0;
+			d[5] = 1.0;
+			d[6] = 0.0;
+			d[7] = 5.0;
+			d[8] = 1.0;
+			vectors x(3, 3, d);
+			normalise(&x);
+			c[0] = 4.0 / 5;
+			c[1] = 0.0;
+			c[2] = 1.0 / sqrt(3);
+			c[3] = 3.0 / 5;
+			c[4] = 12.0 / 13;
+			c[5] = 1.0 / sqrt(3);
+			c[6] = 0.0;
+			c[7] = 5.0 / 13;
+			c[8] = 1.0 / sqrt(3);
+			for (int i = 0; i < x.n_samples; i++)
+			{
+				for (int j = 0; j < x.n_features; j++)
+				{
+					Assert::AreEqual(c[i * x.n_features + j], x.coords[i * x.n_features + j], 1e-4);
+				}
+			}
+			free(c);
+			free(d);
+		}
+
+		/*TEST_METHOD(Test_power_method)
+		{
+			double* d2 = (double*)malloc(sizeof(double) * 4);
+			d2[0] = 18;
+			d2[1] = -6;
+			d2[2] = -6;
+			d2[3] = 8;
+			vectors cov(2, 2, d2);
+			vectors eiv(2, 2);
+			power_method(cov, &eiv, 1e-6, 1);
+			normalise(&cov);
+			for (int i = 0; i < eiv.n_samples; i++)
+			{
+				for (int j = 0; j < eiv.n_features; j++)
+				{
+					Assert::AreEqual(cov.coords[i * eiv.n_features + j], eiv.coords[i * eiv.n_features + j], 1e-4);
+				}
+			}
+			free(d2);
+		}*/
 	};
 }
+

@@ -339,7 +339,7 @@ void operator<<(std::ostream& out, const vectors& some_vector)
 		{
 			out << some_vector.coords[i * some_vector.n_features + j] << ' ';
 		}
-		std::cout << std::endl;
+		out << std::endl;
 	}
 }
 
