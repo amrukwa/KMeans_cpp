@@ -549,23 +549,15 @@ double abs(double a, double b)
 	if (a - b > 0)
 		return a - b;
 	return b - a;
-
 }
 
 double biggest_difference(const vectors& v1, const vectors& v2)
 {
-	if (v1.n_features != v2.n_features)
+	if (v1.n_features != v2.n_features || v1.n_samples != v2.n_samples)
 	{
 		std::cout << "Inequal dimensions";
 		exit(1);
 	}
-
-	if (v1.n_samples != v2.n_samples)
-	{
-		std::cout << "Inequal dimensions";
-		exit(1);
-	}
-
 	double diff = abs(v1.coords[0], v2.coords[0]);
 	double cur;
 	for (int i = 0; i < v1.n_features * v1.n_samples; i++)
