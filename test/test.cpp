@@ -879,7 +879,7 @@ namespace test
 			free(s);
 		}
 
-		/*TEST_METHOD(Test_orthogonalisation)
+		TEST_METHOD(Test_orthogonalisation)
 		{
 			double* d = (double*)malloc(sizeof(double) * 6);
 			d[0] = 1.0;
@@ -901,7 +901,7 @@ namespace test
 				}
 			}
 			free(d);
-		}*/
+		}
 
 		/*TEST_METHOD(Test_Gramm_Schmidt)
 		{

@@ -598,8 +598,12 @@ void orthogonalise(vectors* x, int col1, int col2)
 // col1 is the vector we project onto
 {
 	double* proj = (double*)malloc(sizeof(double) * x->n_samples);
-	double scalar; // col product
-	// subtract proj
+	double scalar = col_product(*x, col1, col2)/ col_product(*x, col1, col1);
+	for (int i = 0; i < x->n_samples; i++)
+	{
+		proj[i] = scalar* x->coords[i * x->n_features + col1];
+	}
+	x->substract(proj, col2);
 	free(proj);
 }
 
