@@ -609,12 +609,17 @@ void orthogonalise(vectors* x, int col1, int col2)
 
 vectors Gram_Schmidt(vectors x)
 // we assume the vectors are in columns, not rows, while using this function - check your matrix before orthonormalisation
+// using MGS for numerical stability
 {
 	vectors temp(x);
 	normalise(&temp, 0);
 	for (int i = 1; i < temp.n_features; i++)
 	{
 		//another loop - substracting projections
+		for (int j = 0; j < i; j++)
+		{
+			orthogonalise(&temp, j, i);
+		}
 		normalise(&temp, i);
 	}
 	return temp;

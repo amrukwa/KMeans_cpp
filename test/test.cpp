@@ -903,7 +903,7 @@ namespace test
 			free(d);
 		}
 
-		/*TEST_METHOD(Test_Gramm_Schmidt)
+		TEST_METHOD(Test_Gramm_Schmidt)
 		{
 			double* m = (double*)malloc(sizeof(double) * 9);
 			double* o = (double*)malloc(sizeof(double) * 9);
@@ -934,6 +934,6 @@ namespace test
 					Assert::AreEqual(o[i * x.n_features + j], orth.coords[i * x.n_features + j], 1e-6);
 				}
 			}
-		}*/
+		}
 	};
 }
