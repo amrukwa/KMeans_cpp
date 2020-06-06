@@ -769,22 +769,22 @@ namespace test
 			Assert::AreEqual(3.0, abs(a, b));
 		}
 
-		TEST_METHOD(Test_max_difference)
+
+		TEST_METHOD(Test_tol_equality)
 		{
 			double* c = (double*)malloc(sizeof(double) * 4);
 			double* d = (double*)malloc(sizeof(double) * 4);
 			c[0] = 0;
-			d[0] = 1;
-			c[1] = 1;
+			d[0] = 0.00001;
+			c[1] = 1.1;
 			d[1] = 1.1;
 			c[2] = -2;
-			d[2] = -2.01;
-			c[3] = 5;
+			d[2] = -2.00001;
+			c[3] = 6.199999;
 			d[3] = 6.2;
 			vectors vc(2, 2, c);
 			vectors vd(2, 2, d);
-			double diff = biggest_difference(vc, vd);
-			Assert::AreEqual(1.2, diff, 1e-9);
+			Assert::AreEqual(true, are_same(vc, vd));
 		}
 
 		TEST_METHOD(Test_normalising)
@@ -839,26 +839,5 @@ namespace test
 			}
 			free(d);
 		}
-
-		/*TEST_METHOD(Test_power_method)
-		{
-			double* d2 = (double*)malloc(sizeof(double) * 4);
-			d2[0] = 18;
-			d2[1] = -6;
-			d2[2] = -6;
-			d2[3] = 8;
-			vectors cov(2, 2, d2);
-			vectors eiv(2, 2);
-			power_method(cov, &eiv, 1e-6, 1);
-			normalise(&cov);
-			for (int i = 0; i < eiv.n_samples; i++)
-			{
-				for (int j = 0; j < eiv.n_features; j++)
-				{
-					Assert::AreEqual(cov.coords[i * eiv.n_features + j], eiv.coords[i * eiv.n_features + j], 1e-4);
-				}
-			}
-			free(d2);
-		}*/
 	};
 }

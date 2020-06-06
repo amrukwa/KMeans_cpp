@@ -302,9 +302,20 @@ void normalise(vectors* v)
 	for (int i = 0; i < v->n_features; i++)
 	{
 		n = length_of_column(*v, i);
-		std::cout << n << std::endl;
 		v->divide(n, i);
 	}
+}
+
+vectors Gram_Schmidt(vectors x)
+{
+	vectors temp;
+	return temp;
+}
+
+vectors r(vectors q, vectors x)
+{
+	vectors temp;
+	return temp;
 }
 
 vectors standarise(const vectors& v1)
@@ -379,6 +390,7 @@ void operator<<(std::ostream& out, const vectors& some_vector)
 	}
 }
 
+//probably deletable
 double* operator*(const vectors& A, double* x)
 {
 	static double* ptr;
@@ -551,23 +563,23 @@ double abs(double a, double b)
 	return b - a;
 }
 
-double biggest_difference(const vectors& v1, const vectors& v2)
+bool are_same(const vectors& v1, const vectors& v2, double tol = 1e-4)
 {
 	if (v1.n_features != v2.n_features || v1.n_samples != v2.n_samples)
 	{
-		std::cout << "Inequal dimensions";
-		exit(1);
+		return false;
 	}
-	double diff = abs(v1.coords[0], v2.coords[0]);
 	double cur;
-	for (int i = 0; i < v1.n_features * v1.n_samples; i++)
+	for (int i = 0; i < v1.n_samples; i++)
 	{
-		cur = abs(v1.coords[i], v2.coords[i]);
-		if (cur > diff)
+		for (int j = 0; j < v1.n_features; j++)
 		{
-			diff = cur;
+			cur = abs(v1.coords[i*v1.n_features+j], v2.coords[i * v2.n_features + j]);
+			if (cur > tol)
+			{
+				return false;
+			}
 		}
 	}
-
-	return diff;
+	return true;
 }

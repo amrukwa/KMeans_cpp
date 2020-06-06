@@ -14,21 +14,30 @@ vectors covariance_matrix(vectors data)
 	return c;
 }
 
-/*void power_method(vectors x, vectors* eigenvec, double tol, int iter)
+void power_method(vectors x, vectors* eigenvec, double tol, int iter)
 {
-	vectors prev(x);
-	normalise(&prev);
-	vectors d = x * prev;
-	normalise(&d);
-
-	for (int i = 0; i < x.n_samples; i++)
+	vectors prev = x;
+	normalise(&prev); // Gramm Schmidt
+	for (int k = 0; k < iter; k++)
 	{
-		for (int j = 0; j < x.n_features; j++)
+		*eigenvec = x * prev;
+		normalise(eigenvec); // Gramm Schmidt
+		// *eigenvec = gram_s
+		std::cout << *eigenvec;
+		std::cout << std::endl;
+		if (biggest_difference(prev, *eigenvec) <= tol)
 		{
-			eigenvec->coords[i*x.n_features+j] = d.coords[i * x.n_features + j];
+			break;
+		}
+		for (int i = 0; i < x.n_samples; i++)
+		{
+			for (int j = 0; j < x.n_features; j++)
+			{
+				prev.coords[i * x.n_features + j] = eigenvec->coords[i * x.n_features + j];
+			}
 		}
 	}
-}*/
+}
 
 class PCA {
 public:
