@@ -205,6 +205,14 @@ public:
 			coords[i * n_features + column] -= value;
 		}
 	}
+
+	void substract(double* v, int col)
+	{
+		for (int i = 0; i < n_samples; i++)
+		{
+			coords[i * n_features + col] -= v[i];
+		}
+	}
 	
 	double* substract(double value, int row) const
 	{
@@ -296,26 +304,18 @@ double length_of_row(double* v, int dimension)
 	return distance;
 }
 
+void normalise(vectors* v, int col)
+{
+	double n = length_of_column(*v, col);
+	v->divide(n, col);
+}
+
 void normalise(vectors* v)
 {
-	double n;
 	for (int i = 0; i < v->n_features; i++)
 	{
-		n = length_of_column(*v, i);
-		v->divide(n, i);
+		normalise(v, i);
 	}
-}
-
-vectors Gram_Schmidt(vectors x)
-{
-	vectors temp;
-	return temp;
-}
-
-vectors r(vectors q, vectors x)
-{
-	vectors temp;
-	return temp;
 }
 
 vectors standarise(const vectors& v1)
@@ -429,6 +429,16 @@ double row_product(double* d1, double* d2, int dimension)
 	for (int i = 0; i < dimension; i++)
 	{
 		prod += d1[i] * d2[i];
+	}
+	return prod;
+}
+
+double col_product(vectors x, int col1, int col2)
+{
+	double prod = 0;
+	for (int i = 0; i < x.n_samples; i++)
+	{
+		prod += x.coords[i * x.n_features + col1] * x.coords[i * x.n_features + col2];
 	}
 	return prod;
 }
@@ -582,4 +592,32 @@ bool are_same(const vectors& v1, const vectors& v2, double tol = 1e-4)
 		}
 	}
 	return true;
+}
+
+void orthogonalise(vectors* x, int col1, int col2)
+// col1 is the vector we project onto
+{
+	double* proj = (double*)malloc(sizeof(double) * x->n_samples);
+	double scalar; // col product
+	// subtract proj
+	free(proj);
+}
+
+vectors Gram_Schmidt(vectors x)
+// we assume the vectors are in columns, not rows, while using this function - check your matrix before orthonormalisation
+{
+	vectors temp(x);
+	normalise(&temp, 0);
+	for (int i = 1; i < temp.n_features; i++)
+	{
+		//another loop - substracting projections
+		normalise(&temp, i);
+	}
+	return temp;
+}
+
+vectors r(vectors q, vectors x)
+{
+	vectors temp;
+	return temp;
 }

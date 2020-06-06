@@ -400,7 +400,6 @@ namespace test
 			free(d2);
 		}
 
-
 		TEST_METHOD(Test_cov)
 		{
 			double* d1;
@@ -761,14 +760,12 @@ namespace test
 			free(l);
 		}
 
-
 		TEST_METHOD(Test_abs)
 		{
 			double a = 4;
 			double b = 7;
 			Assert::AreEqual(3.0, abs(a, b));
 		}
-
 
 		TEST_METHOD(Test_tol_equality)
 		{
@@ -839,5 +836,104 @@ namespace test
 			}
 			free(d);
 		}
+
+		TEST_METHOD(Test_col_product)
+		{
+			double* d = (double*)malloc(sizeof(double) * 4);
+			d[0] = 1;
+			d[2] = 2;
+			d[1] = 4;
+			d[3] = 5;
+			double dot = 14.0;
+			vectors data(2, 2, d);
+			Assert::AreEqual(dot, col_product(data, 0, 1));
+			free(d);
+		}
+
+		TEST_METHOD(Test_substracting_cols)
+		{
+			double* d = (double*)malloc(sizeof(double) * 4);
+			d[0] = 3.0;
+			d[1] = 4.0;
+			d[2] = 5.0;
+			d[3] = 6.0;
+			double* c = (double*)malloc(sizeof(double) * 4);
+			vectors check(2, 2, d);
+			c[0] = 2.0;
+			c[1] = 4.0;
+			c[2] = 1.0;
+			c[3] = 6.0;
+			double* s = (double*)malloc(sizeof(double) * 2);
+			s[0] = 1.0;
+			s[1] = 4.0;
+			check.substract(s, 0);
+			for (int i = 0; i < check.n_samples; i++)
+			{
+				for (int j = 0; j < check.n_features; j++)
+				{
+					check_matrix_filling(&check, c, i, j);
+				}
+			}
+			free(d);
+			free(c);
+			free(s);
+		}
+
+		/*TEST_METHOD(Test_orthogonalisation)
+		{
+			double* d = (double*)malloc(sizeof(double) * 6);
+			d[0] = 1.0;
+			d[1] = 1.0;
+			d[2] = 1.0;
+			d[3] = 2.0;
+			d[4] = 0.0;
+			d[5] = 0.0;
+			vectors x(3, 2, d);
+			d[1] = -0.5;
+			d[3] = 0.5;
+			vectors orth(3, 2, d);
+			orthogonalise(&x, 0, 1);
+			for (int i = 0; i < x.n_samples; i++)
+			{
+				for (int j = 0; j < x.n_features; j++)
+				{
+					Assert::AreEqual(orth.coords[i * x.n_features + j], x.coords[i * x.n_features + j], 1e-6);
+				}
+			}
+			free(d);
+		}*/
+
+		/*TEST_METHOD(Test_Gramm_Schmidt)
+		{
+			double* m = (double*)malloc(sizeof(double) * 9);
+			double* o = (double*)malloc(sizeof(double) * 9);
+			m[0] = 1.0;
+			m[1] = 1.0;
+			m[2] = 0.0;
+			m[3] = 1.0;
+			m[4] = 2.0;
+			m[5] = 1.0;
+			m[6] = 0.0;
+			m[7] = 0.0;
+			m[8] = 2.0;
+			o[0] = sqrt(2)/2;
+			o[1] = -sqrt(2) / 2;
+			o[2] = 0.0;
+			o[3] = sqrt(2) / 2;
+			o[4] = sqrt(2) / 2;
+			o[5] = 0.0;
+			o[6] = 0.0;
+			o[7] = 0.0;
+			o[8] = 1.0;
+			vectors x(3, 3, m);
+			vectors orth = Gram_Schmidt(x);
+			for (int i = 0; i < x.n_samples; i++)
+			{
+				for (int j = 0; j < x.n_features; j++)
+				{
+					Assert::AreEqual(o[i * x.n_features + j], orth.coords[i * x.n_features + j], 1e-6);
+				}
+			}
+		}*/
 	};
 }
