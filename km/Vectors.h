@@ -624,9 +624,3 @@ vectors Gram_Schmidt(vectors x)
 	}
 	return temp;
 }
-
-vectors r(vectors q, vectors x)
-{
-	vectors temp;
-	return temp;
-}
