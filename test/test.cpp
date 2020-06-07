@@ -514,7 +514,6 @@ namespace test
 		TEST_METHOD(Test_standardising)
 		{
 			double* data;
-			double dist;
 			data = (double*)malloc(sizeof(double) * 6);
 			for (int i = 0; i < 6; i++)
 			{
@@ -934,6 +933,34 @@ namespace test
 					Assert::AreEqual(o[i * x.n_features + j], orth.coords[i * x.n_features + j], 1e-6);
 				}
 			}
+		}
+
+		TEST_METHOD(Test_centering)
+		{
+			double* data;
+			data = (double*)malloc(sizeof(double) * 6);
+			for (int i = 0; i < 6; i++)
+			{
+				data[i] = double(i) + 1;
+			}
+			vectors v(2, 3, data);
+			double* c;
+			c = (double*)malloc(sizeof(double) * 6);
+			c[0] = -1.5;
+			c[1] = -1.5;
+			c[2] = -1.5;
+			c[3] = 1.5;
+			c[4] = 1.5;
+			c[5] = 1.5;
+			vectors d = center(v);
+			for (int i = 0; i < 2; i++)
+			{
+				for (int j = 0; j < 3; j++)
+				{
+					Assert::AreEqual(d.coords[i * d.n_features + j], c[i * d.n_features + j], 1e-4);
+				}
+			}
+			free(data);
 		}
 	};
 }

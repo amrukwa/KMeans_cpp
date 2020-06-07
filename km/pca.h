@@ -48,7 +48,7 @@ public:
 	vectors eigenvectors;
 	vectors eigenvalues;
 	double tol;
-	int n_iter = 100;
+	int n_iter = 1000;
 
 	PCA(std::string red = "YES", int dims = 2, double tolerance = 1e-6) :
 		reduced_dims{ dims },
@@ -68,18 +68,21 @@ public:
 		tol{ t.tol }
 	{}
 
-	void fit(vectors data) // please standarise your matrix before using this method
+	void fit(vectors data)
 	{
-		vectors cov = covariance_matrix(data);
+		vectors cov = center(data);
+		cov = covariance_matrix(cov);
 		eigenvectors.change_size(cov.n_samples, cov.n_features);
 		eigenvalues.change_size(1, cov.n_samples);
-		//power_method(cov, &eigenvectors, tol, n_iter);
+		QR_algorithm(cov, &eigenvectors, &eigenvalues, tol, n_iter);
+		// sort them
+		// decide how much to leave
 	}
 
 	vectors transform(vectors data)
 	{
-		vectors v;
-		//stuff
+		vectors v = center(data);
+		v = v * eigenvectors;
 		return v;
 	}
 

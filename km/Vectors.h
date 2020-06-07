@@ -318,6 +318,18 @@ void normalise(vectors* v)
 	}
 }
 
+vectors center(const vectors& v1)
+{
+	vectors temp(v1);
+	double mean;
+	for (int i = 0; i < temp.n_features; i++)
+	{
+		mean = temp.mean_of_column(i);
+		temp.substract(mean, i);
+	}
+	return temp;
+}
+
 vectors standarise(const vectors& v1)
 {
 	vectors temp(v1);
