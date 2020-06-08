@@ -40,7 +40,6 @@ void QR_algorithm(vectors x, vectors* eigenvec, vectors* eigenvals, double tol, 
 	}
 }
 
-
 class PCA {
 public:
 	int reduced_dims;
@@ -75,8 +74,9 @@ public:
 		eigenvectors.change_size(cov.n_samples, cov.n_features);
 		eigenvalues.change_size(1, cov.n_samples);
 		QR_algorithm(cov, &eigenvectors, &eigenvalues, tol, n_iter);
-		// sort them
-		// decide how much to leave
+		sort_two(&eigenvalues, &eigenvectors);
+		eigenvectors.leave_n_cols(reduced_dims);
+		eigenvalues.leave_n_cols(reduced_dims);
 	}
 
 	vectors transform(vectors data)
