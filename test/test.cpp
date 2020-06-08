@@ -1027,5 +1027,94 @@ namespace test
 			Assert::AreEqual(0.0, idx.coords[1]);
 			free(data);
 		}
+
+		TEST_METHOD(Test_sort_by_idx)
+		{
+			vectors idx(1,3);
+			idx.coords[0] = 1;
+			idx.coords[1] = 2;
+			idx.coords[2] = 0;
+			vectors d(2, 3);
+			for (int i = 0; i < 6; i++)
+			{
+				d.coords[i] = i;
+			}
+			sort_by_idx(&d, idx);
+			double* t = (double*)malloc(sizeof(double) * 6);
+			t[0] = 1.0;
+			t[1] = 2.0;
+			t[2] = 0.0;
+			t[3] = 4.0;
+			t[4] = 5.0;
+			t[5] = 3.0;
+			for (int i = 0; i < 6; i++)
+			{
+				Assert::AreEqual(t[i], d.coords[i]);
+			}
+			free(t);
+		}
+
+		TEST_METHOD(Test_sort_2)
+		{
+			vectors val(1, 4);
+			val.coords[0] = 2.56;
+			val.coords[1] = 10.12;
+			val.coords[2] = 3.8;
+			val.coords[3] = 1.07;
+			vectors vec(2, 4);
+			vec.coords[0] = 1.2;
+			vec.coords[1] = 2.3;
+			vec.coords[2] = 3.4;
+			vec.coords[3] = 4.5;
+			vec.coords[4] = 6.7;
+			vec.coords[5] = 7.8;
+			vec.coords[6] = 8.9;
+			vec.coords[7] = 9.10;
+			sort_two(&val, &vec);
+			double* vals = (double*)malloc(sizeof(double) * 4);
+			vals[0] = 10.12;
+			vals[1] = 3.8;
+			vals[2] = 2.56;
+			vals[3] = 1.07;
+			double* vecs = (double*)malloc(sizeof(double) * 8);
+			vecs[0] = 2.3;
+			vecs[1] = 3.4;
+			vecs[2] = 1.2;
+			vecs[3] = 4.5;
+			vecs[4] = 7.8;
+			vecs[5] = 8.9;
+			vecs[6] = 6.7;
+			vecs[7] = 9.10;
+			for (int i = 0; i < val.n_features; i++)
+			{
+				Assert::AreEqual(vals[i], val.coords[i]);
+				for (int j = 0; j < vec.n_samples; j++)
+				{
+					Assert::AreEqual(vecs[j * vec.n_features + i], vec.coords[j * vec.n_features + i]);
+				}
+			}
+			free(vals);
+			free(vecs);
+		}
+
+		TEST_METHOD(Test_cutting_dims)
+		{
+			vectors vec(2, 4);
+			vec.coords[0] = 1.2;
+			vec.coords[1] = 2.3;
+			vec.coords[2] = 3.4;
+			vec.coords[3] = 4.5;
+			vec.coords[4] = 6.7;
+			vec.coords[5] = 7.8;
+			vec.coords[6] = 8.9;
+			vec.coords[7] = 9.10;
+			vec.leave_n_cols(2);
+			vectors v(2, 2);
+			v.coords[0] = 1.2;
+			v.coords[1] = 2.3;
+			v.coords[2] = 6.7;
+			v.coords[3] = 7.8;
+			Assert::IsTrue(vec == v);
+		}
 	};
 }
