@@ -28,7 +28,6 @@ void sort_by_idx(vectors* x, vectors idx)
 			{
 				temp.coords[j * x->n_features + i] = x->coords[j * x->n_features + int(idx.coords[i])];
 			}
-
 	}
 	*x =  temp;
 }
