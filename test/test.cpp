@@ -962,5 +962,41 @@ namespace test
 			}
 			free(data);
 		}
+		
+
+		TEST_METHOD(Test_ind_v)
+		{
+			vectors basic(2, 2);
+			vectors i = basic.indices();
+			for (int j = 0; j < i.n_features; j++)
+			{
+				Assert::AreEqual(j, int(i.coords[j]));
+			}
+		}
+
+		TEST_METHOD(Test_sort_desc)
+		{
+			double* data = (double*)malloc(sizeof(double) * 2);
+			data[0] = 5;
+			data[1] = 10;
+			vectors c(1, 2, data);
+			std::sort(c.coords, c.coords + (c.n_features) * c.n_samples, descending_sort);
+			Assert::AreEqual(10.0, c.coords[0]);
+			Assert::AreEqual(5.0, c.coords[1]);
+			free(data);
+		}
+
+		TEST_METHOD(Test_sort_idx)
+		{
+			double* data = (double*)malloc(sizeof(double) * 2);
+			data[0] = 5;
+			data[1] = 10;
+			vectors c(2, 1, data);
+			vectors idx = c.indices();
+			std::sort(idx.coords, idx.coords + (idx.n_features) * idx.n_samples, sort_indices(c));
+			Assert::AreEqual(1.0, idx.coords[0]);
+			Assert::AreEqual(0.0, idx.coords[1]);
+			free(data);
+		}
 	};
 }

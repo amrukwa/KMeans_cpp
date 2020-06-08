@@ -1,5 +1,5 @@
 #pragma once
-# include "Vectors.h"
+# include "sorting.h"
 
 vectors covariance_matrix(vectors data)
 {

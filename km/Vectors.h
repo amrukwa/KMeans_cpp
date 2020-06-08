@@ -5,6 +5,13 @@
 #include <math.h>
 #pragma once
 
+void swap(double* a, double* b)
+{
+	// function swapping two variables
+	int dummy = *a;
+	*a = *b;
+	*b = dummy;
+}
 
 class vectors
 {
@@ -265,6 +272,16 @@ public:
 		}
 		vectors temp(n_features, n_samples, data);
 		return temp;
+	}
+
+	vectors indices()
+	{
+		vectors ind(1, n_samples);
+		for (int i = 0; i < n_samples; i++)
+		{
+			ind.coords[i] = i;
+		}
+		return ind;
 	}
 };
 
