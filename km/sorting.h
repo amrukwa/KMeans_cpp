@@ -23,7 +23,6 @@ void sort_by_idx(vectors* x, vectors idx)
 	vectors temp(x->n_samples, x->n_features);
 	for (int i = 0; i < idx.n_features; i++)
 	{
-
 		for (int j = 0; j < x->n_samples; j++)
 			{
 				temp.coords[j * x->n_features + i] = x->coords[j * x->n_features + int(idx.coords[i])];
