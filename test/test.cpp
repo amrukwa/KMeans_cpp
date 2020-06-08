@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "CppUnitTest.h"
 #include "kmeans.h"
+# include "pca.h"
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace test
@@ -399,6 +400,37 @@ namespace test
 			free(d2);
 		}
 
+		TEST_METHOD(Test_cov)
+		{
+			double* d1;
+			d1 = (double*)malloc(sizeof(double) * 6);
+			double* d2;
+			d2 = (double*)malloc(sizeof(double) * 4);
+			d1[0] = -1;
+			d1[1] = 4;
+			d1[2] = 2;
+			d1[3] = 0;
+			d1[4] = 5;
+			d1[5] = 2;
+			d2[0] = 18;
+			d2[1] = -6;
+			d2[2] = -6;
+			d2[3] = 8;
+			vectors A(3, 2, d1);
+			vectors B = covariance_matrix(A);
+			Assert::AreEqual(B.n_features, 2);
+			Assert::AreEqual(B.n_samples, 2);
+			for (int i = 0; i < B.n_samples; i++)
+			{
+				for (int j = 0; j < B.n_features; j++)
+				{
+					check_matrix_filling(&B, d2, i, j);
+				}
+			}
+			free(d1);
+			free(d2);
+		}
+
 		TEST_METHOD(Test_distance)
 		{
 			double* data;
@@ -482,7 +514,6 @@ namespace test
 		TEST_METHOD(Test_standardising)
 		{
 			double* data;
-			double dist;
 			data = (double*)malloc(sizeof(double) * 6);
 			for (int i = 0; i < 6; i++)
 			{
@@ -726,6 +757,364 @@ namespace test
 			free(x);
 			free(c);
 			free(l);
+		}
+
+		TEST_METHOD(Test_abs)
+		{
+			double a = 4;
+			double b = 7;
+			Assert::AreEqual(3.0, abs(a, b));
+		}
+
+		TEST_METHOD(Test_tol_equality)
+		{
+			double* c = (double*)malloc(sizeof(double) * 4);
+			double* d = (double*)malloc(sizeof(double) * 4);
+			c[0] = 0;
+			d[0] = 0.00001;
+			c[1] = 1.1;
+			d[1] = 1.1;
+			c[2] = -2;
+			d[2] = -2.00001;
+			c[3] = 6.199999;
+			d[3] = 6.2;
+			vectors vc(2, 2, c);
+			vectors vd(2, 2, d);
+			Assert::AreEqual(true, are_same(vc, vd));
+		}
+
+		TEST_METHOD(Test_normalising)
+		{
+			double* d = (double*)malloc(sizeof(double) * 9);
+			double* c = (double*)malloc(sizeof(double) * 9);
+			d[0] = 4.0;
+			d[1] = 0.0;
+			d[2] = 1.0;
+			d[3] = 3.0;
+			d[4] = 12.0;
+			d[5] = 1.0;
+			d[6] = 0.0;
+			d[7] = 5.0;
+			d[8] = 1.0;
+			vectors x(3, 3, d);
+			normalise(&x);
+			c[0] = 4.0 / 5;
+			c[1] = 0.0;
+			c[2] = 1.0 / sqrt(3);
+			c[3] = 3.0 / 5;
+			c[4] = 12.0 / 13;
+			c[5] = 1.0 / sqrt(3);
+			c[6] = 0.0;
+			c[7] = 5.0 / 13;
+			c[8] = 1.0 / sqrt(3);
+			for (int i = 0; i < x.n_samples; i++)
+			{
+				for (int j = 0; j < x.n_features; j++)
+				{
+					Assert::AreEqual(c[i * x.n_features + j], x.coords[i * x.n_features + j], 1e-4);
+				}
+			}
+			free(c);
+			free(d);
+		}
+
+		TEST_METHOD(Test_deep_asignment)
+		{
+			double* d = (double*)malloc(sizeof(double) * 4);
+			d[0] = 1.0;
+			d[1] = 2.0;
+			d[2] = 3.0;
+			d[3] = 4.0;
+			vectors v2(3, 1);
+			vectors v1(2, 2, d);
+			v2 = v1;
+			v1.divide(2.0);
+			for (int i = 0; i < 4; i++)
+			{
+				Assert::AreEqual(2 * v1.coords[i], v2.coords[i]);
+			}
+			free(d);
+		}
+
+		TEST_METHOD(Test_col_product)
+		{
+			double* d = (double*)malloc(sizeof(double) * 4);
+			d[0] = 1;
+			d[2] = 2;
+			d[1] = 4;
+			d[3] = 5;
+			double dot = 14.0;
+			vectors data(2, 2, d);
+			Assert::AreEqual(dot, col_product(data, 0, 1));
+			free(d);
+		}
+
+		TEST_METHOD(Test_substracting_cols)
+		{
+			double* d = (double*)malloc(sizeof(double) * 4);
+			d[0] = 3.0;
+			d[1] = 4.0;
+			d[2] = 5.0;
+			d[3] = 6.0;
+			double* c = (double*)malloc(sizeof(double) * 4);
+			vectors check(2, 2, d);
+			c[0] = 2.0;
+			c[1] = 4.0;
+			c[2] = 1.0;
+			c[3] = 6.0;
+			double* s = (double*)malloc(sizeof(double) * 2);
+			s[0] = 1.0;
+			s[1] = 4.0;
+			check.substract(s, 0);
+			for (int i = 0; i < check.n_samples; i++)
+			{
+				for (int j = 0; j < check.n_features; j++)
+				{
+					check_matrix_filling(&check, c, i, j);
+				}
+			}
+			free(d);
+			free(c);
+			free(s);
+		}
+
+		TEST_METHOD(Test_orthogonalisation)
+		{
+			double* d = (double*)malloc(sizeof(double) * 6);
+			d[0] = 1.0;
+			d[1] = 1.0;
+			d[2] = 1.0;
+			d[3] = 2.0;
+			d[4] = 0.0;
+			d[5] = 0.0;
+			vectors x(3, 2, d);
+			d[1] = -0.5;
+			d[3] = 0.5;
+			vectors orth(3, 2, d);
+			orthogonalise(&x, 0, 1);
+			for (int i = 0; i < x.n_samples; i++)
+			{
+				for (int j = 0; j < x.n_features; j++)
+				{
+					Assert::AreEqual(orth.coords[i * x.n_features + j], x.coords[i * x.n_features + j], 1e-6);
+				}
+			}
+			free(d);
+		}
+
+		TEST_METHOD(Test_Gramm_Schmidt)
+		{
+			double* m = (double*)malloc(sizeof(double) * 9);
+			double* o = (double*)malloc(sizeof(double) * 9);
+			m[0] = 1.0;
+			m[1] = 1.0;
+			m[2] = 0.0;
+			m[3] = 1.0;
+			m[4] = 2.0;
+			m[5] = 1.0;
+			m[6] = 0.0;
+			m[7] = 0.0;
+			m[8] = 2.0;
+			o[0] = sqrt(2)/2;
+			o[1] = -sqrt(2) / 2;
+			o[2] = 0.0;
+			o[3] = sqrt(2) / 2;
+			o[4] = sqrt(2) / 2;
+			o[5] = 0.0;
+			o[6] = 0.0;
+			o[7] = 0.0;
+			o[8] = 1.0;
+			vectors x(3, 3, m);
+			vectors orth = Gram_Schmidt(x);
+			for (int i = 0; i < x.n_samples; i++)
+			{
+				for (int j = 0; j < x.n_features; j++)
+				{
+					Assert::AreEqual(o[i * x.n_features + j], orth.coords[i * x.n_features + j], 1e-6);
+				}
+			}
+		}
+
+		TEST_METHOD(Test_centering)
+		{
+			double* data;
+			data = (double*)malloc(sizeof(double) * 6);
+			for (int i = 0; i < 6; i++)
+			{
+				data[i] = double(i) + 1;
+			}
+			vectors v(2, 3, data);
+			double* c;
+			c = (double*)malloc(sizeof(double) * 6);
+			c[0] = -1.5;
+			c[1] = -1.5;
+			c[2] = -1.5;
+			c[3] = 1.5;
+			c[4] = 1.5;
+			c[5] = 1.5;
+			vectors d = center(v);
+			for (int i = 0; i < 2; i++)
+			{
+				for (int j = 0; j < 3; j++)
+				{
+					Assert::AreEqual(d.coords[i * d.n_features + j], c[i * d.n_features + j], 1e-4);
+				}
+			}
+			free(data);
+		}
+		
+		TEST_METHOD(Test_QR)
+		{
+			vectors d(2, 2);
+			double* evc = (double*)malloc(sizeof(double) * 4);
+			double* evl = (double*)malloc(sizeof(double) * 2);
+			vectors evec(2, 2);
+			vectors evals(1, 2);
+			d.coords[0] = 2.0;
+			d.coords[1] = 0.0;
+			d.coords[2] = 0.0;
+			d.coords[3] = -1.0;
+			evc[0] = 1.0;
+			evc[1] = 0.0;
+			evc[2] = 0.0;
+			evc[3] = -1.0;
+			evl[0] = 2.0;
+			evl[1] = -1.0;
+			QR_algorithm(d, &evec, &evals, 1e-4, 100);
+			for (int i = 0; i < 2; i++)
+			{
+				Assert::AreEqual(evl[i], evals.coords[i]);
+				for (int j = 0; j < 2; j++)
+				{
+					Assert::AreEqual(evc[i*evec.n_features+j], evec.coords[i * evec.n_features + j]);
+				}
+			}
+			free(evc);
+			free(evl);
+		}
+
+		TEST_METHOD(Test_ind_v)
+		{
+			vectors basic(2, 2);
+			vectors i = indices(2);
+			for (int j = 0; j < i.n_features; j++)
+			{
+				Assert::AreEqual(j, int(i.coords[j]));
+			}
+		}
+
+		TEST_METHOD(Test_sort_desc)
+		{
+			double* data = (double*)malloc(sizeof(double) * 2);
+			data[0] = 5;
+			data[1] = 10;
+			vectors c(1, 2, data);
+			std::sort(c.coords, c.coords + (c.n_features) * c.n_samples, descending_sort);
+			Assert::AreEqual(10.0, c.coords[0]);
+			Assert::AreEqual(5.0, c.coords[1]);
+			free(data);
+		}
+
+		TEST_METHOD(Test_sort_idx)
+		{
+			double* data = (double*)malloc(sizeof(double) * 2);
+			data[0] = 5;
+			data[1] = 10;
+			vectors c(2, 1, data);
+			vectors idx = indices(2);
+			std::sort(idx.coords, idx.coords + (idx.n_features) * idx.n_samples, sort_indices(c));
+			Assert::AreEqual(1.0, idx.coords[0]);
+			Assert::AreEqual(0.0, idx.coords[1]);
+			free(data);
+		}
+
+		TEST_METHOD(Test_sort_by_idx)
+		{
+			vectors idx(1,3);
+			idx.coords[0] = 1;
+			idx.coords[1] = 2;
+			idx.coords[2] = 0;
+			vectors d(2, 3);
+			for (int i = 0; i < 6; i++)
+			{
+				d.coords[i] = i;
+			}
+			sort_by_idx(&d, idx);
+			double* t = (double*)malloc(sizeof(double) * 6);
+			t[0] = 1.0;
+			t[1] = 2.0;
+			t[2] = 0.0;
+			t[3] = 4.0;
+			t[4] = 5.0;
+			t[5] = 3.0;
+			for (int i = 0; i < 6; i++)
+			{
+				Assert::AreEqual(t[i], d.coords[i]);
+			}
+			free(t);
+		}
+
+		TEST_METHOD(Test_sort_2)
+		{
+			vectors val(1, 4);
+			val.coords[0] = 2.56;
+			val.coords[1] = 10.12;
+			val.coords[2] = 3.8;
+			val.coords[3] = 1.07;
+			vectors vec(2, 4);
+			vec.coords[0] = 1.2;
+			vec.coords[1] = 2.3;
+			vec.coords[2] = 3.4;
+			vec.coords[3] = 4.5;
+			vec.coords[4] = 6.7;
+			vec.coords[5] = 7.8;
+			vec.coords[6] = 8.9;
+			vec.coords[7] = 9.10;
+			sort_two(&val, &vec);
+			double* vals = (double*)malloc(sizeof(double) * 4);
+			vals[0] = 10.12;
+			vals[1] = 3.8;
+			vals[2] = 2.56;
+			vals[3] = 1.07;
+			double* vecs = (double*)malloc(sizeof(double) * 8);
+			vecs[0] = 2.3;
+			vecs[1] = 3.4;
+			vecs[2] = 1.2;
+			vecs[3] = 4.5;
+			vecs[4] = 7.8;
+			vecs[5] = 8.9;
+			vecs[6] = 6.7;
+			vecs[7] = 9.10;
+			for (int i = 0; i < val.n_features; i++)
+			{
+				Assert::AreEqual(vals[i], val.coords[i]);
+				for (int j = 0; j < vec.n_samples; j++)
+				{
+					Assert::AreEqual(vecs[j * vec.n_features + i], vec.coords[j * vec.n_features + i]);
+				}
+			}
+			free(vals);
+			free(vecs);
+		}
+
+		TEST_METHOD(Test_cutting_dims)
+		{
+			vectors vec(2, 4);
+			vec.coords[0] = 1.2;
+			vec.coords[1] = 2.3;
+			vec.coords[2] = 3.4;
+			vec.coords[3] = 4.5;
+			vec.coords[4] = 6.7;
+			vec.coords[5] = 7.8;
+			vec.coords[6] = 8.9;
+			vec.coords[7] = 9.10;
+			vec.leave_n_cols(2);
+			vectors v(2, 2);
+			v.coords[0] = 1.2;
+			v.coords[1] = 2.3;
+			v.coords[2] = 6.7;
+			v.coords[3] = 7.8;
+			Assert::IsTrue(vec == v);
 		}
 	};
 }

@@ -5,7 +5,6 @@
 #include <math.h>
 #pragma once
 
-
 class vectors
 {
 public:
@@ -69,6 +68,31 @@ public:
 	~vectors()
 	{
 		free(coords);
+	}
+
+	vectors& operator=(const vectors& v)
+	{
+		if (n_features != v.n_features || n_samples != v.n_samples)
+		{
+			n_features = v.n_features;
+			n_samples = v.n_samples;
+			if (this != NULL)
+			{
+				coords = (double*)realloc(coords, (n_features * n_samples) * sizeof(double));
+			}
+			else
+			{
+				coords = (double*)malloc(n_features * n_samples * sizeof(double));
+			}
+		}
+		for (int i = 0; i < n_samples; i++)
+		{
+			for (int j = 0; j < n_features; j++)
+			{
+				coords[i * n_features + j] = v.coords[i * n_features + j];
+			}
+		}
+		return *this;
 	}
 
 	void get_dimensions(std::ifstream& datafile)
@@ -180,6 +204,14 @@ public:
 			coords[i * n_features + column] -= value;
 		}
 	}
+
+	void substract(double* v, int col)
+	{
+		for (int i = 0; i < n_samples; i++)
+		{
+			coords[i * n_features + col] -= v[i];
+		}
+	}
 	
 	double* substract(double value, int row) const
 	{
@@ -233,7 +265,30 @@ public:
 		vectors temp(n_features, n_samples, data);
 		return temp;
 	}
+
+	void leave_n_cols(int col)
+	{
+		vectors temp(n_samples, col);
+		for (int i = 0; i < temp.n_samples; i++)
+		{
+			for (int j = 0; j < temp.n_features; j++)
+			{
+				temp.coords[i * temp.n_features + j] = coords[i * n_features + j];
+			}
+		}
+		*this = temp;
+	}
 };
+
+vectors indices(int l)
+{
+	vectors ind(1, l);
+	for (int i = 0; i < ind.n_features; i++)
+	{
+		ind.coords[i] = i;
+	}
+	return ind;
+}
 
 double length_of_column(const vectors& v1, int column)
 {
@@ -269,6 +324,32 @@ double length_of_row(double* v, int dimension)
 	}
 	distance = sqrt(distance);
 	return distance;
+}
+
+void normalise(vectors* v, int col)
+{
+	double n = length_of_column(*v, col);
+	v->divide(n, col);
+}
+
+void normalise(vectors* v)
+{
+	for (int i = 0; i < v->n_features; i++)
+	{
+		normalise(v, i);
+	}
+}
+
+vectors center(const vectors& v1)
+{
+	vectors temp(v1);
+	double mean;
+	for (int i = 0; i < temp.n_features; i++)
+	{
+		mean = temp.mean_of_column(i);
+		temp.substract(mean, i);
+	}
+	return temp;
 }
 
 vectors standarise(const vectors& v1)
@@ -339,7 +420,7 @@ void operator<<(std::ostream& out, const vectors& some_vector)
 		{
 			out << some_vector.coords[i * some_vector.n_features + j] << ' ';
 		}
-		std::cout << std::endl;
+		out << std::endl;
 	}
 }
 
@@ -381,6 +462,16 @@ double row_product(double* d1, double* d2, int dimension)
 	for (int i = 0; i < dimension; i++)
 	{
 		prod += d1[i] * d2[i];
+	}
+	return prod;
+}
+
+double col_product(vectors x, int col1, int col2)
+{
+	double prod = 0;
+	for (int i = 0; i < x.n_samples; i++)
+	{
+		prod += x.coords[i * x.n_features + col1] * x.coords[i * x.n_features + col2];
 	}
 	return prod;
 }
@@ -506,4 +597,63 @@ int argmin_distance(const vectors& v1, const vectors& v2, int row1, std::string 
 		}
 	}
 	return index;
+}
+
+double abs(double a, double b)
+{
+	if (a - b > 0)
+		return a - b;
+	return b - a;
+}
+
+bool are_same(const vectors& v1, const vectors& v2, double tol = 1e-4)
+{
+	if (v1.n_features != v2.n_features || v1.n_samples != v2.n_samples)
+	{
+		return false;
+	}
+	double cur;
+	for (int i = 0; i < v1.n_samples; i++)
+	{
+		for (int j = 0; j < v1.n_features; j++)
+		{
+			cur = abs(v1.coords[i*v1.n_features+j], v2.coords[i * v2.n_features + j]);
+			if (cur > tol)
+			{
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
+void orthogonalise(vectors* x, int col1, int col2)
+// col1 is the vector we project onto
+{
+	double* proj = (double*)malloc(sizeof(double) * x->n_samples);
+	double scalar = col_product(*x, col1, col2)/ col_product(*x, col1, col1);
+	for (int i = 0; i < x->n_samples; i++)
+	{
+		proj[i] = scalar* x->coords[i * x->n_features + col1];
+	}
+	x->substract(proj, col2);
+	free(proj);
+}
+
+vectors Gram_Schmidt(vectors x)
+// we assume the vectors are in columns, not rows, while using this function - check your matrix before orthonormalisation
+// using MGS for numerical stability
+{
+	vectors temp(x);
+	normalise(&temp, 0);
+	for (int i = 1; i < temp.n_features; i++)
+	{
+		//another loop - substracting projections
+		for (int j = 0; j < i; j++)
+		{
+			orthogonalise(&temp, j, i);
+		}
+		normalise(&temp, i);
+	}
+	return temp;
 }
