@@ -963,11 +963,36 @@ namespace test
 			free(data);
 		}
 		
-
 		TEST_METHOD(Test_QR)
 		{
-
+			vectors d(2, 2);
+			double* evc = (double*)malloc(sizeof(double) * 4);
+			double* evl = (double*)malloc(sizeof(double) * 2);
+			vectors evec(2, 2);
+			vectors evals(1, 2);
+			d.coords[0] = 2.0;
+			d.coords[1] = 0.0;
+			d.coords[2] = 0.0;
+			d.coords[3] = -1.0;
+			evc[0] = 1.0;
+			evc[1] = 0.0;
+			evc[2] = 0.0;
+			evc[3] = -1.0;
+			evl[0] = 2.0;
+			evl[1] = -1.0;
+			QR_algorithm(d, &evec, &evals, 1e-4, 100);
+			for (int i = 0; i < 2; i++)
+			{
+				Assert::AreEqual(evl[i], evals.coords[i]);
+				for (int j = 0; j < 2; j++)
+				{
+					Assert::AreEqual(evc[i*evec.n_features+j], evec.coords[i * evec.n_features + j]);
+				}
+			}
+			free(evc);
+			free(evl);
 		}
+
 		TEST_METHOD(Test_ind_v)
 		{
 			vectors basic(2, 2);
