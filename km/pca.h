@@ -75,8 +75,11 @@ public:
 		eigenvalues.change_size(1, cov.n_samples);
 		QR_algorithm(cov, &eigenvectors, &eigenvalues, tol, n_iter);
 		sort_two(&eigenvalues, &eigenvectors);
-		eigenvectors.leave_n_cols(reduced_dims);
-		eigenvalues.leave_n_cols(reduced_dims);
+		if (reduce == "YES")
+		{
+			eigenvectors.leave_n_cols(reduced_dims);
+			eigenvalues.leave_n_cols(reduced_dims);
+		}
 	}
 
 	vectors transform(vectors data)
