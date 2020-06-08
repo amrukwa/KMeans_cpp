@@ -2,6 +2,14 @@
 # include <ctime>
 # include "Vectors.h"
 
+void swap(double* a, double* b)
+{
+	// function swapping two doubles
+	double dummy = *a;
+	*a = *b;
+	*b = dummy;
+}
+
 void fisher_yates(int desired_dimensions, vectors* ind)
 {
 	// function for obtaining given quantity of non-repeating random numbers in given range
