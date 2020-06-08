@@ -16,7 +16,7 @@ void fisher_yates(int desired_dimensions, vectors* ind)
 
 void random_init(vectors* centres, vectors x)
 {
-	vectors ind = x.indices();
+	vectors ind = indices(x.n_samples);
 	fisher_yates(centres->n_samples, &ind);
 	for (int j = 0; j < centres->n_samples; j++)
 	{

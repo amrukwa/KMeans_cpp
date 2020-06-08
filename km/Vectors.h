@@ -8,7 +8,7 @@
 void swap(double* a, double* b)
 {
 	// function swapping two variables
-	int dummy = *a;
+	double dummy = *a;
 	*a = *b;
 	*b = dummy;
 }
@@ -273,17 +273,17 @@ public:
 		vectors temp(n_features, n_samples, data);
 		return temp;
 	}
-
-	vectors indices()
-	{
-		vectors ind(1, n_samples);
-		for (int i = 0; i < n_samples; i++)
-		{
-			ind.coords[i] = i;
-		}
-		return ind;
-	}
 };
+
+vectors indices(int l)
+{
+	vectors ind(1, l);
+	for (int i = 0; i < ind.n_features; i++)
+	{
+		ind.coords[i] = i;
+	}
+	return ind;
+}
 
 double length_of_column(const vectors& v1, int column)
 {

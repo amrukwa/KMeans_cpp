@@ -964,10 +964,14 @@ namespace test
 		}
 		
 
+		TEST_METHOD(Test_QR)
+		{
+
+		}
 		TEST_METHOD(Test_ind_v)
 		{
 			vectors basic(2, 2);
-			vectors i = basic.indices();
+			vectors i = indices(2);
 			for (int j = 0; j < i.n_features; j++)
 			{
 				Assert::AreEqual(j, int(i.coords[j]));
@@ -992,7 +996,7 @@ namespace test
 			data[0] = 5;
 			data[1] = 10;
 			vectors c(2, 1, data);
-			vectors idx = c.indices();
+			vectors idx = indices(2);
 			std::sort(idx.coords, idx.coords + (idx.n_features) * idx.n_samples, sort_indices(c));
 			Assert::AreEqual(1.0, idx.coords[0]);
 			Assert::AreEqual(0.0, idx.coords[1]);
