@@ -5,14 +5,6 @@
 #include <math.h>
 #pragma once
 
-void swap(double* a, double* b)
-{
-	// function swapping two variables
-	double dummy = *a;
-	*a = *b;
-	*b = dummy;
-}
-
 class vectors
 {
 public:
@@ -273,6 +265,19 @@ public:
 		vectors temp(n_features, n_samples, data);
 		return temp;
 	}
+
+	void leave_n_cols(int col)
+	{
+		vectors temp(n_samples, col);
+		for (int i = 0; i < temp.n_samples; i++)
+		{
+			for (int j = 0; j < temp.n_features; j++)
+			{
+				temp.coords[i * temp.n_features + j] = coords[i * n_features + j];
+			}
+		}
+		*this = temp;
+	}
 };
 
 vectors indices(int l)
@@ -419,7 +424,6 @@ void operator<<(std::ostream& out, const vectors& some_vector)
 	}
 }
 
-//probably deletable
 double* operator*(const vectors& A, double* x)
 {
 	static double* ptr;
