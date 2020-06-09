@@ -105,8 +105,21 @@ public:
 
 	~kmeans() {}
 
-	kmeans(const kmeans& estim, int clusters_n = 0) :
+	kmeans(const kmeans& estim) :
 		metric{ estim.metric },
+		n_clusters{ estim.n_clusters },
+		initialization{ estim.initialization },
+		inertia{ 0 },
+		max_iter{ estim.max_iter },
+		n_iter{ 0 },
+		labels(1, 1),
+		centroids(estim.centroids),
+		n_init{estim.n_init}
+	{}
+
+	kmeans(const kmeans& estim, int clusters_n) :
+		metric{ estim.metric },
+		n_clusters{ clusters_n },
 		initialization{ estim.initialization },
 		inertia{ 0 },
 		max_iter{ estim.max_iter },
@@ -114,16 +127,7 @@ public:
 		labels(1, 1),
 		centroids(1, 1),
 		n_init{ estim.n_init }
-	{
-		if (clusters_n == 0)
-		{
-			n_clusters = estim.n_clusters;
-		}
-		else
-		{
-			n_clusters = clusters_n;
-		}
-	}
+	{}
 
 	void fit(vectors data)
 	{
