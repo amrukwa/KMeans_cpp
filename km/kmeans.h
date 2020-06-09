@@ -48,7 +48,8 @@ void kmeans_algorithm(vectors* centroids,
 	vectors* labels,
 	std::string metric,
 	int n_clusters,
-	std::string initialization,
+	//std::string initialization,
+	init_method initialization,
 	double* inertia,
 	int max_iter,
 	int* n_iter,
@@ -84,14 +85,14 @@ public:
 	vectors centroids;
 	std::string metric;
 	int n_clusters;
-	std::string initialization;
+	init_method initialization;
 	double inertia;
 	int max_iter;
 	int n_iter;
 	vectors labels;
 	int n_init;
 
-	kmeans(int clusters_n, std::string metrics = "correlation", std::string init = "k++", int iter = 1000, int init_n = 10) :
+	kmeans(int clusters_n, std::string metrics = "correlation", init_method init = init_method::kpp, int iter = 1000, int init_n = 10) :
 		centroids(1, 1),
 		labels(1, 1),
 		metric{ metrics },

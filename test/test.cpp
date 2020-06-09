@@ -642,7 +642,7 @@ namespace test
 			a[2] = 2;
 			vectors x(3, 1, a);
 			vectors c(3, 1);
-			initialize(&c, x, "random", "Euclidean");
+			initialize(&c, x, init_method::random, "Euclidean");
 			Assert::IsNotNull(c.coords);
 			Assert::AreNotEqual(c.coords[0], c.coords[1]);
 			Assert::AreNotEqual(c.coords[1], c.coords[2]);

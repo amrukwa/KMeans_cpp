@@ -2,6 +2,8 @@
 # include <ctime>
 # include "Vectors.h"
 
+enum class init_method {random, kpp};
+
 void swap(double* a, double* b)
 {
 	// function swapping two doubles
@@ -89,20 +91,18 @@ void kpp_init(vectors* centres, vectors x, std::string metric)
 	}
 }
 
-void initialize(vectors* centres, vectors x, std::string init, std::string metric)
+void initialize(vectors* centres, vectors x, init_method init, std::string metric)
 {
-	if (init == "random")
+	switch (init)
 	{
+	case init_method::random:
 		random_init(centres, x);
-	}
-
-	else if (init == "k++")
-	{
+		break;
+	case init_method::kpp:
 		kpp_init(centres, x, metric);
-	}
-	else
-	{
-		std::cout << "Unknown initialization type.";
+		break;
+	default:
+		std::cout << "Unknown initialization type.\n";
 		exit(1);
 	}
 }
