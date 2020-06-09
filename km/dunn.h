@@ -6,8 +6,7 @@ enum class intra_ {closest, furthest, avg }; // distance within cluster
 
 double inter_centroid(vectors centroids, dist_ metric) // smallest distance between centroids 
 {
-	double min_centroid = distance(centroids, centroids, 0, 1, metric);
-	double dist = 0;
+	double dist, min_centroid = distance(centroids, centroids, 0, 1, metric);
 	for (int i = 0; i < centroids.n_samples; i++)
 	{
 		for (int j = i + 1; j < centroids.n_samples; j++)
