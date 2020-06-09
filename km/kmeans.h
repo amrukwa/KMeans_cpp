@@ -117,6 +117,18 @@ public:
 		n_init{estim.n_init}
 	{}
 
+	kmeans(const kmeans& estim, int clusters_n) :
+		metric{ estim.metric },
+		n_clusters{ clusters_n },
+		initialization{ estim.initialization },
+		inertia{ 0 },
+		max_iter{ estim.max_iter },
+		n_iter{ 0 },
+		labels(1, 1),
+		centroids(1, 1),
+		n_init{ estim.n_init }
+	{}
+
 	void fit(vectors data)
 	{
 		labels.change_size(1, data.n_samples);
