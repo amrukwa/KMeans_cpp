@@ -1117,21 +1117,7 @@ namespace test
 			Assert::IsTrue(vec == v);
 		}
 
-		TEST_METHOD(Test_f_min_dist)
-		{
-			double val = 1.0;
-			vectors centroids(4, 2);
-			centroids.coords[0] = 1.0;
-			centroids.coords[1] = 2.0;
-			centroids.coords[2] = 4.0;
-			centroids.coords[3] = 7.0;
-			centroids.coords[4] = 5.0;
-			centroids.coords[5] = 2.0;
-			centroids.coords[6] = 1.0;
-			centroids.coords[7] = 1.0;
-			double c = following_min_dist(centroids, 0, dist_::Euclidean);
-			Assert::AreEqual(val, c);
-		}
+
 		TEST_METHOD(Test_inter_centroid)
 		{
 			double val = 1.0;
