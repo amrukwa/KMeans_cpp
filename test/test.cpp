@@ -456,7 +456,7 @@ namespace test
 				data[i] = double(i) + 1;
 			}
 			vectors v(2, 3, data);
-			dist = distance(v, v, 0, 1, "cityblock");
+			dist = distance(v, v, 0, 1, dist_::cityblock);
 			Assert::AreEqual(9.0, dist);
 			free(data);
 		}
@@ -506,7 +506,7 @@ namespace test
 				data[i] = double(i) + 1;
 			}
 			vectors v(2, 3, data);
-			dist = distance(v, v, 0, 1, "correlation");
+			dist = distance(v, v, 0, 1, dist_::correlation);
 			Assert::AreEqual(2.22044605e-16, dist, 1e-24);
 			free(data);
 		}
@@ -642,7 +642,7 @@ namespace test
 			a[2] = 2;
 			vectors x(3, 1, a);
 			vectors c(3, 1);
-			initialize(&c, x, init_method::random, "Euclidean");
+			initialize(&c, x, init_::random, dist_::Euclidean);
 			Assert::IsNotNull(c.coords);
 			Assert::AreNotEqual(c.coords[0], c.coords[1]);
 			Assert::AreNotEqual(c.coords[1], c.coords[2]);
@@ -674,7 +674,7 @@ namespace test
 			vectors x(5, 2, x_d);
 			vectors c(3, 2, c_d);
 			vectors l(6, 1);
-			label_points(&l, x, c, "Euclidean");
+			label_points(&l, x, c, dist_::Euclidean);
 			Assert::AreEqual(0.0, l.coords[0]);
 			Assert::AreEqual(1.0, l.coords[1]);
 			Assert::AreEqual(0.0, l.coords[2]);
@@ -717,7 +717,7 @@ namespace test
 			vectors x(5, 2, x_d);
 			vectors c(3, 2, c_d);
 			vectors l(6, 1);
-			label_points(&l, x, c, "Euclidean");
+			label_points(&l, x, c, dist_::Euclidean);
 			calculate_centroids(l, x, &c);
 			for (int i = 0; i < c.n_samples; i++)
 			{
@@ -752,7 +752,7 @@ namespace test
 			l[1] = 0;
 			l[2] = 1;
 			vectors labels(1, 3, l);
-			double inertia = calculate_inertia(labels, data, centres, "Euclidean");
+			double inertia = calculate_inertia(labels, data, centres, dist_::Euclidean);
 			Assert::AreEqual(29.0, inertia);
 			free(x);
 			free(c);

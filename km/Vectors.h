@@ -5,6 +5,9 @@
 #include <math.h>
 #pragma once
 
+enum class dist_ { Euclidean, correlation, cityblock };
+
+
 class vectors
 {
 public:
@@ -521,7 +524,7 @@ double cityblock_distance(const vectors& v1, const vectors& v2, int row1, int ro
 	return distance;
 }
 
-double distance(const vectors& v1, const vectors& v2, int row1, int row2, std::string metric = "Euclidean")
+double distance(const vectors& v1, const vectors& v2, int row1, int row2, dist_ metric = dist_::Euclidean)
 {
 	if (v1.n_features != v2.n_features)
 	{
@@ -529,27 +532,25 @@ double distance(const vectors& v1, const vectors& v2, int row1, int row2, std::s
 		exit(1);
 	}
 	double distance = 0;
-	if (metric == "Euclidean")
+	switch (metric)
 	{
+	case dist_::Euclidean:
 		distance = Euclidean_distance(v1, v2, row1, row2);
-	}
-	else if (metric == "cityblock")
-	{
-		distance = cityblock_distance(v1, v2, row1, row2);
-	}
-	else if (metric == "correlation")
-	{
+		break;
+	case dist_::correlation:
 		distance = correlation_distance(v1, v2, row1, row2);
-	}
-	else
-	{
+		break;
+	case dist_::cityblock:
+		distance = cityblock_distance(v1, v2, row1, row2);
+		break;
+	default:
 		std::cout << "Unknown distance metric.";
 		exit(1);
 	}
 	return distance;
 }
 
-double min_distance(const vectors& v1, const vectors& v2, int row1, std::string metric = "Euclidean")
+double min_distance(const vectors& v1, const vectors& v2, int row1, dist_ metric = dist_::Euclidean)
 {
 	//calculates the distance to the closest member of v2 from row1 of v1 
 	double min_dist = distance(v1, v2, row1, 0, metric);
@@ -565,7 +566,7 @@ double min_distance(const vectors& v1, const vectors& v2, int row1, std::string 
 	return min_dist;
 }
 
-double min_distance(const vectors& v1, const vectors& v2, int row1, int index, std::string metric = "Euclidean")
+double min_distance(const vectors& v1, const vectors& v2, int row1, int index, dist_ metric = dist_::Euclidean)
 {
 	//calculates the distance to the closest member of v2 (up to index, exclusively) from row1 of v1 
 	double min_dist = distance(v1, v2, row1, 0, metric);
@@ -581,7 +582,7 @@ double min_distance(const vectors& v1, const vectors& v2, int row1, int index, s
 	return min_dist;
 }
 
-int argmin_distance(const vectors& v1, const vectors& v2, int row1, std::string metric = "Euclidean")
+int argmin_distance(const vectors& v1, const vectors& v2, int row1, dist_ metric = dist_::Euclidean)
 {
 	//calculates the index of the closest member of v2 from row1 of v1 
 	double min_dist = distance(v1, v2, row1, 0, metric);

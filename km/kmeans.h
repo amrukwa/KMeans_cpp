@@ -1,7 +1,7 @@
 #pragma once
 # include "initialization.h"
 
-void label_points(vectors* labels, vectors x, vectors centroids, std::string metric)
+void label_points(vectors* labels, vectors x, vectors centroids, dist_ metric)
 {
 	for (int i = 0; i < x.n_samples; i++)
 	{
@@ -32,7 +32,7 @@ void calculate_centroids(vectors labels, vectors x, vectors* centroids)
 	}
 }
 
-double calculate_inertia(vectors labels, vectors x, vectors centroids, std::string metric)
+double calculate_inertia(vectors labels, vectors x, vectors centroids, dist_ metric)
 {
 	double inertia = 0;
 	double dist = 0;
@@ -46,10 +46,9 @@ double calculate_inertia(vectors labels, vectors x, vectors centroids, std::stri
 
 void kmeans_algorithm(vectors* centroids,
 	vectors* labels,
-	std::string metric,
+	dist_ metric,
 	int n_clusters,
-	//std::string initialization,
-	init_method initialization,
+	init_ initialization,
 	double* inertia,
 	int max_iter,
 	int* n_iter,
@@ -83,16 +82,17 @@ void kmeans_algorithm(vectors* centroids,
 class kmeans {
 public:
 	vectors centroids;
-	std::string metric;
+	//std::string metric;
+	dist_ metric;
 	int n_clusters;
-	init_method initialization;
+	init_ initialization;
 	double inertia;
 	int max_iter;
 	int n_iter;
 	vectors labels;
 	int n_init;
 
-	kmeans(int clusters_n, std::string metrics = "correlation", init_method init = init_method::kpp, int iter = 1000, int init_n = 10) :
+	kmeans(int clusters_n, dist_ metrics = dist_::Euclidean, init_ init = init_::kpp, int iter = 1000, int init_n = 10) :
 		centroids(1, 1),
 		labels(1, 1),
 		metric{ metrics },

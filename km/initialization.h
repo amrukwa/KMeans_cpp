@@ -2,7 +2,7 @@
 # include <ctime>
 # include "Vectors.h"
 
-enum class init_method {random, kpp};
+enum class init_ {random, kpp};
 
 void swap(double* a, double* b)
 {
@@ -64,7 +64,7 @@ int weighted_random(vectors weights)
 	return index;
 }
 
-void next_centroid(vectors* centres, vectors x, vectors* weights, int c_index, std::string metric)
+void next_centroid(vectors* centres, vectors x, vectors* weights, int c_index, dist_ metric)
 {
 	// c_index is the index where next centroid will be appended
 	double distance;
@@ -81,7 +81,7 @@ void next_centroid(vectors* centres, vectors x, vectors* weights, int c_index, s
 	}
 }
 
-void kpp_init(vectors* centres, vectors x, std::string metric)
+void kpp_init(vectors* centres, vectors x, dist_ metric)
 {
 	vectors weights(x.n_samples, 1);
 	first_centroid(centres, x);
@@ -91,14 +91,14 @@ void kpp_init(vectors* centres, vectors x, std::string metric)
 	}
 }
 
-void initialize(vectors* centres, vectors x, init_method init, std::string metric)
+void initialize(vectors* centres, vectors x, init_ init, dist_ metric)
 {
 	switch (init)
 	{
-	case init_method::random:
+	case init_::random:
 		random_init(centres, x);
 		break;
-	case init_method::kpp:
+	case init_::kpp:
 		kpp_init(centres, x, metric);
 		break;
 	default:
