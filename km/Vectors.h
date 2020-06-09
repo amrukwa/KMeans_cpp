@@ -582,6 +582,26 @@ double min_distance(const vectors& v1, const vectors& v2, int row1, int index, d
 	return min_dist;
 }
 
+double following_min_dist(const vectors& v, int row, dist_ metric = dist_::Euclidean)
+{
+	// calculates the distance to the other rows in the matrix, the ones after the given by index
+	if (row >= v.n_samples - 1)
+	{
+		std::cout << "Invalid index." << std::endl;
+		exit(1);
+	}
+	double cur_dist, min_dist = distance(v, v, row, row+1, metric);
+	for (int j = row + 2; j < v.n_samples; j++)
+	{
+		cur_dist = distance(v, v, row, j, metric);
+		if (cur_dist < min_dist)
+		{
+			min_dist = cur_dist;
+		}
+	}
+	return min_dist;
+}
+
 int argmin_distance(const vectors& v1, const vectors& v2, int row1, dist_ metric = dist_::Euclidean)
 {
 	//calculates the index of the closest member of v2 from row1 of v1 
