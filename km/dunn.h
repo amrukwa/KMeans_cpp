@@ -14,9 +14,7 @@ double inter_centroid(vectors centroids, dist_ metric) // smallest distance betw
 		{
 			dist = distance(centroids, centroids, i, j, metric);
 			if (dist < min_centroid)
-			{
 				min_centroid = dist;
-			}
 		}
 	}
 	return min_centroid;
