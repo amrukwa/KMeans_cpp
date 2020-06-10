@@ -4,6 +4,44 @@
 enum class inter_ {centroid, closest, furthest, avg}; // distance between clusters
 enum class intra_ {centroid, furthest, avg }; // distance within cluster
 
+double single_linkage(vectors labels, vectors data, int c1, int c2, dist_ metric)
+// closest distance between two samples belonging to two given clusters
+{
+	double cur, min_dist = LONG_MAX;
+	for (int i = 0; i < data.n_samples; i++)
+	{
+		for (int j = i + 1; j < data.n_samples; j++)
+		{
+			if (labels.coords[i] == c1 && labels.coords[j] == c2)
+			{
+				cur = distance(data, data, i, j, metric);
+				if (cur < min_dist)
+					min_dist = cur;
+			}
+		}
+	}
+	return min_dist;
+}
+
+double complete_linkage(vectors labels, vectors data, int c1, int c2, dist_ metric)
+// the distance between the most remote samples belonging to two given clusters
+{
+	double cur, min_dist = 0;
+	for (int i = 0; i < data.n_samples; i++)
+	{
+		for (int j = i + 1; j < data.n_samples; j++)
+		{
+			if (labels.coords[i] == c1 && labels.coords[j] == c2)
+			{
+				cur = distance(data, data, i, j, metric);
+				if (cur > min_dist)
+					min_dist = cur;
+			}
+		}
+	}
+	return min_dist;
+}
+
 double inter_centroid(vectors centroids, dist_ metric) // smallest distance between centroids 
 {
 	double dist, min_centroid = distance(centroids, centroids, 0, 1, metric);
@@ -17,25 +55,6 @@ double inter_centroid(vectors centroids, dist_ metric) // smallest distance betw
 		}
 	}
 	return min_centroid;
-}
-
-double single_linkage(vectors labels, vectors data, int c1, int c2, dist_ metric)
-// closest distance between two samples belonging to two given clusters
-{
-	double cur, min_dist = LONG_MAX;
-	for (int i = 0; i < data.n_samples; i++)
-	{
-		for (int j = i+1; j < data.n_samples; j++)
-		{
-			if (labels.coords[i] == c1 && labels.coords[j] == c2)
-			{
-				cur = distance(data, data, i, j, metric);
-				if (cur < min_dist)
-					min_dist = cur;
-			}
-		}
-	}
-	return min_dist;
 }
 
 double inter_closest(vectors labels, vectors data, dist_ metric, int n_clusters)
