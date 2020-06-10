@@ -19,9 +19,30 @@ double inter_centroid(vectors centroids, dist_ metric) // smallest distance betw
 	return min_centroid;
 }
 
+double single_linkage(vectors labels, vectors data, int c1, int c2, dist_ metric)
+// closest distance between two samples belonging to two different clusters
+{
+	double cur, min_dist = LONG_MAX;
+	for (int i = 0; i < labels.n_features; i++)
+	{
+		for (int j = i+1; j < labels.n_features; j++)
+		{
+			if (labels.coords[i] == c1 && labels.coords[j] == c2)
+			{
+				cur = distance(data, data, i, j, metric);
+				if (cur < min_dist)
+				{
+					min_dist = cur;
+				}
+			}
+		}
+	}
+	return min_dist;
+}
+
 double inter_closest(kmeans estim, vectors data)
 {
-	double min_closest = 0;
+	double dist, min_closest = 0;
 
 	return min_closest;
 }

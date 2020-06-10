@@ -1133,5 +1133,26 @@ namespace test
 			double c = inter_centroid(centroids, dist_::Euclidean);
 			Assert::AreEqual(val, c);
 		}
+
+
+		TEST_METHOD(Test_single_linkage)
+		{
+			vectors labels(1, 4);
+			labels.coords[0] = 0;
+			labels.coords[1] = 0;
+			labels.coords[2] = 1;
+			labels.coords[3] = 2;
+			vectors data(4, 2);
+			data.coords[0] = 4.0;
+			data.coords[1] = 7.0;
+			data.coords[2] = 1.0;
+			data.coords[3] = 2.0;
+			data.coords[4] = 5.0;
+			data.coords[5] = 2.0;
+			data.coords[6] = 1.0;
+			data.coords[7] = 1.0;
+			double d = single_linkage(labels, data, 0, 1, dist_::Euclidean);
+			Assert::AreEqual(4.0, d);
+		}
 	};
 }
