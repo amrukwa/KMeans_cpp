@@ -2,7 +2,7 @@
 # include "kmeans.h"
 
 enum class inter_ {centroid, closest, furthest, avg}; // distance between clusters
-enum class intra_ {closest, furthest, avg }; // distance within cluster
+enum class intra_ {centroid, furthest, avg }; // distance within cluster
 
 double inter_centroid(vectors centroids, dist_ metric) // smallest distance between centroids 
 {
@@ -91,16 +91,10 @@ double inter_distance(kmeans *estim, vectors data, inter_ metric = inter_::centr
 	return inter;
 }
 
-double intra_closest(vectors labels, vectors data, dist_ metric, int n_clusters)
+double intra_centroid()
 {
-	double cur, dist = single_linkage(labels, data, 0, 0, metric);
-	for (int i = 1; i < n_clusters; i++)
-	{
-		cur = single_linkage(labels, data, i, i, metric);
-		if (cur > dist)
-			dist = cur;
-	}
-	return dist;
+	
+	return 0;
 }
 
 double intra_furthest(vectors labels, vectors data)
@@ -122,8 +116,8 @@ double intra_distance(kmeans* estim, vectors data, intra_ metric = intra_::avg)
 	double intra = 0;
 	switch (metric)
 	{
-	case intra_::closest:
-		intra = intra_closest(estim->labels, data, estim->metric, estim->n_clusters);
+	case intra_::centroid:
+		intra = intra_centroid();
 		break;
 	case intra_::furthest:
 		intra = intra_furthest(estim->labels, data);

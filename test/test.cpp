@@ -1176,7 +1176,7 @@ namespace test
 			Assert::AreEqual(1.0, d);
 		}
 
-		TEST_METHOD(Test_intra_closest)
+		/*TEST_METHOD(Test_intra_centroid)
 		{
 			kmeans est(2);
 			est.labels.change_size(1, 4);
@@ -1193,8 +1193,8 @@ namespace test
 			data.coords[5] = 12.0;
 			data.coords[6] = 0.0;
 			data.coords[7] = 0.0;
-			double d = intra_distance(&est, data, intra_::closest);
+			double d = intra_distance(&est, data, intra_::centroid);
 			Assert::AreEqual(13.0, d);
-		}
+		}*/
 	};
 }
