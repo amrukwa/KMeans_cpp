@@ -23,9 +23,9 @@ double single_linkage(vectors labels, vectors data, int c1, int c2, dist_ metric
 // closest distance between two samples belonging to two different clusters
 {
 	double cur, min_dist = LONG_MAX;
-	for (int i = 0; i < labels.n_features; i++)
+	for (int i = 0; i < data.n_samples; i++)
 	{
-		for (int j = i+1; j < labels.n_features; j++)
+		for (int j = i+1; j < data.n_samples; j++)
 		{
 			if (labels.coords[i] == c1 && labels.coords[j] == c2)
 			{
@@ -40,11 +40,19 @@ double single_linkage(vectors labels, vectors data, int c1, int c2, dist_ metric
 	return min_dist;
 }
 
-double inter_closest(kmeans estim, vectors data)
+double inter_closest(vectors labels, vectors data, dist_ metric, int n_clusters)
 {
-	double dist, min_closest = 0;
-
-	return min_closest;
+	double cur, dist = single_linkage(labels, data, 0, 1, metric);
+	for (int i = 0; i < n_clusters - 1; i++)
+	{
+		for (int j = i+1; j < n_clusters; j++)
+		{
+			cur = single_linkage(labels, data, i, j, metric);
+			if (cur < dist)
+				dist = cur;
+		}
+	}
+	return dist;
 }
 
 double inter_furthest(kmeans estim, vectors data)
@@ -61,22 +69,22 @@ double inter_avg(kmeans estim, vectors data)
 	return min_avg;
 }
 
-double inter_distance(kmeans estim, vectors data, inter_ metric = inter_::centroid)
+double inter_distance(kmeans *estim, vectors data, inter_ metric = inter_::centroid)
 {
 	double inter = 0;
 	switch (metric)
 	{
 	case inter_::centroid:
-		inter = inter_centroid(estim.centroids, estim.metric);
+		inter = inter_centroid(estim->centroids, estim->metric);
 		break;
 	case inter_::closest:
-		inter = inter_closest(estim, data);
+		inter = inter_closest(estim->labels, data, estim->metric, estim->n_clusters);
 		break;
 	case inter_::furthest:
-		inter = inter_furthest(estim, data);
+		inter = inter_furthest(*estim, data);
 		break;
 	case inter_::avg:
-		inter = inter_avg(estim, data);
+		inter = inter_avg(*estim, data);
 		break;
 	default:
 		std::cout << "Invalid Selection for Dunn Index\n";
@@ -106,19 +114,19 @@ double intra_avg(kmeans estim, vectors data)
 	return max_avg;
 }
 
-double intra_distance(kmeans estim, vectors data, intra_ metric = intra_::avg)
+double intra_distance(kmeans* estim, vectors data, intra_ metric = intra_::avg)
 {
 	double intra = 0;
 	switch (metric)
 	{
 	case intra_::closest:
-		intra = intra_closest(estim.labels, data);
+		intra = intra_closest(estim->labels, data);
 		break;
 	case intra_::furthest:
-		intra = intra_furthest(estim.labels, data);
+		intra = intra_furthest(estim->labels, data);
 		break;
 	case intra_::avg:
-		intra = intra_avg(estim, data);
+		intra = intra_avg(*estim, data);
 		break;
 	default:
 		std::cout << "Invalid Selection for Dunn Index\n";
@@ -133,8 +141,8 @@ double dunn_index(kmeans *estim, vectors data, inter_ metric1 = inter_::centroid
 	{
 		estim->fit(data);
 	}
-	double inter = inter_distance(*estim, data, metric1);
-	double intra = intra_distance(*estim, data, metric2);
+	double inter = inter_distance(estim, data, metric1);
+	double intra = intra_distance(estim, data, metric2);
 	return inter/intra;
 }
 

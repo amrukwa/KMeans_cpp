@@ -1117,23 +1117,23 @@ namespace test
 			Assert::IsTrue(vec == v);
 		}
 
-
 		TEST_METHOD(Test_inter_centroid)
 		{
+			kmeans k(3);
+			k.centroids.change_size(4, 2);
 			double val = 1.0;
-			 vectors centroids(4, 2);
-			centroids.coords[2] = 1.0;
-			centroids.coords[3] = 2.0;
-			centroids.coords[0] = 4.0;
-			centroids.coords[1] = 7.0;
-			centroids.coords[4] = 5.0;
-			centroids.coords[5] = 2.0;
-			centroids.coords[6] = 1.0;
-			centroids.coords[7] = 1.0;
-			double c = inter_centroid(centroids, dist_::Euclidean);
+			vectors data(4, 2);
+			k.centroids.coords[2] = 1.0;
+			k.centroids.coords[3] = 2.0;
+			k.centroids.coords[0] = 4.0;
+			k.centroids.coords[1] = 7.0;
+			k.centroids.coords[4] = 5.0;
+			k.centroids.coords[5] = 2.0;
+			k.centroids.coords[6] = 1.0;
+			k.centroids.coords[7] = 1.0;
+			double c = inter_distance(&k, data, inter_::centroid);
 			Assert::AreEqual(val, c);
 		}
-
 
 		TEST_METHOD(Test_single_linkage)
 		{
@@ -1153,6 +1153,27 @@ namespace test
 			data.coords[7] = 1.0;
 			double d = single_linkage(labels, data, 0, 1, dist_::Euclidean);
 			Assert::AreEqual(4.0, d);
+		}
+
+		TEST_METHOD(Test_inter_closest)
+		{
+			kmeans est(3);
+			est.labels.change_size(1, 4);
+			est.labels.coords[0] = 0;
+			est.labels.coords[1] = 0;
+			est.labels.coords[2] = 1;
+			est.labels.coords[3] = 2;
+			vectors data(4, 2);
+			data.coords[0] = 4.0;
+			data.coords[1] = 7.0;
+			data.coords[2] = 1.0;
+			data.coords[3] = 2.0;
+			data.coords[4] = 5.0;
+			data.coords[5] = 2.0;
+			data.coords[6] = 1.0;
+			data.coords[7] = 1.0;
+			double d = inter_distance(&est, data, inter_::closest);
+			Assert::AreEqual(1.0, d);
 		}
 	};
 }
