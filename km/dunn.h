@@ -4,6 +4,7 @@
 enum class inter_ {centroid, closest, furthest, avg}; // distance between clusters
 enum class intra_ {centroid, furthest, avg }; // distance within cluster
 
+
 double single_linkage(vectors labels, vectors data, int c1, int c2, dist_ metric)
 // closest distance between two samples belonging to two given clusters
 {
@@ -80,7 +81,7 @@ double inter_furthest(vectors labels, vectors data, dist_ metric, int n_clusters
 		for (int j = i + 1; j < n_clusters; j++)
 		{
 			cur = complete_linkage(labels, data, i, j, metric);
-			if (cur > dist)
+			if (cur < dist)
 				dist = cur;
 		}
 	}
@@ -90,7 +91,6 @@ double inter_furthest(vectors labels, vectors data, dist_ metric, int n_clusters
 double inter_avg(kmeans estim, vectors data)
 {
 	double min_avg = 0;
-
 	return min_avg;
 }
 

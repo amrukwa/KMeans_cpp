@@ -1214,7 +1214,7 @@ namespace test
 			data.coords[6] = 0.0;
 			data.coords[7] = 0.0;
 			double d = inter_distance(&est, data, inter_::furthest);
-			Assert::AreEqual(sqrt(149), d);
+			Assert::AreEqual(sqrt(29), d);
 		}
 	};
 }
