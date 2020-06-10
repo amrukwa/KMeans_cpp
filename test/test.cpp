@@ -41,7 +41,7 @@ namespace test
 		TEST_METHOD(Test_vector_is_copied)
 		{
 			double* data = (double*)malloc(20 * sizeof(double));
-			data[0] = 0;
+			data[0] = 0.0;
 			vectors some_vector(1, 1, data);
 			vectors other_vector(some_vector);
 			Assert::AreEqual(0.0, other_vector.coords[0]);
@@ -1194,6 +1194,27 @@ namespace test
 			data.coords[7] = 1.0;
 			double d = complete_linkage(labels, data, 0, 1, dist_::Euclidean);
 			Assert::AreEqual(sqrt(26.0), d);
+		}
+
+		TEST_METHOD(Test_inter_furthest)
+		{
+			kmeans est(3);
+			est.labels.change_size(1, 4);
+			est.labels.coords[0] = 0;
+			est.labels.coords[1] = 0;
+			est.labels.coords[2] = 1;
+			est.labels.coords[3] = 2;
+			vectors data(4, 2);
+			data.coords[0] = 10.0;
+			data.coords[1] = 7.0;
+			data.coords[2] = 1.0;
+			data.coords[3] = 2.0;
+			data.coords[4] = 5.0;
+			data.coords[5] = 2.0;
+			data.coords[6] = 0.0;
+			data.coords[7] = 0.0;
+			double d = inter_distance(&est, data, inter_::furthest);
+			Assert::AreEqual(sqrt(149), d);
 		}
 	};
 }

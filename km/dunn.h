@@ -72,11 +72,19 @@ double inter_closest(vectors labels, vectors data, dist_ metric, int n_clusters)
 	return dist;
 }
 
-double inter_furthest(kmeans estim, vectors data)
+double inter_furthest(vectors labels, vectors data, dist_ metric, int n_clusters)
 {
-	double min_furthest = 0;
-
-	return min_furthest;
+	double cur, dist = complete_linkage(labels, data, 0, 1, metric);
+	for (int i = 0; i < n_clusters - 1; i++)
+	{
+		for (int j = i + 1; j < n_clusters; j++)
+		{
+			cur = complete_linkage(labels, data, i, j, metric);
+			if (cur > dist)
+				dist = cur;
+		}
+	}
+	return dist;
 }
 
 double inter_avg(kmeans estim, vectors data)
@@ -98,7 +106,7 @@ double inter_distance(kmeans *estim, vectors data, inter_ metric = inter_::centr
 		inter = inter_closest(estim->labels, data, estim->metric, estim->n_clusters);
 		break;
 	case inter_::furthest:
-		inter = inter_furthest(*estim, data);
+		inter = inter_furthest(estim->labels, data, estim->metric, estim->n_clusters);
 		break;
 	case inter_::avg:
 		inter = inter_avg(*estim, data);
