@@ -9,7 +9,7 @@ double single_linkage(vectors labels, vectors data, int c1, int c2, dist_ metric
 // closest distance between two samples belonging to two given clusters
 {
 	double cur, min_dist = LONG_MAX;
-	for (int i = 0; i < data.n_samples; i++)
+	for (int i = 0; i < data.n_samples-1; i++)
 	{
 		for (int j = i + 1; j < data.n_samples; j++)
 		{
@@ -28,7 +28,7 @@ double complete_linkage(vectors labels, vectors data, int c1, int c2, dist_ metr
 // the distance between the most remote samples belonging to two given clusters
 {
 	double cur, min_dist = 0;
-	for (int i = 0; i < data.n_samples; i++)
+	for (int i = 0; i < data.n_samples-1; i++)
 	{
 		for (int j = i + 1; j < data.n_samples; j++)
 		{
@@ -124,11 +124,16 @@ double intra_centroid()
 	return 0;
 }
 
-double intra_furthest(vectors labels, vectors data)
+double intra_furthest(vectors labels, vectors data, dist_ metric, int n_clusters)
 {
-	double max_furthest = 0;
-
-	return max_furthest;
+	double cur, dist = complete_linkage(labels, data, 0, 0, metric);
+	for (int i = 1; i < n_clusters; i++)
+	{
+		cur = complete_linkage(labels, data, i, i, metric);
+		if (cur > dist)
+			dist = cur;
+	}
+	return dist;
 }
 
 double intra_avg(kmeans estim, vectors data)
@@ -147,7 +152,7 @@ double intra_distance(kmeans* estim, vectors data, intra_ metric = intra_::avg)
 		intra = intra_centroid();
 		break;
 	case intra_::furthest:
-		intra = intra_furthest(estim->labels, data);
+		intra = intra_furthest(estim->labels, data, estim->metric, estim->n_clusters);
 		break;
 	case intra_::avg:
 		intra = intra_avg(*estim, data);
