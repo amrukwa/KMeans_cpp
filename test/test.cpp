@@ -1175,5 +1175,26 @@ namespace test
 			double d = inter_distance(&est, data, inter_::closest);
 			Assert::AreEqual(1.0, d);
 		}
+
+		TEST_METHOD(Test_intra_closest)
+		{
+			kmeans est(2);
+			est.labels.change_size(1, 4);
+			est.labels.coords[0] = 0;
+			est.labels.coords[1] = 0;
+			est.labels.coords[2] = 1;
+			est.labels.coords[3] = 1;
+			vectors data(4, 2);
+			data.coords[0] = 4.0;
+			data.coords[1] = 3.0;
+			data.coords[2] = 1.0;
+			data.coords[3] = 2.0;
+			data.coords[4] = 5.0;
+			data.coords[5] = 12.0;
+			data.coords[6] = 0.0;
+			data.coords[7] = 0.0;
+			double d = intra_distance(&est, data, intra_::closest);
+			Assert::AreEqual(13.0, d);
+		}
 	};
 }

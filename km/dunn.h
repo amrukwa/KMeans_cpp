@@ -20,7 +20,7 @@ double inter_centroid(vectors centroids, dist_ metric) // smallest distance betw
 }
 
 double single_linkage(vectors labels, vectors data, int c1, int c2, dist_ metric)
-// closest distance between two samples belonging to two different clusters
+// closest distance between two samples belonging to two given clusters
 {
 	double cur, min_dist = LONG_MAX;
 	for (int i = 0; i < data.n_samples; i++)
@@ -91,11 +91,16 @@ double inter_distance(kmeans *estim, vectors data, inter_ metric = inter_::centr
 	return inter;
 }
 
-double intra_closest(vectors labels, vectors data)
+double intra_closest(vectors labels, vectors data, dist_ metric, int n_clusters)
 {
-	double max_closest = 0;
-
-	return max_closest;
+	double cur, dist = single_linkage(labels, data, 0, 0, metric);
+	for (int i = 1; i < n_clusters; i++)
+	{
+		cur = single_linkage(labels, data, i, i, metric);
+		if (cur > dist)
+			dist = cur;
+	}
+	return dist;
 }
 
 double intra_furthest(vectors labels, vectors data)
@@ -118,7 +123,7 @@ double intra_distance(kmeans* estim, vectors data, intra_ metric = intra_::avg)
 	switch (metric)
 	{
 	case intra_::closest:
-		intra = intra_closest(estim->labels, data);
+		intra = intra_closest(estim->labels, data, estim->metric, estim->n_clusters);
 		break;
 	case intra_::furthest:
 		intra = intra_furthest(estim->labels, data);
