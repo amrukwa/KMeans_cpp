@@ -65,10 +65,7 @@ void kmeans_algorithm(vectors* centroids,
 	*n_iter = 0;
 	for (*n_iter; *n_iter < max_iter; (*n_iter)++)
 	{
-		for (int i = 0; i < labels->n_features; i++)
-		{
-			prev_labels.coords[i] = labels->coords[i];
-		}
+		prev_labels = *labels;
 		calculate_centroids(*labels, x, centroids);
 		label_points(labels, x, *centroids, metric);
 		if (prev_labels == *labels)
