@@ -31,9 +31,7 @@ double single_linkage(vectors labels, vectors data, int c1, int c2, dist_ metric
 			{
 				cur = distance(data, data, i, j, metric);
 				if (cur < min_dist)
-				{
 					min_dist = cur;
-				}
 			}
 		}
 	}

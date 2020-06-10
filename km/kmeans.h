@@ -62,16 +62,13 @@ void kmeans_algorithm(vectors* centroids,
 	}
 	initialize(centroids, x, initialization, metric);
 	label_points(labels, x, *centroids, metric);
-	*n_iter = 0;
 	for (*n_iter; *n_iter < max_iter; (*n_iter)++)
 	{
 		prev_labels = *labels;
 		calculate_centroids(*labels, x, centroids);
 		label_points(labels, x, *centroids, metric);
 		if (prev_labels == *labels)
-		{
 			break;
-		}
 	}
 	*inertia = calculate_inertia(*labels, x, *centroids, metric);
 }
@@ -79,7 +76,6 @@ void kmeans_algorithm(vectors* centroids,
 class kmeans {
 public:
 	vectors centroids;
-	//std::string metric;
 	dist_ metric;
 	int n_clusters;
 	init_ initialization;
