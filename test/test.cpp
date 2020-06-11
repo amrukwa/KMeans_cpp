@@ -6,7 +6,7 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace test
 {
-	TEST_CLASS(test)
+	TEST_CLASS(test_vectors)
 	{
 	public:
 		void check_matrix_filling(vectors* some_vector, double* data, int i, int j)
@@ -625,140 +625,6 @@ namespace test
 			free(d2);
 		}
 
-		TEST_METHOD(Test_kmeans_const)
-		{
-			kmeans k(2);
-			kmeans cpy(k);
-			k.centroids.coords[0] = 1;
-			Assert::AreNotEqual(1.0, cpy.centroids.coords[0]);
-			Assert::AreEqual(1.0, k.centroids.coords[0]);
-		}
-
-		TEST_METHOD(Test_random_kmeans_init)
-		{
-			double* a = (double*)malloc(sizeof(double)*3);
-			a[0] = 0;
-			a[1] = 1;
-			a[2] = 2;
-			vectors x(3, 1, a);
-			vectors c(3, 1);
-			initialize(&c, x, init_::random, dist_::Euclidean);
-			Assert::IsNotNull(c.coords);
-			Assert::AreNotEqual(c.coords[0], c.coords[1]);
-			Assert::AreNotEqual(c.coords[1], c.coords[2]);
-			Assert::AreNotEqual(c.coords[0], c.coords[2]);
-			free(a);		
-		}
-
-		TEST_METHOD(Test_labeling)
-		{
-			double* x_d = (double*)malloc(sizeof(double) * 10);
-			double* c_d = (double*)malloc(sizeof(double) * 6);
-			c_d[0] = -3;
-			c_d[1] = -2; // 0
-			c_d[2] = -6;
-			c_d[3] = 3; // 1
-			c_d[4] = 5;
-			c_d[5] = 2; // 2
-
-			x_d[0] = -4;
-			x_d[1] = 0; // 0
-			x_d[2] = -5;
-			x_d[3] = 3; // 1
-			x_d[4] = 0;
-			x_d[5] = 0; // 0
-			x_d[6] = 4;
-			x_d[7] = 3; // 2
-			x_d[8] = 6;
-			x_d[9] = 1; // 2
-			vectors x(5, 2, x_d);
-			vectors c(3, 2, c_d);
-			vectors l(6, 1);
-			label_points(&l, x, c, dist_::Euclidean);
-			Assert::AreEqual(0.0, l.coords[0]);
-			Assert::AreEqual(1.0, l.coords[1]);
-			Assert::AreEqual(0.0, l.coords[2]);
-			Assert::AreEqual(2.0, l.coords[3]);
-			Assert::AreEqual(2.0, l.coords[4]);
-			free(x_d);
-			free(c_d);
-		}
-
-		TEST_METHOD(Test_calc_centroids)
-		{
-			double* x_d = (double*)malloc(sizeof(double) * 10);
-			double* c_d = (double*)malloc(sizeof(double) * 6);
-			double* c_real = (double*)malloc(sizeof(double) * 6);
-			c_d[0] = -3;
-			c_d[1] = -2; // 0
-			c_d[2] = -6;
-			c_d[3] = 3; // 1
-			c_d[4] = 5;
-			c_d[5] = 2; // 2
-
-			x_d[0] = -4;
-			x_d[1] = 0; // 0
-			x_d[2] = -5;
-			x_d[3] = 3; // 1
-			x_d[4] = 0;
-			x_d[5] = 0; // 0
-			x_d[6] = 4;
-			x_d[7] = 3; // 2
-			x_d[8] = 6;
-			x_d[9] = 1; // 2
-
-			c_real[0] = -2;
-			c_real[1] = 0;
-			c_real[2] = -5;
-			c_real[3] = 3;
-			c_real[4] = 5;
-			c_real[5] = 2;
-
-			vectors x(5, 2, x_d);
-			vectors c(3, 2, c_d);
-			vectors l(6, 1);
-			label_points(&l, x, c, dist_::Euclidean);
-			calculate_centroids(l, x, &c);
-			for (int i = 0; i < c.n_samples; i++)
-			{
-				for (int j = 0; j < c.n_features; j++)
-				{
-					check_matrix_filling(&c, c_real, i, j);
-				}
-			}
-			free(c_d);
-			free(c_real);
-			free(x_d);
-		}
-
-		TEST_METHOD(Test_inertia)
-		{
-			double* x = (double*)malloc(sizeof(double) * 9);
-			double* c = (double*)malloc(sizeof(double) * 6);
-			double* l = (double*)malloc(sizeof(double) * 3);
-			for (int i = 0; i < 9; i++)
-			{
-				x[i] = double(i) + 1;
-			}
-			vectors data(3, 3, x);
-			c[0] = 2;
-			c[1] = 3;
-			c[2] = 4;
-			c[3] = 10;
-			c[4] = 10;
-			c[5] = 10;
-			vectors centres(2, 3, c);
-			l[0] = 0;
-			l[1] = 0;
-			l[2] = 1;
-			vectors labels(1, 3, l);
-			double inertia = calculate_inertia(labels, data, centres, dist_::Euclidean);
-			Assert::AreEqual(29.0, inertia);
-			free(x);
-			free(c);
-			free(l);
-		}
-
 		TEST_METHOD(Test_abs)
 		{
 			double a = 4;
@@ -992,7 +858,149 @@ namespace test
 			free(evc);
 			free(evl);
 		}
+	};
 
+	TEST_CLASS(test_kmeans)
+	{
+	public:
+		TEST_METHOD(Test_kmeans_const)
+		{
+			kmeans k(2);
+			kmeans cpy(k);
+			k.centroids.coords[0] = 1;
+			Assert::AreNotEqual(1.0, cpy.centroids.coords[0]);
+			Assert::AreEqual(1.0, k.centroids.coords[0]);
+		}
+
+		TEST_METHOD(Test_random_kmeans_init)
+		{
+			double* a = (double*)malloc(sizeof(double) * 3);
+			a[0] = 0;
+			a[1] = 1;
+			a[2] = 2;
+			vectors x(3, 1, a);
+			vectors c(3, 1);
+			initialize(&c, x, init_::random, dist_::Euclidean);
+			Assert::IsNotNull(c.coords);
+			Assert::AreNotEqual(c.coords[0], c.coords[1]);
+			Assert::AreNotEqual(c.coords[1], c.coords[2]);
+			Assert::AreNotEqual(c.coords[0], c.coords[2]);
+			free(a);
+		}
+
+		TEST_METHOD(Test_labeling)
+		{
+			double* x_d = (double*)malloc(sizeof(double) * 10);
+			double* c_d = (double*)malloc(sizeof(double) * 6);
+			c_d[0] = -3;
+			c_d[1] = -2; // 0
+			c_d[2] = -6;
+			c_d[3] = 3; // 1
+			c_d[4] = 5;
+			c_d[5] = 2; // 2
+
+			x_d[0] = -4;
+			x_d[1] = 0; // 0
+			x_d[2] = -5;
+			x_d[3] = 3; // 1
+			x_d[4] = 0;
+			x_d[5] = 0; // 0
+			x_d[6] = 4;
+			x_d[7] = 3; // 2
+			x_d[8] = 6;
+			x_d[9] = 1; // 2
+			vectors x(5, 2, x_d);
+			vectors c(3, 2, c_d);
+			vectors l(6, 1);
+			label_points(&l, x, c, dist_::Euclidean);
+			Assert::AreEqual(0.0, l.coords[0]);
+			Assert::AreEqual(1.0, l.coords[1]);
+			Assert::AreEqual(0.0, l.coords[2]);
+			Assert::AreEqual(2.0, l.coords[3]);
+			Assert::AreEqual(2.0, l.coords[4]);
+			free(x_d);
+			free(c_d);
+		}
+
+		TEST_METHOD(Test_calc_centroids)
+		{
+			double* x_d = (double*)malloc(sizeof(double) * 10);
+			double* c_d = (double*)malloc(sizeof(double) * 6);
+			double* c_real = (double*)malloc(sizeof(double) * 6);
+			c_d[0] = -3;
+			c_d[1] = -2; // 0
+			c_d[2] = -6;
+			c_d[3] = 3; // 1
+			c_d[4] = 5;
+			c_d[5] = 2; // 2
+
+			x_d[0] = -4;
+			x_d[1] = 0; // 0
+			x_d[2] = -5;
+			x_d[3] = 3; // 1
+			x_d[4] = 0;
+			x_d[5] = 0; // 0
+			x_d[6] = 4;
+			x_d[7] = 3; // 2
+			x_d[8] = 6;
+			x_d[9] = 1; // 2
+
+			c_real[0] = -2;
+			c_real[1] = 0;
+			c_real[2] = -5;
+			c_real[3] = 3;
+			c_real[4] = 5;
+			c_real[5] = 2;
+
+			vectors x(5, 2, x_d);
+			vectors c(3, 2, c_d);
+			vectors l(6, 1);
+			label_points(&l, x, c, dist_::Euclidean);
+			calculate_centroids(l, x, &c);
+			for (int i = 0; i < c.n_samples; i++)
+			{
+				for (int j = 0; j < c.n_features; j++)
+				{
+					Assert::AreEqual(c.coords[i * c.n_features + j], c_real[i * c.n_features + j]);
+				}
+			}
+			free(c_d);
+			free(c_real);
+			free(x_d);
+		}
+
+		TEST_METHOD(Test_inertia)
+		{
+			double* x = (double*)malloc(sizeof(double) * 9);
+			double* c = (double*)malloc(sizeof(double) * 6);
+			double* l = (double*)malloc(sizeof(double) * 3);
+			for (int i = 0; i < 9; i++)
+			{
+				x[i] = double(i) + 1;
+			}
+			vectors data(3, 3, x);
+			c[0] = 2;
+			c[1] = 3;
+			c[2] = 4;
+			c[3] = 10;
+			c[4] = 10;
+			c[5] = 10;
+			vectors centres(2, 3, c);
+			l[0] = 0;
+			l[1] = 0;
+			l[2] = 1;
+			vectors labels(1, 3, l);
+			double inertia = calculate_inertia(labels, data, centres, dist_::Euclidean);
+			Assert::AreEqual(29.0, inertia);
+			free(x);
+			free(c);
+			free(l);
+		}
+	};
+
+	TEST_CLASS(test_sorting)
+	{
+	public:
 		TEST_METHOD(Test_ind_v)
 		{
 			vectors basic(2, 2);
@@ -1030,7 +1038,7 @@ namespace test
 
 		TEST_METHOD(Test_sort_by_idx)
 		{
-			vectors idx(1,3);
+			vectors idx(1, 3);
 			idx.coords[0] = 1;
 			idx.coords[1] = 2;
 			idx.coords[2] = 0;
@@ -1116,7 +1124,11 @@ namespace test
 			v.coords[3] = 7.8;
 			Assert::IsTrue(vec == v);
 		}
+	};
 
+	TEST_CLASS(test_dunn)
+	{
+	public:
 		TEST_METHOD(Test_inter_centroid)
 		{
 			kmeans k(3);
@@ -1134,7 +1146,6 @@ namespace test
 			double c = inter_distance(&k, data, inter_::centroid);
 			Assert::AreEqual(val, c);
 		}
-
 		TEST_METHOD(Test_single_linkage)
 		{
 			vectors labels(1, 4);
@@ -1154,7 +1165,6 @@ namespace test
 			double d = inter_linkage(labels, data, 0, 1, dist_::Euclidean, inter_::closest);
 			Assert::AreEqual(4.0, d);
 		}
-
 		TEST_METHOD(Test_inter_closest)
 		{
 			kmeans est(3);
@@ -1175,7 +1185,6 @@ namespace test
 			double d = inter_distance(&est, data, inter_::closest);
 			Assert::AreEqual(1.0, d);
 		}
-
 		TEST_METHOD(Test_complete_linkage)
 		{
 			vectors labels(1, 4);
@@ -1195,7 +1204,6 @@ namespace test
 			double d = inter_linkage(labels, data, 0, 1, dist_::Euclidean, inter_::furthest);
 			Assert::AreEqual(sqrt(26.0), d);
 		}
-
 		TEST_METHOD(Test_inter_furthest)
 		{
 			kmeans est(3);
@@ -1216,7 +1224,6 @@ namespace test
 			double d = inter_distance(&est, data, inter_::furthest);
 			Assert::AreEqual(sqrt(29), d);
 		}
-
 		TEST_METHOD(Test_intra_furthest)
 		{
 			kmeans est(2);
@@ -1237,7 +1244,6 @@ namespace test
 			double d = intra_distance(&est, data, intra_::furthest);
 			Assert::AreEqual(sqrt(149), d);
 		}
-
 		TEST_METHOD(Test_avg_linkage_diff)
 		{
 			vectors labels(1, 5);
@@ -1258,9 +1264,8 @@ namespace test
 			d.coords[8] = 9.0;
 			d.coords[9] = 10.0;
 			double l = inter_linkage(labels, d, 0, 1, dist_::Euclidean, inter_::avg);
-			Assert::AreEqual(4*sqrt(2), l, 1e-6);
+			Assert::AreEqual(4 * sqrt(2), l, 1e-6);
 		}
-
 		TEST_METHOD(Test_inter_avg)
 		{
 			kmeans est(3);
@@ -1284,7 +1289,6 @@ namespace test
 			double l = inter_distance(&est, d, inter_::avg);
 			Assert::AreEqual(2 * sqrt(2), l, 1e-6);
 		}
-
 		TEST_METHOD(Test_avg_linkage_same)
 		{
 			kmeans est(3);
@@ -1306,9 +1310,8 @@ namespace test
 			d.coords[8] = 9.0;
 			d.coords[9] = 10.0;
 			double l = intra_linkage(&est, d, 0, intra_::avg);
-			Assert::AreEqual(8 * sqrt(2)/3, l, 1e-6);
+			Assert::AreEqual(8 * sqrt(2) / 3, l, 1e-6);
 		}
-
 		TEST_METHOD(Test_intra_avg)
 		{
 			kmeans est(2);
@@ -1332,7 +1335,6 @@ namespace test
 			double l = intra_distance(&est, d, intra_::avg);
 			Assert::AreEqual(8 * sqrt(2) / 3, l, 1e-6);
 		}
-	
 		TEST_METHOD(Test_avg_dist_to_cent)
 		{
 			kmeans est(2);
@@ -1355,7 +1357,6 @@ namespace test
 			double l = intra_centroid(&est, d, 0);
 			Assert::AreEqual(sqrt(2), l, 1e-6);
 		}
-
 		TEST_METHOD(Test_cent_intra)
 		{
 			kmeans est(2);
@@ -1376,7 +1377,8 @@ namespace test
 			d.coords[4] = 3.0;
 			d.coords[5] = 4.0;
 			double l = intra_distance(&est, d, intra_::centroid);
-			Assert::AreEqual(3*sqrt(2), l, 1e-6);
+			Assert::AreEqual(3 * sqrt(2), l, 1e-6);
 		}
 	};
 }
+
