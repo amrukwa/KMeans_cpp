@@ -79,9 +79,9 @@ public:
 	dist_ metric;
 	int n_clusters;
 	init_ initialization;
-	double inertia;
+	double inertia = 0;
 	int max_iter;
-	int n_iter;
+	int n_iter = 0;
 	vectors labels;
 	int n_init;
 
@@ -91,11 +91,11 @@ public:
 		metric{ metrics },
 		n_clusters{ clusters_n },
 		initialization{ init },
-		inertia{ 0 },
 		max_iter{ iter },
-		n_iter{0},
 		n_init{init_n}
 	{}
+
+	kmeans() = default;
 
 	~kmeans() {}
 
@@ -103,9 +103,7 @@ public:
 		metric{ estim.metric },
 		n_clusters{ estim.n_clusters },
 		initialization{ estim.initialization },
-		inertia{ 0 },
 		max_iter{ estim.max_iter },
-		n_iter{ 0 },
 		labels(1, 1),
 		centroids(estim.centroids),
 		n_init{estim.n_init}
@@ -115,13 +113,25 @@ public:
 		metric{ estim.metric },
 		n_clusters{ clusters_n },
 		initialization{ estim.initialization },
-		inertia{ 0 },
 		max_iter{ estim.max_iter },
-		n_iter{ 0 },
 		labels(1, 1),
 		centroids(1, 1),
 		n_init{ estim.n_init }
 	{}
+
+	kmeans& operator=(const kmeans& estim)
+	{
+		metric = estim.metric;
+		n_clusters = estim.n_clusters;
+		initialization = estim.initialization;
+		centroids = estim.centroids;
+		labels = estim.labels;
+		max_iter = estim.max_iter;
+		n_init = estim.n_init;
+		n_iter = estim.n_iter;
+		inertia = estim.inertia;
+		return *this;
+	}
 
 	void fit(vectors data)
 	{
