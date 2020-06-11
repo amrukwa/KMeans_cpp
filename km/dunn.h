@@ -208,12 +208,14 @@ public:
 		intra{ estim.intra },
 		inter{ estim.inter },
 		max_clusters{ estim.max_clusters },
-		min_clusters{ estim.min_clusters }
+		min_clusters{ estim.min_clusters },
+		index{estim.index}
 	{}
 
 	void fit(vectors data)
 	{
-		for (int i = min_clusters; i < max_clusters; i++)
+		index = dunn_index(&estimator, data, inter, intra);
+		for (int i = min_clusters; i <= max_clusters; i++)
 		{
 		}
 	}
