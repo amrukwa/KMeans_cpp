@@ -45,7 +45,20 @@ double complete_linkage(vectors labels, vectors data, int c1, int c2, dist_ metr
 
 double avg_linkage(vectors labels, vectors data, int c1, int c2, dist_ metric)
 {
-	return 0;
+	double dist = 0;
+	int count = 0;
+	for (int i = 0; i < data.n_samples - 1; i++)
+	{
+		for (int j = i + 1; j < data.n_samples; j++)
+		{
+			if (labels.coords[i] == c1 && labels.coords[j] == c2)
+			{
+				dist += distance(data, data, i, j, metric);
+				count += 1;
+			}
+		}
+	}
+	return dist/count;
 }
 
 double inter_linkage(vectors labels, vectors data, int c1, int c2, dist_ metric, inter_ link)
@@ -127,12 +140,6 @@ double intra_furthest(vectors labels, vectors data, dist_ metric, int n_clusters
 	return dist;
 }
 
-double intra_avg(kmeans estim, vectors data)
-{
-	double max_avg = 0;
-
-	return max_avg;
-}
 
 double intra_linkage(kmeans* estim, vectors data, int c, intra_ metric = intra_::avg)
 {
@@ -142,7 +149,7 @@ double intra_linkage(kmeans* estim, vectors data, int c, intra_ metric = intra_:
 	else if(metric == intra_::furthest)
 		intra = complete_linkage(estim->labels, data, c, c, estim->metric);
 	else if(metric == intra_::avg)
-		intra = intra_avg(*estim, data);
+		intra = avg_linkage(estim->labels, data, c, c, estim->metric);
 	else
 	{
 		std::cout << "Invalid Selection for Dunn Index\n";

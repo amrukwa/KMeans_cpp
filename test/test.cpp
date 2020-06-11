@@ -1237,5 +1237,58 @@ namespace test
 			double d = intra_distance(&est, data, intra_::furthest);
 			Assert::AreEqual(sqrt(149), d);
 		}
+
+		TEST_METHOD(Test_avg_linkage_diff)
+		{
+			vectors labels(1, 5);
+			labels.coords[0] = 0;
+			labels.coords[1] = 0;
+			labels.coords[2] = 0;
+			labels.coords[3] = 1;
+			labels.coords[4] = 2;
+			vectors d(5, 2);
+			d.coords[0] = 1.0;
+			d.coords[1] = 2.0;
+			d.coords[2] = 3.0;
+			d.coords[3] = 4.0;
+			d.coords[4] = 5.0;
+			d.coords[5] = 6.0;
+			d.coords[6] = 7.0;
+			d.coords[7] = 8.0;
+			d.coords[8] = 9.0;
+			d.coords[9] = 10.0;
+			double l = inter_linkage(labels, d, 0, 1, dist_::Euclidean, inter_::avg);
+			Assert::AreEqual(4*sqrt(2), l, 1e-6);
+		}
+
+
+		TEST_METHOD(Test_inter_avg)
+		{
+
+		}
+
+		TEST_METHOD(Test_avg_linkage_same)
+		{
+			kmeans est(3);
+			est.labels.change_size(1, 5);
+			est.labels.coords[0] = 0;
+			est.labels.coords[1] = 0;
+			est.labels.coords[2] = 0;
+			est.labels.coords[3] = 1;
+			est.labels.coords[4] = 2;
+			vectors d(5, 2);
+			d.coords[0] = 1.0;
+			d.coords[1] = 2.0;
+			d.coords[2] = 3.0;
+			d.coords[3] = 4.0;
+			d.coords[4] = 5.0;
+			d.coords[5] = 6.0;
+			d.coords[6] = 7.0;
+			d.coords[7] = 8.0;
+			d.coords[8] = 9.0;
+			d.coords[9] = 10.0;
+			double l = intra_linkage(&est, d, 0, intra_::avg);
+			Assert::AreEqual(8 * sqrt(2)/3, l, 1e-6);
+		}
 	};
 }
