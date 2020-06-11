@@ -1261,10 +1261,28 @@ namespace test
 			Assert::AreEqual(4*sqrt(2), l, 1e-6);
 		}
 
-
 		TEST_METHOD(Test_inter_avg)
 		{
-
+			kmeans est(3);
+			est.labels.change_size(1, 5);
+			est.labels.coords[0] = 0;
+			est.labels.coords[1] = 0;
+			est.labels.coords[2] = 0;
+			est.labels.coords[3] = 1;
+			est.labels.coords[4] = 2;
+			vectors d(5, 2);
+			d.coords[0] = 1.0;
+			d.coords[1] = 2.0;
+			d.coords[2] = 3.0;
+			d.coords[3] = 4.0;
+			d.coords[4] = 5.0;
+			d.coords[5] = 6.0;
+			d.coords[6] = 7.0;
+			d.coords[7] = 8.0;
+			d.coords[8] = 9.0;
+			d.coords[9] = 10.0;
+			double l = inter_distance(&est, d, inter_::avg);
+			Assert::AreEqual(2 * sqrt(2), l, 1e-6);
 		}
 
 		TEST_METHOD(Test_avg_linkage_same)
@@ -1289,6 +1307,30 @@ namespace test
 			d.coords[9] = 10.0;
 			double l = intra_linkage(&est, d, 0, intra_::avg);
 			Assert::AreEqual(8 * sqrt(2)/3, l, 1e-6);
+		}
+
+		TEST_METHOD(Test_intra_avg)
+		{
+			kmeans est(2);
+			est.labels.change_size(1, 5);
+			est.labels.coords[0] = 0;
+			est.labels.coords[1] = 0;
+			est.labels.coords[2] = 0;
+			est.labels.coords[3] = 1;
+			est.labels.coords[4] = 1;
+			vectors d(5, 2);
+			d.coords[0] = 1.0;
+			d.coords[1] = 2.0;
+			d.coords[2] = 3.0;
+			d.coords[3] = 4.0;
+			d.coords[4] = 5.0;
+			d.coords[5] = 6.0;
+			d.coords[6] = 7.0;
+			d.coords[7] = 8.0;
+			d.coords[8] = 9.0;
+			d.coords[9] = 10.0;
+			double l = intra_distance(&est, d, intra_::avg);
+			Assert::AreEqual(8 * sqrt(2) / 3, l, 1e-6);
 		}
 	};
 }

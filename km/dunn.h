@@ -58,6 +58,10 @@ double avg_linkage(vectors labels, vectors data, int c1, int c2, dist_ metric)
 			}
 		}
 	}
+	if (count == 0) // this can happen only for avg distance within cluster for one member - as we are looking for the biggest distance in intra distances, it will be skipped
+	{
+		return -1;
+	}
 	return dist/count;
 }
 
