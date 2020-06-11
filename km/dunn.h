@@ -48,7 +48,7 @@ double avg_linkage(vectors labels, vectors data, int c1, int c2, dist_ metric)
 	return 0;
 }
 
-double linkage(vectors labels, vectors data, int c1, int c2, dist_ metric, inter_ link)
+double inter_linkage(vectors labels, vectors data, int c1, int c2, dist_ metric, inter_ link)
 {
 	double dist = 0;
 	switch (link)
@@ -71,12 +71,12 @@ double linkage(vectors labels, vectors data, int c1, int c2, dist_ metric, inter
 
 double inter_dist(kmeans* est, vectors data, inter_ metric)
 {
-	double cur, dist = linkage(est->labels, data, 0, 1, est->metric, metric);
+	double cur, dist = inter_linkage(est->labels, data, 0, 1, est->metric, metric);
 	for (int i = 0; i < est->n_clusters - 1; i++)
 	{
 		for (int j = i + 1; j < est->n_clusters; j++)
 		{
-			cur = linkage(est->labels, data, i, j, est->metric, metric);
+			cur = inter_linkage(est->labels, data, i, j, est->metric, metric);
 			if (cur < dist)
 				dist = cur;
 		}
@@ -138,7 +138,7 @@ double intra_avg(kmeans estim, vectors data)
 	return max_avg;
 }
 
-double intra_distance(kmeans* estim, vectors data, intra_ metric = intra_::avg)
+double intra_linkage(kmeans* estim, vectors data, int c, intra_ metric = intra_::avg)
 {
 	double intra = 0;
 	switch (metric)
@@ -147,7 +147,7 @@ double intra_distance(kmeans* estim, vectors data, intra_ metric = intra_::avg)
 		intra = intra_centroid();
 		break;
 	case intra_::furthest:
-		intra = intra_furthest(estim->labels, data, estim->metric, estim->n_clusters);
+		intra = complete_linkage(estim->labels, data, c, c, estim->metric);
 		break;
 	case intra_::avg:
 		intra = intra_avg(*estim, data);
@@ -157,6 +157,18 @@ double intra_distance(kmeans* estim, vectors data, intra_ metric = intra_::avg)
 		exit(1);
 	}
 	return intra;
+}
+
+double intra_distance(kmeans* est, vectors data, intra_ metric= intra_::avg)
+{
+	double cur, dist = intra_linkage(est, data, 0, metric);
+	for (int i = 0; i < est->n_clusters - 1; i++)
+	{
+		cur = intra_linkage(est, data, i, metric);
+		if (cur > dist)
+			dist = cur;
+	}
+	return dist;
 }
 
 double dunn_index(kmeans *estim, vectors data, inter_ metric1 = inter_::centroid, intra_ metric2 = intra_::avg)
