@@ -51,18 +51,14 @@ double avg_linkage(vectors labels, vectors data, int c1, int c2, dist_ metric)
 double inter_linkage(vectors labels, vectors data, int c1, int c2, dist_ metric, inter_ link)
 {
 	double dist = 0;
-	switch (link)
-	{
-	case inter_::closest:
+	if (link == inter_::closest)
 		dist = single_linkage(labels, data, c1, c2, metric);
-		break;
-	case inter_::furthest:
+	else if (link == inter_::furthest)
 		dist = complete_linkage(labels, data, c1, c2, metric);
-		break;
-	case inter_::avg:
+	else if (link == inter_::avg)
 		dist = avg_linkage(labels, data, c1, c2, metric);
-		break;
-	default:
+	else
+	{
 		std::cout << "Invalid Selection for Dunn Index\n";
 		exit(1);
 	}
