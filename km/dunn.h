@@ -137,18 +137,14 @@ double intra_avg(kmeans estim, vectors data)
 double intra_linkage(kmeans* estim, vectors data, int c, intra_ metric = intra_::avg)
 {
 	double intra = 0;
-	switch (metric)
-	{
-	case intra_::centroid:
+	if (metric == intra_::centroid)
 		intra = intra_centroid();
-		break;
-	case intra_::furthest:
+	else if(metric == intra_::furthest)
 		intra = complete_linkage(estim->labels, data, c, c, estim->metric);
-		break;
-	case intra_::avg:
+	else if(metric == intra_::avg)
 		intra = intra_avg(*estim, data);
-		break;
-	default:
+	else
+	{
 		std::cout << "Invalid Selection for Dunn Index\n";
 		exit(1);
 	}
