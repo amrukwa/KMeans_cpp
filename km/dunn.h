@@ -127,16 +127,26 @@ double inter_distance(kmeans *estim, vectors data, inter_ metric = inter_::centr
 	return inter;
 }
 
-double intra_centroid()
+double intra_centroid(kmeans* est, vectors data, int c)
 {
-	return 0;
+	double dist = 0;
+	int count = 0;
+	for (int i = 0; i < data.n_samples; i++)
+	{
+		if (est->labels.coords[i] == c)
+		{
+			dist += distance(data, est->centroids, i, c, est->metric);
+			count += 1;
+		}
+	}
+	return dist/count;
 }
 
 double intra_linkage(kmeans* estim, vectors data, int c, intra_ metric = intra_::avg)
 {
 	double intra = 0;
 	if (metric == intra_::centroid)
-		intra = intra_centroid();
+		intra = intra_centroid(estim, data, c);
 	else if(metric == intra_::furthest)
 		intra = complete_linkage(estim->labels, data, c, c, estim->metric);
 	else if(metric == intra_::avg)

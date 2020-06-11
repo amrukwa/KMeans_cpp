@@ -1332,5 +1332,51 @@ namespace test
 			double l = intra_distance(&est, d, intra_::avg);
 			Assert::AreEqual(8 * sqrt(2) / 3, l, 1e-6);
 		}
+	
+		TEST_METHOD(Test_avg_dist_to_cent)
+		{
+			kmeans est(2);
+			est.labels.change_size(1, 3);
+			est.centroids.change_size(2, 2);
+			est.labels.coords[0] = 0;
+			est.labels.coords[1] = 1;
+			est.labels.coords[2] = 0;
+			est.centroids.coords[0] = 2.0;
+			est.centroids.coords[1] = 3.0;
+			est.centroids.coords[2] = 7.0;
+			est.centroids.coords[3] = 8.0;
+			vectors d(3, 2);
+			d.coords[0] = 1.0;
+			d.coords[1] = 2.0;
+			d.coords[2] = 10.0;
+			d.coords[3] = 11.0;
+			d.coords[4] = 3.0;
+			d.coords[5] = 4.0;
+			double l = intra_centroid(&est, d, 0);
+			Assert::AreEqual(sqrt(2), l, 1e-6);
+		}
+
+		TEST_METHOD(Test_cent_intra)
+		{
+			kmeans est(2);
+			est.labels.change_size(1, 3);
+			est.centroids.change_size(2, 2);
+			est.labels.coords[0] = 0;
+			est.labels.coords[1] = 1;
+			est.labels.coords[2] = 0;
+			est.centroids.coords[0] = 2.0;
+			est.centroids.coords[1] = 3.0;
+			est.centroids.coords[2] = 7.0;
+			est.centroids.coords[3] = 8.0;
+			vectors d(3, 2);
+			d.coords[0] = 1.0;
+			d.coords[1] = 2.0;
+			d.coords[2] = 10.0;
+			d.coords[3] = 11.0;
+			d.coords[4] = 3.0;
+			d.coords[5] = 4.0;
+			double l = intra_distance(&est, d, intra_::centroid);
+			Assert::AreEqual(3*sqrt(2), l, 1e-6);
+		}
 	};
 }
