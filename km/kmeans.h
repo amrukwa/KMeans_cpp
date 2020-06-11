@@ -104,9 +104,11 @@ public:
 		n_clusters{ estim.n_clusters },
 		initialization{ estim.initialization },
 		max_iter{ estim.max_iter },
-		labels(1, 1),
+		labels(estim.labels),
 		centroids(estim.centroids),
-		n_init{estim.n_init}
+		n_init{estim.n_init},
+		inertia{ estim.inertia },
+		n_iter{ estim.n_iter }
 	{}
 
 	kmeans(const kmeans& estim, int clusters_n) :
@@ -116,6 +118,8 @@ public:
 		max_iter{ estim.max_iter },
 		labels(1, 1),
 		centroids(1, 1),
+		inertia{estim.inertia},
+		n_iter{estim.n_iter},
 		n_init{ estim.n_init }
 	{}
 
