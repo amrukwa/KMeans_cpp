@@ -1313,11 +1313,11 @@ namespace test
 		{
 			kmeans est(2);
 			est.labels.change_size(1, 5);
-			est.labels.coords[0] = 0;
-			est.labels.coords[1] = 0;
-			est.labels.coords[2] = 0;
-			est.labels.coords[3] = 1;
-			est.labels.coords[4] = 1;
+			est.labels.coords[0] = 1;
+			est.labels.coords[1] = 1;
+			est.labels.coords[2] = 1;
+			est.labels.coords[3] = 0;
+			est.labels.coords[4] = 0;
 			vectors d(5, 2);
 			d.coords[0] = 1.0;
 			d.coords[1] = 2.0;

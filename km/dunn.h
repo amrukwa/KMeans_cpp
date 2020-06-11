@@ -132,19 +132,6 @@ double intra_centroid()
 	return 0;
 }
 
-double intra_furthest(vectors labels, vectors data, dist_ metric, int n_clusters)
-{
-	double cur, dist = complete_linkage(labels, data, 0, 0, metric);
-	for (int i = 1; i < n_clusters; i++)
-	{
-		cur = complete_linkage(labels, data, i, i, metric);
-		if (cur > dist)
-			dist = cur;
-	}
-	return dist;
-}
-
-
 double intra_linkage(kmeans* estim, vectors data, int c, intra_ metric = intra_::avg)
 {
 	double intra = 0;
@@ -165,7 +152,7 @@ double intra_linkage(kmeans* estim, vectors data, int c, intra_ metric = intra_:
 double intra_distance(kmeans* est, vectors data, intra_ metric= intra_::avg)
 {
 	double cur, dist = intra_linkage(est, data, 0, metric);
-	for (int i = 0; i < est->n_clusters - 1; i++)
+	for (int i = 0; i < est->n_clusters; i++)
 	{
 		cur = intra_linkage(est, data, i, metric);
 		if (cur > dist)
