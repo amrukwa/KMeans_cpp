@@ -43,6 +43,47 @@ double complete_linkage(vectors labels, vectors data, int c1, int c2, dist_ metr
 	return min_dist;
 }
 
+double avg_linkage(vectors labels, vectors data, int c1, int c2, dist_ metric)
+{
+	return 0;
+}
+
+double linkage(vectors labels, vectors data, int c1, int c2, dist_ metric, inter_ link)
+{
+	double dist = 0;
+	switch (link)
+	{
+	case inter_::closest:
+		dist = single_linkage(labels, data, c1, c2, metric);
+		break;
+	case inter_::furthest:
+		dist = complete_linkage(labels, data, c1, c2, metric);
+		break;
+	case inter_::avg:
+		dist = avg_linkage(labels, data, c1, c2, metric);
+		break;
+	default:
+		std::cout << "Invalid Selection for Dunn Index\n";
+		exit(1);
+	}
+	return dist;
+}
+
+double inter_dist(kmeans* est, vectors data, inter_ metric)
+{
+	double cur, dist = linkage(est->labels, data, 0, 1, est->metric, metric);
+	for (int i = 0; i < est->n_clusters - 1; i++)
+	{
+		for (int j = i + 1; j < est->n_clusters; j++)
+		{
+			cur = linkage(est->labels, data, i, j, est->metric, metric);
+			if (cur < dist)
+				dist = cur;
+		}
+	}
+	return dist;
+}
+
 double inter_centroid(vectors centroids, dist_ metric) // smallest distance between centroids 
 {
 	double dist, min_centroid = distance(centroids, centroids, 0, 1, metric);
@@ -58,42 +99,6 @@ double inter_centroid(vectors centroids, dist_ metric) // smallest distance betw
 	return min_centroid;
 }
 
-double inter_closest(vectors labels, vectors data, dist_ metric, int n_clusters)
-{
-	double cur, dist = single_linkage(labels, data, 0, 1, metric);
-	for (int i = 0; i < n_clusters - 1; i++)
-	{
-		for (int j = i+1; j < n_clusters; j++)
-		{
-			cur = single_linkage(labels, data, i, j, metric);
-			if (cur < dist)
-				dist = cur;
-		}
-	}
-	return dist;
-}
-
-double inter_furthest(vectors labels, vectors data, dist_ metric, int n_clusters)
-{
-	double cur, dist = complete_linkage(labels, data, 0, 1, metric);
-	for (int i = 0; i < n_clusters - 1; i++)
-	{
-		for (int j = i + 1; j < n_clusters; j++)
-		{
-			cur = complete_linkage(labels, data, i, j, metric);
-			if (cur < dist)
-				dist = cur;
-		}
-	}
-	return dist;
-}
-
-double inter_avg(kmeans estim, vectors data)
-{
-	double min_avg = 0;
-	return min_avg;
-}
-
 double inter_distance(kmeans *estim, vectors data, inter_ metric = inter_::centroid)
 {
 	double inter = 0;
@@ -102,25 +107,15 @@ double inter_distance(kmeans *estim, vectors data, inter_ metric = inter_::centr
 	case inter_::centroid:
 		inter = inter_centroid(estim->centroids, estim->metric);
 		break;
-	case inter_::closest:
-		inter = inter_closest(estim->labels, data, estim->metric, estim->n_clusters);
-		break;
-	case inter_::furthest:
-		inter = inter_furthest(estim->labels, data, estim->metric, estim->n_clusters);
-		break;
-	case inter_::avg:
-		inter = inter_avg(*estim, data);
-		break;
 	default:
-		std::cout << "Invalid Selection for Dunn Index\n";
-		exit(1);
+		inter = inter_dist(estim, data, metric);
+		break;
 	}
 	return inter;
 }
 
 double intra_centroid()
 {
-	
 	return 0;
 }
 

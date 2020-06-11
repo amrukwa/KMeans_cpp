@@ -1151,7 +1151,7 @@ namespace test
 			data.coords[5] = 2.0;
 			data.coords[6] = 1.0;
 			data.coords[7] = 1.0;
-			double d = single_linkage(labels, data, 0, 1, dist_::Euclidean);
+			double d = linkage(labels, data, 0, 1, dist_::Euclidean, inter_::closest);
 			Assert::AreEqual(4.0, d);
 		}
 
@@ -1192,7 +1192,7 @@ namespace test
 			data.coords[5] = 2.0;
 			data.coords[6] = 1.0;
 			data.coords[7] = 1.0;
-			double d = complete_linkage(labels, data, 0, 1, dist_::Euclidean);
+			double d = linkage(labels, data, 0, 1, dist_::Euclidean, inter_::furthest);
 			Assert::AreEqual(sqrt(26.0), d);
 		}
 
