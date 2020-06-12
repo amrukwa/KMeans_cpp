@@ -2,6 +2,8 @@
 # include <ctime>
 # include "Vectors.h"
 
+enum class init_ {random, kpp};
+
 void swap(double* a, double* b)
 {
 	// function swapping two doubles
@@ -62,7 +64,7 @@ int weighted_random(vectors weights)
 	return index;
 }
 
-void next_centroid(vectors* centres, vectors x, vectors* weights, int c_index, std::string metric)
+void next_centroid(vectors* centres, vectors x, vectors* weights, int c_index, dist_ metric)
 {
 	// c_index is the index where next centroid will be appended
 	double distance;
@@ -79,7 +81,7 @@ void next_centroid(vectors* centres, vectors x, vectors* weights, int c_index, s
 	}
 }
 
-void kpp_init(vectors* centres, vectors x, std::string metric)
+void kpp_init(vectors* centres, vectors x, dist_ metric)
 {
 	vectors weights(x.n_samples, 1);
 	first_centroid(centres, x);
@@ -89,20 +91,18 @@ void kpp_init(vectors* centres, vectors x, std::string metric)
 	}
 }
 
-void initialize(vectors* centres, vectors x, std::string init, std::string metric)
+void initialize(vectors* centres, vectors x, init_ init, dist_ metric)
 {
-	if (init == "random")
+	switch (init)
 	{
+	case init_::random:
 		random_init(centres, x);
-	}
-
-	else if (init == "k++")
-	{
+		break;
+	case init_::kpp:
 		kpp_init(centres, x, metric);
-	}
-	else
-	{
-		std::cout << "Unknown initialization type.";
+		break;
+	default:
+		std::cout << "Unknown initialization type.\n";
 		exit(1);
 	}
 }

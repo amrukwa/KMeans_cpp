@@ -1,7 +1,7 @@
 #pragma once
 # include "initialization.h"
 
-void label_points(vectors* labels, vectors x, vectors centroids, std::string metric)
+void label_points(vectors* labels, vectors x, vectors centroids, dist_ metric)
 {
 	for (int i = 0; i < x.n_samples; i++)
 	{
@@ -32,7 +32,7 @@ void calculate_centroids(vectors labels, vectors x, vectors* centroids)
 	}
 }
 
-double calculate_inertia(vectors labels, vectors x, vectors centroids, std::string metric)
+double calculate_inertia(vectors labels, vectors x, vectors centroids, dist_ metric)
 {
 	double inertia = 0;
 	double dist = 0;
@@ -46,9 +46,9 @@ double calculate_inertia(vectors labels, vectors x, vectors centroids, std::stri
 
 void kmeans_algorithm(vectors* centroids,
 	vectors* labels,
-	std::string metric,
+	dist_ metric,
 	int n_clusters,
-	std::string initialization,
+	init_ initialization,
 	double* inertia,
 	int max_iter,
 	int* n_iter,
@@ -62,19 +62,13 @@ void kmeans_algorithm(vectors* centroids,
 	}
 	initialize(centroids, x, initialization, metric);
 	label_points(labels, x, *centroids, metric);
-	*n_iter = 0;
 	for (*n_iter; *n_iter < max_iter; (*n_iter)++)
 	{
-		for (int i = 0; i < labels->n_features; i++)
-		{
-			prev_labels.coords[i] = labels->coords[i];
-		}
+		prev_labels = *labels;
 		calculate_centroids(*labels, x, centroids);
 		label_points(labels, x, *centroids, metric);
 		if (prev_labels == *labels)
-		{
 			break;
-		}
 	}
 	*inertia = calculate_inertia(*labels, x, *centroids, metric);
 }
@@ -82,26 +76,26 @@ void kmeans_algorithm(vectors* centroids,
 class kmeans {
 public:
 	vectors centroids;
-	std::string metric;
+	dist_ metric;
 	int n_clusters;
-	std::string initialization;
-	double inertia;
+	init_ initialization;
+	double inertia = 0;
 	int max_iter;
-	int n_iter;
+	int n_iter = 0;
 	vectors labels;
 	int n_init;
 
-	kmeans(int clusters_n, std::string metrics = "correlation", std::string init = "k++", int iter = 1000, int init_n = 10) :
+	kmeans(int clusters_n, dist_ metrics = dist_::Euclidean, init_ init = init_::kpp, int iter = 1000, int init_n = 10) :
 		centroids(1, 1),
 		labels(1, 1),
 		metric{ metrics },
 		n_clusters{ clusters_n },
 		initialization{ init },
-		inertia{ 0 },
 		max_iter{ iter },
-		n_iter{0},
 		n_init{init_n}
 	{}
+
+	kmeans() = default;
 
 	~kmeans() {}
 
@@ -109,13 +103,39 @@ public:
 		metric{ estim.metric },
 		n_clusters{ estim.n_clusters },
 		initialization{ estim.initialization },
-		inertia{ 0 },
 		max_iter{ estim.max_iter },
-		n_iter{ 0 },
-		labels(1, 1),
+		labels(estim.labels),
 		centroids(estim.centroids),
-		n_init{estim.n_init}
+		n_init{estim.n_init},
+		inertia{ estim.inertia },
+		n_iter{ estim.n_iter }
 	{}
+
+	kmeans(const kmeans& estim, int clusters_n) :
+		metric{ estim.metric },
+		n_clusters{ clusters_n },
+		initialization{ estim.initialization },
+		max_iter{ estim.max_iter },
+		labels(1, 1),
+		centroids(1, 1),
+		inertia{estim.inertia},
+		n_iter{estim.n_iter},
+		n_init{ estim.n_init }
+	{}
+
+	kmeans& operator=(const kmeans& estim)
+	{
+		metric = estim.metric;
+		n_clusters = estim.n_clusters;
+		initialization = estim.initialization;
+		centroids = estim.centroids;
+		labels = estim.labels;
+		max_iter = estim.max_iter;
+		n_init = estim.n_init;
+		n_iter = estim.n_iter;
+		inertia = estim.inertia;
+		return *this;
+	}
 
 	void fit(vectors data)
 	{
