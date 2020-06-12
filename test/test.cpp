@@ -1199,17 +1199,13 @@ namespace test_dunn
 			labels.coords[2] = 0;
 			labels.coords[3] = 1;
 			labels.coords[4] = 2;
-			vectors d(5, 2);
-			d.coords[0] = 1.0;
-			d.coords[1] = 2.0;
-			d.coords[2] = 3.0;
-			d.coords[3] = 4.0;
-			d.coords[4] = 5.0;
-			d.coords[5] = 6.0;
-			d.coords[6] = 7.0;
-			d.coords[7] = 8.0;
-			d.coords[8] = 9.0;
-			d.coords[9] = 10.0;
+			vectors d = indices(10);
+			for (int i = 0; i < 10; i++)
+			{
+				d.coords[i] += 1;
+			}
+			d.n_features = 2;
+			d.n_samples = 5;
 			double l = inter_linkage(labels, d, 0, 1, dist_::Euclidean, inter_::avg);
 			Assert::AreEqual(4 * sqrt(2), l, 1e-6);
 		}
@@ -1223,17 +1219,13 @@ namespace test_dunn
 			est.labels.coords[2] = 0;
 			est.labels.coords[3] = 1;
 			est.labels.coords[4] = 2;
-			vectors d(5, 2);
-			d.coords[0] = 1.0;
-			d.coords[1] = 2.0;
-			d.coords[2] = 3.0;
-			d.coords[3] = 4.0;
-			d.coords[4] = 5.0;
-			d.coords[5] = 6.0;
-			d.coords[6] = 7.0;
-			d.coords[7] = 8.0;
-			d.coords[8] = 9.0;
-			d.coords[9] = 10.0;
+			vectors d = indices(10);
+			for (int i = 0; i < 10; i++)
+			{
+				d.coords[i] += 1;
+			}
+			d.n_features = 2;
+			d.n_samples = 5;
 			double l = intra_linkage(&est, d, 0, intra_::avg);
 			Assert::AreEqual(8 * sqrt(2) / 3, l, 1e-6);
 		}
@@ -1404,18 +1396,15 @@ namespace test_dunn
 			est.labels.coords[2] = 0;
 			est.labels.coords[3] = 1;
 			est.labels.coords[4] = 2;
-			vectors d(5, 2);
-			d.coords[0] = 1.0;
-			d.coords[1] = 2.0;
-			d.coords[2] = 3.0;
-			d.coords[3] = 4.0;
-			d.coords[4] = 5.0;
-			d.coords[5] = 6.0;
-			d.coords[6] = 7.0;
-			d.coords[7] = 8.0;
-			d.coords[8] = 9.0;
-			d.coords[9] = 10.0;
+			vectors d = indices(10);
+			for (int i = 0; i < 10; i++)
+			{
+				d.coords[i] += 1;
+			}
+			d.n_features = 2;
+			d.n_samples = 5;
 			Assert::AreEqual(2 * sqrt(2), inter_distance(&est, d, inter_::avg), 1e-6);
 		}
 	};
+
 }
