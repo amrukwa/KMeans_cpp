@@ -212,6 +212,14 @@ public:
 		index{estim.index}
 	{}
 
+	double single_idx(kmeans* est, vectors data, int clusters_n)
+	{
+		if (est->n_clusters != clusters_n)
+			est->n_clusters = clusters_n;
+		est->fit(data);
+		return dunn_index(est, data, inter, intra);
+	}
+
 	void fit(vectors data)
 	{
 		double idx;
@@ -219,9 +227,7 @@ public:
 		for (int i = min_clusters; i <= max_clusters; i++)
 		{
 			temp = estimator;
-			temp.n_clusters = i;
-			temp.fit(data);
-			idx = dunn_index(&temp, data, inter, intra);
+			idx = single_idx(&temp, data, i);
 			if (idx > index)
 			{
 				estimator = temp;
