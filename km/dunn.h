@@ -142,7 +142,7 @@ double intra_centroid(kmeans* est, vectors data, int c)
 	return dist/count;
 }
 
-double intra_linkage(kmeans* estim, vectors data, int c, intra_ metric = intra_::avg)
+double intra_linkage(kmeans* estim, vectors data, int c, intra_ metric)
 {
 	double intra = 0;
 	if (metric == intra_::centroid)
@@ -188,8 +188,8 @@ public:
 	kmeans estimator;
 	intra_ intra;
 	inter_ inter;
-	int max_clusters;
-	int min_clusters;
+	int max_clusters=10;
+	int min_clusters=2;
 	double index = 0.0;
 
 	DunnSearch(kmeans est, inter_ inter_d = inter_::centroid, intra_ intra_d = intra_::avg, int min = 2, int max = 10):
@@ -214,9 +214,19 @@ public:
 
 	void fit(vectors data)
 	{
-		index = dunn_index(&estimator, data, inter, intra);
+		double idx;
+		kmeans temp;
 		for (int i = min_clusters; i <= max_clusters; i++)
 		{
+			temp = estimator;
+			temp.n_clusters = i;
+			temp.fit(data);
+			idx = dunn_index(&temp, data, inter, intra);
+			if (idx > index)
+			{
+				estimator = temp;
+				index = idx;
+			}
 		}
 	}
 };
