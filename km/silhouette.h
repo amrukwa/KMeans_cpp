@@ -1,6 +1,20 @@
 #pragma once
 # include "kmeans.h"
 
+vectors distance_matrix(vectors x, dist_ metric = dist_::Euclidean)
+{
+	vectors temp(x.n_samples, x.n_samples);
+	for (int i = 0; i < x.n_samples; i++)
+	{
+		for (int j = 0; j < x.n_samples; j++)
+		{
+			temp.coords[i * temp.n_features + j] = distance(x, x, i, j, metric);
+		}
+	}
+
+	return temp;
+}
+
 class SilhouetteSearch
 {
 public:
@@ -24,6 +38,11 @@ public:
 		min_clusters{ estim.min_clusters },
 		coefficient{ estim.coefficient }
 	{}
+
+	double silhouette_for_sample(kmeans* est, vectors data)
+	{
+		return 0;
+	}
 
 	double single_coefficient(kmeans* est, vectors data, int clusters_n)
 	{

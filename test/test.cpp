@@ -2,6 +2,8 @@
 #include "CppUnitTest.h"
 #include "dunn.h"
 # include "pca.h"
+# include "silhouette.h"
+
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace test_vectors
@@ -1407,4 +1409,29 @@ namespace test_dunn
 		}
 	};
 
+}
+
+namespace test_silhouette {
+	TEST_CLASS(Test_silhouette)
+	{
+	public:
+		TEST_METHOD(Test_dist_matrix)
+		{
+			vectors coords = indices(4);
+			coords.change_size(2, 2);
+			vectors dist = distance_matrix(coords);
+			for (int i = 0; i < dist.n_samples; i++)
+			{
+				for (int j = 0; j < dist.n_samples; j++)
+				{
+					if (i == j)
+					{
+						Assert::AreEqual(0.0, dist.coords[i * dist.n_features + j]);
+					}
+					else
+						Assert::AreEqual(2*sqrt(2), dist.coords[i * dist.n_features + j]);
+				}
+			}
+		}
+	};
 }
