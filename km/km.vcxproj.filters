@@ -38,5 +38,8 @@
     <ClInclude Include="dunn.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="silhouette.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

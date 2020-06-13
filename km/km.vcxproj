@@ -145,6 +145,7 @@
     <ClInclude Include="initialization.h" />
     <ClInclude Include="kmeans.h" />
     <ClInclude Include="pca.h" />
+    <ClInclude Include="silhouette.h" />
     <ClInclude Include="sorting.h" />
     <ClInclude Include="Vectors.h" />
   </ItemGroup>
