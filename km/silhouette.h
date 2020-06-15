@@ -56,11 +56,11 @@ class SilhouetteSearch
 {
 public:
 	kmeans estimator;
-	int max_clusters = 10;
+	int max_clusters = 20;
 	int min_clusters = 2;
 	double coefficient = 0.0;
 
-	SilhouetteSearch(kmeans est, int min = 2, int max = 10) :
+	SilhouetteSearch(kmeans est, int min = 2, int max = 20) :
 		estimator(est),
 		max_clusters{ max },
 		min_clusters{ min }

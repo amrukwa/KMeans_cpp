@@ -193,11 +193,11 @@ public:
 	kmeans estimator;
 	intra_ intra;
 	inter_ inter;
-	int max_clusters=10;
+	int max_clusters=20;
 	int min_clusters=2;
 	double index = 0.0;
 
-	DunnSearch(kmeans est, inter_ inter_d = inter_::centroid, intra_ intra_d = intra_::avg, int min = 2, int max = 10):
+	DunnSearch(kmeans est, inter_ inter_d = inter_::centroid, intra_ intra_d = intra_::avg, int min = 2, int max = 20):
 		estimator(est),
 		inter{inter_d},
 		intra{intra_d},
