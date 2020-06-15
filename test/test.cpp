@@ -905,6 +905,21 @@ namespace test_kmeans
 			free(a);
 		}
 
+		TEST_METHOD(Test_kpp_kmeans_init)
+		{
+			double* a = (double*)malloc(sizeof(double) * 3);
+			a[0] = 0;
+			a[1] = 1;
+			a[2] = 2;
+			vectors x(3, 1, a);
+			vectors c(3, 1);
+			initialize(&c, x, init_::kpp, dist_::Euclidean);
+			Assert::IsNotNull(c.coords);
+			Assert::AreNotEqual(c.coords[0], c.coords[1]);
+			Assert::AreNotEqual(c.coords[1], c.coords[2]);
+			Assert::AreNotEqual(c.coords[0], c.coords[2]);
+			free(a);
+		}
 		TEST_METHOD(Test_labeling)
 		{
 			double* x_d = (double*)malloc(sizeof(double) * 10);

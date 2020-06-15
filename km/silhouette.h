@@ -33,10 +33,10 @@ double min_avg(vectors labels, vectors data, int sample, int n_clusters, dist_ m
 
 double _for_sample(kmeans* est, vectors data, int sample)
 {
-	double a, b;
-
+	double a= avg_to_cluster(est->labels, data, sample, est->labels.coords[sample], est->metric);
+	double b = min_avg(est->labels, data, sample, est->n_clusters, est->metric);
 	double den = std::max(a, b);
-	return 0;
+	return (b-a)/den;
 }
 
 class SilhouetteSearch
