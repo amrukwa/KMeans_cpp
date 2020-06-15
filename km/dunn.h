@@ -11,6 +11,8 @@ double single_linkage(vectors labels, vectors data, int c1, int c2, dist_ metric
 	double cur, min_dist = LONG_MAX;
 	for (int i = 0; i < data.n_samples-1; i++)
 	{
+		if (labels.coords[i] != c1 && labels.coords[i] != c2)
+			continue;
 		for (int j = i + 1; j < data.n_samples; j++)
 		{
 			if ((labels.coords[i] == c1 && labels.coords[j] == c2) || (labels.coords[i] == c2 && labels.coords[j] == c1))
@@ -30,6 +32,8 @@ double complete_linkage(vectors labels, vectors data, int c1, int c2, dist_ metr
 	double cur, min_dist = 0;
 	for (int i = 0; i < data.n_samples-1; i++)
 	{
+		if (labels.coords[i] != c1 && labels.coords[i] != c2)
+			continue;
 		for (int j = i + 1; j < data.n_samples; j++)
 		{
 			if ((labels.coords[i] == c1 && labels.coords[j] == c2) || (labels.coords[i] == c2 && labels.coords[j] == c1))
@@ -49,6 +53,8 @@ double avg_linkage(vectors labels, vectors data, int c1, int c2, dist_ metric)
 	int count = 0;
 	for (int i = 0; i < data.n_samples - 1; i++)
 	{
+		if (labels.coords[i] != c1 && labels.coords[i] != c2)
+			continue;
 		for (int j = i + 1; j < data.n_samples; j++)
 		{
 			if ((labels.coords[i] == c1 && labels.coords[j] == c2) || (labels.coords[i] == c2 && labels.coords[j] == c1))
