@@ -1,5 +1,6 @@
 #pragma once
 # include "kmeans.h"
+# include <algorithm>
 
 double avg_to_cluster(vectors labels, vectors data, int sample, int c, dist_ metric)
 {
@@ -39,6 +40,18 @@ double _for_sample(kmeans* est, vectors data, int sample)
 	return (b-a)/den;
 }
 
+double silhouette(kmeans* est, vectors data)
+{
+	if (est->centroids.n_samples == 1)
+		est->fit(data);
+	double coef = 0;
+	for (int i = 0; i < data.n_samples; i++)
+	{
+		coef += _for_sample(est, data, i);
+	}
+	return coef / data.n_samples;
+}
+
 class SilhouetteSearch
 {
 public:
@@ -63,15 +76,12 @@ public:
 		coefficient{ estim.coefficient }
 	{}
 
-
 	double single_coefficient(kmeans* est, vectors data, int clusters_n)
 	{
 		if (est->n_clusters != clusters_n)
 			est->n_clusters = clusters_n;
 		est->fit(data);
-		double coef = 0;
-		//
-		return coef/data.n_samples;
+		return silhouette(est, data);
 	}
 
 	void fit(vectors data)

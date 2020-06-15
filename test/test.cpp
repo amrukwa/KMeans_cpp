@@ -1537,6 +1537,21 @@ namespace test_silhouette {
 			Assert::AreEqual(1.0 / 3, s, 1e-4);
 		}
 
-		// TEST_METHOD(Test_score_all)
+		TEST_METHOD(Test_score_all)
+		{
+			kmeans est(3, dist_::Euclidean);
+			est.centroids.n_samples = 3;
+			est.labels.change_size(1, 6);
+			est.labels.coords[0] = 2;
+			est.labels.coords[1] = 2;
+			est.labels.coords[2] = 0;
+			est.labels.coords[3] = 0;
+			est.labels.coords[4] = 1;
+			est.labels.coords[5] = 1;
+			vectors data = indices(6);
+			data.change_size(6, 1);
+			double score = silhouette(&est, data);
+			Assert::AreEqual(0.42222, score, 1e-4);
+		}
 	};
 }
