@@ -32,7 +32,7 @@ double complete_linkage(vectors labels, vectors data, int c1, int c2, dist_ metr
 	{
 		for (int j = i + 1; j < data.n_samples; j++)
 		{
-			if (labels.coords[i] == c1 && labels.coords[j] == c2)
+			if (labels.coords[i] == c1 && labels.coords[j] == c2 || labels.coords[i] == c2 && labels.coords[j] == c1)
 			{
 				cur = distance(data, data, i, j, metric);
 				if (cur > min_dist)
