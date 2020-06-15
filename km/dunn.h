@@ -4,16 +4,17 @@
 enum class inter_ {centroid, closest, furthest, avg}; // distance between clusters
 enum class intra_ {centroid, furthest, avg }; // distance within cluster
 
-
 double single_linkage(vectors labels, vectors data, int c1, int c2, dist_ metric)
 // closest distance between two samples belonging to two given clusters
 {
 	double cur, min_dist = LONG_MAX;
 	for (int i = 0; i < data.n_samples-1; i++)
 	{
+		if (labels.coords[i] != c1 && labels.coords[i] != c2)
+			continue;
 		for (int j = i + 1; j < data.n_samples; j++)
 		{
-			if (labels.coords[i] == c1 && labels.coords[j] == c2)
+			if ((labels.coords[i] == c1 && labels.coords[j] == c2) || (labels.coords[i] == c2 && labels.coords[j] == c1))
 			{
 				cur = distance(data, data, i, j, metric);
 				if (cur < min_dist)
@@ -30,9 +31,11 @@ double complete_linkage(vectors labels, vectors data, int c1, int c2, dist_ metr
 	double cur, min_dist = 0;
 	for (int i = 0; i < data.n_samples-1; i++)
 	{
+		if (labels.coords[i] != c1 && labels.coords[i] != c2)
+			continue;
 		for (int j = i + 1; j < data.n_samples; j++)
 		{
-			if (labels.coords[i] == c1 && labels.coords[j] == c2)
+			if ((labels.coords[i] == c1 && labels.coords[j] == c2) || (labels.coords[i] == c2 && labels.coords[j] == c1))
 			{
 				cur = distance(data, data, i, j, metric);
 				if (cur > min_dist)
@@ -49,19 +52,21 @@ double avg_linkage(vectors labels, vectors data, int c1, int c2, dist_ metric)
 	int count = 0;
 	for (int i = 0; i < data.n_samples - 1; i++)
 	{
+		if (labels.coords[i] != c1 && labels.coords[i] != c2)
+			continue;
 		for (int j = i + 1; j < data.n_samples; j++)
 		{
-			if (labels.coords[i] == c1 && labels.coords[j] == c2)
+			if ((labels.coords[i] == c1 && labels.coords[j] == c2) || (labels.coords[i] == c2 && labels.coords[j] == c1))
 			{
 				dist += distance(data, data, i, j, metric);
 				count += 1;
 			}
 		}
 	}
-	if (count == 0) // this can happen only for avg distance within cluster for one member - as we are looking for the biggest distance in intra distances, it will be skipped
-	{
+	if (count == 0)
 		return -1;
-	}
+	// this can happen only for avg distance within cluster for one member - as we are looking for the biggest distance in intra distances, it will be skipped
+
 	return dist/count;
 }
 
@@ -188,11 +193,11 @@ public:
 	kmeans estimator;
 	intra_ intra;
 	inter_ inter;
-	int max_clusters=10;
+	int max_clusters=20;
 	int min_clusters=2;
 	double index = 0.0;
 
-	DunnSearch(kmeans est, inter_ inter_d = inter_::centroid, intra_ intra_d = intra_::avg, int min = 2, int max = 10):
+	DunnSearch(kmeans est, inter_ inter_d = inter_::centroid, intra_ intra_d = intra_::avg, int min = 2, int max = 20):
 		estimator(est),
 		inter{inter_d},
 		intra{intra_d},

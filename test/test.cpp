@@ -2,6 +2,8 @@
 #include "CppUnitTest.h"
 #include "dunn.h"
 # include "pca.h"
+# include "silhouette.h"
+
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace test_vectors
@@ -903,6 +905,21 @@ namespace test_kmeans
 			free(a);
 		}
 
+		TEST_METHOD(Test_kpp_kmeans_init)
+		{
+			double* a = (double*)malloc(sizeof(double) * 3);
+			a[0] = 0;
+			a[1] = 1;
+			a[2] = 2;
+			vectors x(3, 1, a);
+			vectors c(3, 1);
+			initialize(&c, x, init_::kpp, dist_::Euclidean);
+			Assert::IsNotNull(c.coords);
+			Assert::AreNotEqual(c.coords[0], c.coords[1]);
+			Assert::AreNotEqual(c.coords[1], c.coords[2]);
+			Assert::AreNotEqual(c.coords[0], c.coords[2]);
+			free(a);
+		}
 		TEST_METHOD(Test_labeling)
 		{
 			double* x_d = (double*)malloc(sizeof(double) * 10);
@@ -1212,7 +1229,7 @@ namespace test_dunn
 
 		TEST_METHOD(Test_avg_linkage_same)
 		{
-			kmeans est(3);
+			kmeans est(3, dist_::Euclidean);
 			est.labels.change_size(1, 5);
 			est.labels.coords[0] = 0;
 			est.labels.coords[1] = 0;
@@ -1229,13 +1246,55 @@ namespace test_dunn
 			double l = intra_linkage(&est, d, 0, intra_::avg);
 			Assert::AreEqual(8 * sqrt(2) / 3, l, 1e-6);
 		}
+
+		TEST_METHOD(Test_single_linkage_mixed_l)
+		{
+			vectors labels(1, 3);
+			labels.coords[0] = 1;
+			labels.coords[1] = 0;
+			labels.coords[2] = 1;
+			vectors data(3, 1);
+			data.coords[0] = 0.0;
+			data.coords[1] = 1.0;
+			data.coords[2] = 3.0;
+			double d = inter_linkage(labels, data, 0, 1, dist_::Euclidean, inter_::closest);
+			Assert::AreEqual(1.0, d);
+		}
+
+		TEST_METHOD(Test_complete_linkage_mixed_l)
+		{
+			vectors labels(1, 3);
+			labels.coords[0] = 1;
+			labels.coords[1] = 0;
+			labels.coords[2] = 1;
+			vectors data(3, 1);
+			data.coords[0] = 3.0;
+			data.coords[1] = 1.0;
+			data.coords[2] = 0.0;
+			double d = inter_linkage(labels, data, 0, 1, dist_::Euclidean, inter_::furthest);
+			Assert::AreEqual(2.0, d);
+		}
+
+		TEST_METHOD(Test_avg_linkage_mixed_l)
+		{
+			vectors labels(1, 3);
+			labels.coords[0] = 1;
+			labels.coords[1] = 0;
+			labels.coords[2] = 1;
+			vectors data(3, 1);
+			data.coords[0] = 3.0;
+			data.coords[1] = 1.0;
+			data.coords[2] = 0.0;
+			double d = inter_linkage(labels, data, 0, 1, dist_::Euclidean, inter_::avg);
+			Assert::AreEqual(1.5, d);
+		}
 	};
 
 	TEST_CLASS(test_intra)
 	{
 		TEST_METHOD(Test_intra_furthest)
 		{
-			kmeans est(2);
+			kmeans est(2, dist_::Euclidean);
 			est.labels.change_size(1, 4);
 			est.labels.coords[0] = 0;
 			est.labels.coords[1] = 0;
@@ -1256,7 +1315,7 @@ namespace test_dunn
 
 		TEST_METHOD(Test_intra_avg)
 		{
-			kmeans est(2);
+			kmeans est(2, dist_::Euclidean);
 			est.labels.change_size(1, 5);
 			est.labels.coords[0] = 1;
 			est.labels.coords[1] = 1;
@@ -1280,7 +1339,7 @@ namespace test_dunn
 
 		TEST_METHOD(Test_avg_dist_to_cent)
 		{
-			kmeans est(2);
+			kmeans est(2, dist_::Euclidean);
 			est.labels.change_size(1, 3);
 			est.centroids.change_size(2, 2);
 			est.labels.coords[0] = 0;
@@ -1303,7 +1362,7 @@ namespace test_dunn
 
 		TEST_METHOD(Test_cent_intra)
 		{
-			kmeans est(2);
+			kmeans est(2, dist_::Euclidean);
 			est.labels.change_size(1, 3);
 			est.centroids.change_size(2, 2);
 			est.labels.coords[0] = 0;
@@ -1329,7 +1388,7 @@ namespace test_dunn
 	public:
 		TEST_METHOD(Test_inter_centroid)
 		{
-			kmeans k(4);
+			kmeans k(4, dist_::Euclidean);
 			k.centroids.change_size(4, 2);
 			double val = 1.0;
 			vectors data(4, 2);
@@ -1347,7 +1406,7 @@ namespace test_dunn
 		
 		TEST_METHOD(Test_inter_closest)
 		{
-			kmeans est(3);
+			kmeans est(3, dist_::Euclidean);
 			est.labels.change_size(1, 4);
 			est.labels.coords[0] = 0;
 			est.labels.coords[1] = 0;
@@ -1368,7 +1427,7 @@ namespace test_dunn
 
 		TEST_METHOD(Test_inter_furthest)
 		{
-			kmeans est(3);
+			kmeans est(3, dist_::Euclidean);
 			est.labels.change_size(1, 4);
 			est.labels.coords[0] = 0;
 			est.labels.coords[1] = 0;
@@ -1389,7 +1448,7 @@ namespace test_dunn
 		
 		TEST_METHOD(Test_inter_avg)
 		{
-			kmeans est(3);
+			kmeans est(3, dist_::Euclidean);
 			est.labels.change_size(1, 5);
 			est.labels.coords[0] = 0;
 			est.labels.coords[1] = 0;
@@ -1407,4 +1466,92 @@ namespace test_dunn
 		}
 	};
 
+}
+
+namespace test_silhouette {
+	TEST_CLASS(Test_silhouette)
+	{
+	public:
+		TEST_METHOD(avg_to_cl_same)
+		{
+			kmeans est(3, dist_::Euclidean);
+			est.labels.change_size(1, 6);
+			est.labels.coords[0] = 2;
+			est.labels.coords[1] = 2;
+			est.labels.coords[2] = 0;
+			est.labels.coords[3] = 0;
+			est.labels.coords[4] = 1;
+			est.labels.coords[5] = 1;
+			vectors data = indices(6);
+			data.change_size(6, 1);
+			double intra = avg_to_cluster(est.labels, data, 3, 0, est.metric);
+			Assert::AreEqual(1, intra, 1e-4);
+		}
+
+		TEST_METHOD(avg_to_cl_diff)
+		{
+			kmeans est(3, dist_::Euclidean);
+			est.labels.change_size(1, 6);
+			est.labels.coords[0] = 2;
+			est.labels.coords[1] = 2;
+			est.labels.coords[2] = 0;
+			est.labels.coords[3] = 0;
+			est.labels.coords[4] = 1;
+			est.labels.coords[5] = 1;
+			vectors data = indices(6);
+			data.change_size(6, 1);
+			double inter = avg_to_cluster(est.labels, data, 2, 1, est.metric);
+			Assert::AreEqual(2.5, inter, 1e-4);
+			double inter_ = avg_to_cluster(est.labels, data, 2, 2, est.metric);
+			Assert::AreEqual(1.5, inter_, 1e-4);
+		}
+
+		TEST_METHOD(avg_to_closest)
+		{
+			kmeans est(3, dist_::Euclidean);
+			est.labels.change_size(1, 6);
+			est.labels.coords[0] = 2;
+			est.labels.coords[1] = 2;
+			est.labels.coords[2] = 0;
+			est.labels.coords[3] = 0;
+			est.labels.coords[4] = 1;
+			est.labels.coords[5] = 1;
+			vectors data = indices(6);
+			data.change_size(6, 1);
+			double d = min_avg(est.labels, data, 2, 3, est.metric);
+			Assert::AreEqual(1.5, d, 1e-4);
+		}
+		TEST_METHOD(Test_score_sample)
+		{
+			kmeans est(3, dist_::Euclidean);
+			est.labels.change_size(1, 6);
+			est.labels.coords[0] = 2;
+			est.labels.coords[1] = 2;
+			est.labels.coords[2] = 0;
+			est.labels.coords[3] = 0;
+			est.labels.coords[4] = 1;
+			est.labels.coords[5] = 1;
+			vectors data = indices(6);
+			data.change_size(6, 1);
+			double s = _for_sample(&est, data, 2);
+			Assert::AreEqual(1.0 / 3, s, 1e-4);
+		}
+
+		TEST_METHOD(Test_score_all)
+		{
+			kmeans est(3, dist_::Euclidean);
+			est.centroids.n_samples = 3;
+			est.labels.change_size(1, 6);
+			est.labels.coords[0] = 2;
+			est.labels.coords[1] = 2;
+			est.labels.coords[2] = 0;
+			est.labels.coords[3] = 0;
+			est.labels.coords[4] = 1;
+			est.labels.coords[5] = 1;
+			vectors data = indices(6);
+			data.change_size(6, 1);
+			double score = silhouette(&est, data);
+			Assert::AreEqual(0.42222, score, 1e-4);
+		}
+	};
 }
