@@ -4,7 +4,6 @@
 enum class inter_ {centroid, closest, furthest, avg}; // distance between clusters
 enum class intra_ {centroid, furthest, avg }; // distance within cluster
 
-
 double single_linkage(vectors labels, vectors data, int c1, int c2, dist_ metric)
 // closest distance between two samples belonging to two given clusters
 {

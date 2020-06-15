@@ -1,18 +1,28 @@
 #pragma once
 # include "kmeans.h"
 
-vectors distance_matrix(vectors x, dist_ metric = dist_::Euclidean)
+double avg_to_cluster(vectors labels, vectors data, int sample, int c, dist_ metric)
 {
-	vectors temp(x.n_samples, x.n_samples);
-	for (int i = 0; i < x.n_samples; i++)
+	double dist = 0;
+	int count = 0;
+	for (int i = 0; i < data.n_samples; i++)
 	{
-		for (int j = 0; j < x.n_samples; j++)
-		{
-			temp.coords[i * temp.n_features + j] = distance(x, x, i, j, metric);
-		}
+		if (i == sample || labels.coords[i] != c)
+			continue;
+		count += 1;
+		dist += distance(data, data, sample, i, metric);
 	}
+	if (count == 0)
+		return 0;
+	return dist/count;
+}
 
-	return temp;
+double _for_sample(kmeans* est, vectors data, int sample)
+{
+	double a, b;
+
+	double den = std::max(a, b);
+	return 0;
 }
 
 class SilhouetteSearch
@@ -39,17 +49,15 @@ public:
 		coefficient{ estim.coefficient }
 	{}
 
-	double silhouette_for_sample(kmeans* est, vectors data)
-	{
-		return 0;
-	}
 
 	double single_coefficient(kmeans* est, vectors data, int clusters_n)
 	{
 		if (est->n_clusters != clusters_n)
 			est->n_clusters = clusters_n;
 		est->fit(data);
-		return 0;
+		double coef = 0;
+		//
+		return coef/data.n_samples;
 	}
 
 	void fit(vectors data)
