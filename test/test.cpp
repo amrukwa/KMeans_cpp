@@ -1257,6 +1257,20 @@ namespace test_dunn
 			double l = intra_linkage(&est, d, 0, intra_::avg);
 			Assert::AreEqual(8 * sqrt(2) / 3, l, 1e-6);
 		}
+
+		TEST_METHOD(Test_avg_linkage_mixed_l)
+		{
+			vectors labels(1, 3);
+			labels.coords[0] = 1;
+			labels.coords[1] = 0;
+			labels.coords[2] = 1;
+			vectors data(3, 1);
+			data.coords[0] = 3.0;
+			data.coords[1] = 1.0;
+			data.coords[2] = 0.0;
+			double d = inter_linkage(labels, data, 0, 1, dist_::Euclidean, inter_::avg);
+			Assert::AreEqual(1.5, d);
+		}
 	};
 
 	TEST_CLASS(test_intra)

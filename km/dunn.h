@@ -51,17 +51,16 @@ double avg_linkage(vectors labels, vectors data, int c1, int c2, dist_ metric)
 	{
 		for (int j = i + 1; j < data.n_samples; j++)
 		{
-			if (labels.coords[i] == c1 && labels.coords[j] == c2)
+			if (labels.coords[i] == c1 && labels.coords[j] == c2 || labels.coords[i] == c2 && labels.coords[j] == c1)
 			{
 				dist += distance(data, data, i, j, metric);
 				count += 1;
 			}
 		}
 	}
-	if (count == 0) // this can happen only for avg distance within cluster for one member - as we are looking for the biggest distance in intra distances, it will be skipped
-	{
+	if (count == 0) 
 		return -1;
-	}
+	// this can happen only for avg distance within cluster for one member - as we are looking for the biggest distance in intra distances, it will be skipped
 	return dist/count;
 }
 
