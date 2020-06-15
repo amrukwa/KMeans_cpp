@@ -17,6 +17,20 @@ double avg_to_cluster(vectors labels, vectors data, int sample, int c, dist_ met
 	return dist/count;
 }
 
+double min_avg(vectors labels, vectors data, int sample, int n_clusters, dist_ metric)
+{
+	double cur, min_dist = LONG_MAX;
+	for (int i = 0; i < n_clusters; i++)
+	{
+		if (i == labels.coords[sample])
+			continue;
+		cur = avg_to_cluster(labels, data, sample, i, metric);
+		if (cur < min_dist)
+			min_dist = cur;
+	}
+	return min_dist;
+}
+
 double _for_sample(kmeans* est, vectors data, int sample)
 {
 	double a, b;

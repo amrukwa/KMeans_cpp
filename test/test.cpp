@@ -1457,7 +1457,6 @@ namespace test_silhouette {
 	TEST_CLASS(Test_silhouette)
 	{
 	public:
-
 		TEST_METHOD(avg_to_cl_same)
 		{
 			kmeans est(3, dist_::Euclidean);
@@ -1470,8 +1469,8 @@ namespace test_silhouette {
 			est.labels.coords[5] = 1;
 			vectors data = indices(6);
 			data.change_size(6, 1);
-			double inter = avg_to_cluster(est.labels, data, 3, 0, est.metric);
-			Assert::AreEqual(1, inter, 1e-4);
+			double intra = avg_to_cluster(est.labels, data, 3, 0, est.metric);
+			Assert::AreEqual(1, intra, 1e-4);
 		}
 
 		TEST_METHOD(avg_to_cl_diff)
@@ -1486,10 +1485,26 @@ namespace test_silhouette {
 			est.labels.coords[5] = 1;
 			vectors data = indices(6);
 			data.change_size(6, 1);
-			double intra = avg_to_cluster(est.labels, data, 2, 1, est.metric);
-			Assert::AreEqual(2.5, intra, 1e-4);
-			double intra_ = avg_to_cluster(est.labels, data, 2, 2, est.metric);
-			Assert::AreEqual(1.5, intra_, 1e-4);
+			double inter = avg_to_cluster(est.labels, data, 2, 1, est.metric);
+			Assert::AreEqual(2.5, inter, 1e-4);
+			double inter_ = avg_to_cluster(est.labels, data, 2, 2, est.metric);
+			Assert::AreEqual(1.5, inter_, 1e-4);
+		}
+
+		TEST_METHOD(avg_to_closest)
+		{
+			kmeans est(3, dist_::Euclidean);
+			est.labels.change_size(1, 6);
+			est.labels.coords[0] = 2;
+			est.labels.coords[1] = 2;
+			est.labels.coords[2] = 0;
+			est.labels.coords[3] = 0;
+			est.labels.coords[4] = 1;
+			est.labels.coords[5] = 1;
+			vectors data = indices(6);
+			data.change_size(6, 1);
+			double d = min_avg(est.labels, data, 2, 3, est.metric);
+			Assert::AreEqual(1.5, d, 1e-4);
 		}
 		TEST_METHOD(Test_score_sample)
 		{
@@ -1506,5 +1521,7 @@ namespace test_silhouette {
 			double s = _for_sample(&est, data, 2);
 			Assert::AreEqual(1.0 / 3, s, 1e-4);
 		}
+
+		// TEST_METHOD(Test_score_all)
 	};
 }
