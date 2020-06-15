@@ -85,7 +85,7 @@ public:
 	vectors labels;
 	int n_init;
 
-	kmeans(int clusters_n, dist_ metrics = dist_::Euclidean, init_ init = init_::kpp, int iter = 1000, int init_n = 10) :
+	kmeans(int clusters_n, dist_ metrics = dist_::correlation, init_ init = init_::kpp, int iter = 1000, int init_n = 10) :
 		centroids(1, 1),
 		labels(1, 1),
 		metric{ metrics },
