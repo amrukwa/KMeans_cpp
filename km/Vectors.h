@@ -115,12 +115,14 @@ public:
 		return *this;
 	}
 
-	void shape()
+	void shape_show()
+	// method printing the dimensions of the vector
 	{
 		std::cout << "("<<n_samples << "," << n_features<<")" << std::endl;
 	}
 
 	double sum()
+	// method calculating the sum of all elements of the array
 	{
 		double sum = 0;
 		for (int i = 0; i < n_features*n_samples; i++)
@@ -131,6 +133,7 @@ public:
 	}
 
 	double sum_of_column(int column)
+	// calculates the sum of elements in the column of the given index
 	{
 		if (column >= n_features)
 		{
@@ -146,6 +149,7 @@ public:
 	}
 
 	double sum_of_row(int row) const
+	// calculates the sum of elements in the row of the given index
 	{
 		if (row >= n_samples)
 		{
@@ -161,18 +165,21 @@ public:
 	}
 
 	double mean_of_row(int row) const
+	// calculates the mean of elements in the row of the given index
 	{
 		double s = sum_of_row(row);
 		return s / n_features;
 	}
 
-	double mean_of_column(int column) 
+	double mean_of_column(int column)
+	// calculates the mean of elements in the column of the given index
 	{
 		double s = sum_of_column(column);
 		return s / n_samples;
 	}
 
 	void change_size(int samples, int features)
+	// changes dimensions of the object to given values and reallocates the memory
 	{
 		n_samples = samples;
 		n_features = features;
@@ -180,6 +187,7 @@ public:
 	}
 
 	void substract(double value)
+	// method substracting given value from all the elements of the array
 	{
 		for (int i = 0; i < n_features * n_samples; i++)
 		{
@@ -188,6 +196,7 @@ public:
 	}
 
 	void substract(double value, int column)
+	// method substracting given value from all the elements of the column specified by given index
 	{
 		for (int i = 0; i < n_samples; i++)
 		{
@@ -196,6 +205,8 @@ public:
 	}
 
 	void substract(double* v, int col)
+	// method substracting given vector from the column specified by given index
+	// the length of the vector shouldn't be smaller than the length of the column; if it's longer, the additional coords are skipped
 	{
 		for (int i = 0; i < n_samples; i++)
 		{
@@ -204,6 +215,7 @@ public:
 	}
 	
 	double* substract(double value, int row) const
+	// method calculating vector specified by the row index decreased by the given value
 	{
 		static double* ptr;
 		ptr = (double*)malloc(n_features* sizeof(double));
@@ -216,6 +228,7 @@ public:
 	}
 
 	void divide(double value, int column)
+	// method dividing all elements of the column specified by the given index by given value
 	{
 		if (value == 0)
 		{
@@ -229,6 +242,7 @@ public:
 	}
 
 	void divide(double value)
+	// method dividing all elements of the array by given value
 	{
 		if (value == 0)
 		{
@@ -242,6 +256,7 @@ public:
 	}
 
 	vectors transpose()
+	// method returning the transpose matrix of this one
 	{
 		double* data;
 		data = (double*)malloc(sizeof(double) * size_t(double(n_features) * n_samples));
@@ -257,6 +272,7 @@ public:
 	}
 
 	void leave_n_cols(int col)
+	// method removing the columns that are above given number of desired number of features
 	{
 		vectors temp(n_samples, col);
 		for (int i = 0; i < temp.n_samples; i++)
