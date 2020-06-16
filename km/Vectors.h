@@ -6,18 +6,24 @@
 #pragma once
 
 enum class dist_ { Euclidean, correlation, cityblock };
-
+// this enum holds available distance metrics
 
 class vectors
+// this class holds matrices with the data and enables operations on them
 {
 public:
-	int n_samples = 0;
-	int n_features = 0;
-	double* coords;
+	int n_samples = 0; // number of rows
+	int n_features = 0; // number of columns
+	double* coords; // pointer to memory holding the values within matrix
 
 	vectors() = default;
+	// default constructor. Creates NULL pointer
 
 	vectors(int samples, int features, double* data)
+	// constructor creating the matrix of given dimensions:
+	// samples - number of rows
+	// features - number of columns
+	// data - a deep copy of a given array is created. The memory used by this parameter should be freed later on, this constructor doesn't free it 
 	{
 		n_features = features;
 		n_samples = samples;
@@ -32,6 +38,7 @@ public:
 	}
 
 	vectors(int samples, int features)
+	// constructor allocating the memory of the given size (samples*features) and setting the dimensions.
 	{
 		n_features = features;
 		n_samples = samples;
@@ -39,6 +46,7 @@ public:
 	}
 
 	vectors(int square_dim)
+	// convenience constructor for square matrices
 	{
 		n_features = square_dim;
 		n_samples = square_dim;
@@ -46,6 +54,7 @@ public:
 	}
 
 	vectors(const vectors& v1)
+	// copy constructor. Creates a deep copy of a given object - doesn't only copy a pointer coordinates but creates a new one and copies the values in the array
 	{
 		n_samples = v1.n_samples;
 		n_features = v1.n_features;
@@ -60,6 +69,10 @@ public:
 	}
 
 	vectors(std::ifstream& datafile)
+	// constructor for loading the vectors from given stream. 
+	// The data file should contain only numbers, no letters nor comas. The values should be separated by space.
+	// Remember to end the file, as well as each row, with space.
+	// For optimisation's sake it doesn't check the correctness of input - errors may occur.
 	{
 		get_dimensions(datafile);
 		coords = (double*)malloc(n_samples*n_features*sizeof(double));
@@ -69,11 +82,15 @@ public:
 	}
 
 	~vectors()
+	// destructor, frees the memory
 	{
 		free(coords);
 	}
 
 	vectors& operator=(const vectors& v)
+	// Assignment operator for the calculations and swap needs. Changes the values of dimensions of the current vector to the same as the given one.
+	// If the memory was previously unallocated or was of a different size than expected, allocates or reallocates it.
+	// Assigns the values of coordinates, not the pointer
 	{
 		if (n_features != v.n_features || n_samples != v.n_samples)
 		{
@@ -96,36 +113,6 @@ public:
 			}
 		}
 		return *this;
-	}
-
-	void get_dimensions(std::ifstream& datafile)
-	{
-		char c;
-		while (datafile.get(c))
-		{
-			if (c == '\n')
-			{
-				n_samples += 1;
-				n_features += 1;
-			}
-			else if (c == ' ')
-			{
-				n_features += 1;
-			}
-		}
-		n_features /= n_samples;
-	}
-
-	void load_data(std::ifstream& datafile)
-	{
-		double c=1;
-		for (int i = 0; i < n_samples; i++)
-		{
-			for (int j = 0; j < n_features; j++)
-			{
-				datafile >> coords[i*n_features+j];
-			}
-		}
 	}
 
 	void shape()
@@ -281,6 +268,37 @@ public:
 		}
 		*this = temp;
 	}
+private:
+		void get_dimensions(std::ifstream& datafile)
+			// Method counting number of lines and columns in a given file and setting the dimensions of the object accordingly.
+		{
+			char c;
+			while (datafile.get(c))
+			{
+				if (c == '\n')
+				{
+					n_samples += 1;
+					n_features += 1;
+				}
+				else if (c == ' ')
+				{
+					n_features += 1;
+				}
+			}
+			n_features /= n_samples;
+		}
+
+		void load_data(std::ifstream& datafile)
+			// method for loading the data from the given file into the object. The dimensions of the vectors should be specified before the usage.
+		{
+			for (int i = 0; i < n_samples; i++)
+			{
+				for (int j = 0; j < n_features; j++)
+				{
+					datafile >> coords[i * n_features + j];
+				}
+			}
+		}
 };
 
 vectors indices(int l)
