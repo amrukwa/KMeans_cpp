@@ -4,7 +4,7 @@
 # kmeans_cpp
 K-Means algorithm implementation in C++
 
-# Tools
+## Tools
 1) [`Vectors`](https://github.com/amrukwa/kmeans_cpp/blob/master/km/Vectors.h) - provides class and functions for operations on matrices
 2) [`initialization`](https://github.com/amrukwa/kmeans_cpp/blob/master/km/initialization.h) - entails functions choosing some part of given vectors (random or k++ initialization)
 3) [`kmeans`](https://github.com/amrukwa/kmeans_cpp/blob/Vectors-documentation/km/kmeans.h) - runs k-means algorithm
@@ -13,5 +13,5 @@ K-Means algorithm implementation in C++
 6) [`sorting`](https://github.com/amrukwa/kmeans_cpp/blob/Vectors-documentation/km/sorting.h) - sorts two vectors in descending order of one of them
 7) [`pca`](https://github.com/amrukwa/kmeans_cpp/blob/Vectors-documentation/km/pca.h) - performs dimension reduction by Principal Component Analysis
 
-# Exemplary usage
+## Exemplary usage
 You can use this implementation as shown [`here`](https://github.com/amrukwa/kmeans_cpp/blob/Vectors-documentation/km/Example.cpp). 
