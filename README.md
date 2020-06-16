@@ -12,3 +12,6 @@ K-Means algorithm implementation in C++
 5) [`silhouette`](https://github.com/amrukwa/kmeans_cpp/blob/Vectors-documentation/km/silhouette.h) - runs k-means algorithm with sweep by Silhouette Score
 6) [`sorting`](https://github.com/amrukwa/kmeans_cpp/blob/Vectors-documentation/km/sorting.h) - sorts two vectors in descending order of one of them
 7) [`pca`](https://github.com/amrukwa/kmeans_cpp/blob/Vectors-documentation/km/pca.h) - performs dimension reduction by Principal Component Analysis
+
+# Exemplary usage
+You can use this implementation as shown [`here`](https://github.com/amrukwa/kmeans_cpp/blob/Vectors-documentation/km/Example.cpp). 
