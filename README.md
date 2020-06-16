@@ -15,3 +15,19 @@ K-Means algorithm implementation in C++
 
 ## Exemplary usage
 You can use this implementation as shown [`here`](https://github.com/amrukwa/kmeans_cpp/blob/Vectors-documentation/km/Example.cpp). 
+
+## Parameters
+
+### Distance
+In this version the used distance metric can be chosen from Euclidean, correlation and cityblock distance.
+
+### Initialization
+The default initialization method is set to k++, however it is possible to choose MacQueen's random method as well.
+
+### Inter and intra distances
+Dunn Index relies on the choice of the appropriate inter and intra distance measurement types. For distance between clusters the available metrics are: centroid, closest, furthest, avg, while for distance within cluster: centroid, furthest, avg.
+
+## The data file
+You can use as many samples and features as you wish - the program will take care of the dimensions.
+You should not place the number of desired clusters in this file - choose it while creating kmeans instance or let it be done by Dunn or Silhouette. Default minimum and maximum numbers of clusters for these scores are 2 and 20 respectively.
+In the following lines of the file insert points coordinates, don't use commas. The delimiter is set to space. You can use exponential notation. Every line, including the last line, should be ended with enter. This version doesn't check if your file is correctly prepared for overall shorter execution time. This can lead to unexpected errors in case of incorrect file.
