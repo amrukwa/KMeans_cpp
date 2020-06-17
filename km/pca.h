@@ -2,6 +2,7 @@
 # include "sorting.h"
 
 vectors covariance_matrix(vectors data)
+// returns approximate covariance matrix of data
 {
 	vectors cov(data);
 	double mean;
@@ -15,6 +16,7 @@ vectors covariance_matrix(vectors data)
 }
 
 void QR_algorithm(vectors x, vectors* eigenvec, vectors* eigenvals, double tol, int iter)
+// finds eigenvectors and eigenvalues of x approximately to tol, iterates at most iter times
 {
 	vectors Q(x.n_samples, x.n_features), R(x.n_samples, x.n_features);
 	vectors A(x);
@@ -40,16 +42,20 @@ void QR_algorithm(vectors x, vectors* eigenvec, vectors* eigenvals, double tol, 
 	}
 }
 
-class PCA {
+class PCA 
+// Performs Principal Component Analysis
+// usage of standardised vectors is recommended
+{
 public:
-	int reduced_dims;
-	std::string reduce;
-	vectors eigenvectors;
-	vectors eigenvalues;
-	double tol;
-	int n_iter = 1000;
+	int reduced_dims; // number of features data should have left after the transformation 
+	std::string reduce; // if not "YES", keeps all features
+	vectors eigenvectors; // eigenvectors of the covariance matrix of data used to fit
+	vectors eigenvalues; // eigenvalues of the covariance matrix of data used to fit
+	double tol; // tolerance for singular values of coords of eigenvectors
+	int n_iter = 1000; // number of iterations for the QR method 
 
 	PCA(std::string red = "YES", int dims = 2, double tolerance = 1e-6) :
+	// constructor
 		reduced_dims{ dims },
 		reduce{ red },
 		eigenvectors(1, 1),
@@ -60,6 +66,7 @@ public:
 	~PCA() {}
 
 	PCA(const PCA& t) :
+	// copy constructor; creates a deep copy
 		reduced_dims{ t.reduced_dims },
 		reduce{ t.reduce },
 		eigenvectors(t.eigenvectors),
@@ -68,6 +75,7 @@ public:
 	{}
 
 	void fit(vectors data)
+	// fit the model with data
 	{
 		vectors cov = center(data);
 		cov = covariance_matrix(cov);
@@ -83,6 +91,8 @@ public:
 	}
 
 	vectors transform(vectors data)
+	//apply dimensionality reduction to data
+	//data is projected on the first principal components previously extracted from a training set
 	{
 		vectors v = center(data);
 		v = v * eigenvectors;
@@ -90,6 +100,8 @@ public:
 	}
 
 	vectors fit_transform(vectors data)
+	// convenience method
+	// equivalent to fitting model with data and applying dimensionality reduction on it.
 	{
 		fit(data);
 		return transform(data);

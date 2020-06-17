@@ -2,6 +2,7 @@
 # include "initialization.h"
 
 void label_points(vectors* labels, vectors x, vectors centroids, dist_ metric)
+// this function changes labels based on the distance of each corresponding sample of x to the samples of centroids in distance metric
 {
 	for (int i = 0; i < x.n_samples; i++)
 	{
@@ -10,6 +11,7 @@ void label_points(vectors* labels, vectors x, vectors centroids, dist_ metric)
 }
 
 void calculate_centroids(vectors labels, vectors x, vectors* centroids)
+// this function calculates centroids based on mean of coords in x of samples with the same labels coords
 {
 	double sum_on_axis;
 	int members;
@@ -33,6 +35,7 @@ void calculate_centroids(vectors labels, vectors x, vectors* centroids)
 }
 
 double calculate_inertia(vectors labels, vectors x, vectors centroids, dist_ metric)
+// this function calculates inertia of vectors x based on their labels and distance to the appropriate sample of centroids
 {
 	double inertia = 0;
 	double dist = 0;
@@ -53,6 +56,7 @@ void kmeans_algorithm(vectors* centroids,
 	int max_iter,
 	int* n_iter,
 	vectors x)
+// this function performs kmeans clustering on given vectors x
 {
 	vectors prev_labels(1, x.n_samples);
 	if (centroids->n_samples > x.n_samples)
@@ -73,19 +77,22 @@ void kmeans_algorithm(vectors* centroids,
 	*inertia = calculate_inertia(*labels, x, *centroids, metric);
 }
 
-class kmeans {
+class kmeans 
+// this class is a classifier performing k-means clustering based on specified parameters
+{
 public:
-	vectors centroids;
-	dist_ metric;
-	int n_clusters;
-	init_ initialization;
-	double inertia = 0;
-	int max_iter;
-	int n_iter = 0;
-	vectors labels;
-	int n_init;
+	vectors centroids; // Coordinates of cluster centers and their dimensions
+	dist_ metric; // Measure of distance between points; one of dist_: Euclidean, correlation or cityblock
+	int n_clusters; // The number of clusters to form as well as the number of centroids to generate, should be int greater than 1
+	init_ initialization; // Method for initialization; one of init_: random or kpp
+	double inertia = 0; // Sum of squared distances of samples to their closest cluster center
+	int max_iter; // Maximum number of iterations of the k-means algorithm for a single run
+	int n_iter = 0; // Number of iterations run
+	vectors labels; // Labels of each point
+	int n_init; // Number of time the k-means algorithm will be run. The final results will be the best output of n_init consecutive runs in terms of inertia
 
 	kmeans(int clusters_n, dist_ metrics = dist_::correlation, init_ init = init_::kpp, int iter = 1000, int init_n = 10) :
+	// constructor setting all attributes for future clustering
 		centroids(1, 1),
 		labels(1, 1),
 		metric{ metrics },
@@ -96,10 +103,13 @@ public:
 	{}
 
 	kmeans() = default;
+	// default constructor; usage not encouraged
 
 	~kmeans() {}
+	// destructor
 
 	kmeans(const kmeans& estim) :
+	// copy constructor: creates a deep copy of estim 
 		metric{ estim.metric },
 		n_clusters{ estim.n_clusters },
 		initialization{ estim.initialization },
@@ -112,6 +122,8 @@ public:
 	{}
 
 	kmeans(const kmeans& estim, int clusters_n) :
+	// copy constructor for getting the same parameters but different number of clusters 
+	// the object should be fit before  predicting labels, as centroids are not copied
 		metric{ estim.metric },
 		n_clusters{ clusters_n },
 		initialization{ estim.initialization },
@@ -124,6 +136,8 @@ public:
 	{}
 
 	kmeans& operator=(const kmeans& estim)
+	// deep assignment operator
+	// it assigns values behind the estimator, not only the pointers
 	{
 		metric = estim.metric;
 		n_clusters = estim.n_clusters;
@@ -138,6 +152,7 @@ public:
 	}
 
 	void fit(vectors data)
+	// Compute k-means clustering
 	{
 		labels.change_size(1, data.n_samples);
 		centroids.change_size(n_clusters, data.n_features);
@@ -176,6 +191,7 @@ public:
 	}
 
 	vectors predict(vectors data)
+	// Predict the closest cluster each sample in data belongs to
 	{
 		if (data.n_features != centroids.n_features)
 		{
@@ -192,6 +208,8 @@ public:
 	}
 
 	vectors fit_predict(vectors data)
+	// convenience method
+	// equal to calling fit and then predict on the same data
 	{
 		fit(data);
 		return labels;
