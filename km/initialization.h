@@ -3,18 +3,20 @@
 # include "Vectors.h"
 
 enum class init_ {random, kpp};
+// this enum holds available methods for initialization: 
+// random and k++
 
 void swap(double* a, double* b)
+// function swapping two doubles
 {
-	// function swapping two doubles
 	double dummy = *a;
 	*a = *b;
 	*b = dummy;
 }
 
 void fisher_yates(int desired_dimensions, vectors* ind)
+// Obtain given quantity of non-repeating random numbers in given range
 {
-	// function for obtaining given quantity of non-repeating random numbers in given range
 	srand(time(NULL));
 	for (int i = 0; i < desired_dimensions; i++) // for the sake of optimalization it should be sufficient
 	{
@@ -25,6 +27,7 @@ void fisher_yates(int desired_dimensions, vectors* ind)
 }
 
 void random_init(vectors* centres, vectors x)
+// choose centres->n_samples observations (rows) at random from x for the initial centroids
 {
 	vectors ind = indices(x.n_samples);
 	fisher_yates(centres->n_samples, &ind);
@@ -38,6 +41,7 @@ void random_init(vectors* centres, vectors x)
 }
 
 void first_centroid(vectors* centres, vectors x)
+// chooses first centroid at random for k++ initialization
 {
 	srand(time(NULL));
 	int a = rand() % x.n_samples;
@@ -48,6 +52,7 @@ void first_centroid(vectors* centres, vectors x)
 }
 
 int weighted_random(vectors weights)
+// chooses 1 number from weights->n_samples based on the weighted probability of the numbers to be chosen
 {
 	int index;
 	srand(time(NULL));
@@ -65,6 +70,7 @@ int weighted_random(vectors weights)
 }
 
 void next_centroid(vectors* centres, vectors x, vectors* weights, int c_index, dist_ metric)
+// Choses next centroid for k++ initialization based on the distance of samples in x from already chosen centroids
 {
 	// c_index is the index where next centroid will be appended
 	double distance;
@@ -82,6 +88,8 @@ void next_centroid(vectors* centres, vectors x, vectors* weights, int c_index, d
 }
 
 void kpp_init(vectors* centres, vectors x, dist_ metric)
+// To speed up convergence, k++ chooses first centroid at random and the rest based on their distance from the closest of all chosen centroids so far 
+//the bigger the distance, the bigger the probability of being chosen
 {
 	vectors weights(x.n_samples, 1);
 	first_centroid(centres, x);
@@ -92,6 +100,8 @@ void kpp_init(vectors* centres, vectors x, dist_ metric)
 }
 
 void initialize(vectors* centres, vectors x, init_ init, dist_ metric)
+// initializes the centroids by call to the appropriate method
+// chooses centres->n_samples point from x to be the first centroids
 {
 	switch (init)
 	{
