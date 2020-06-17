@@ -6,18 +6,24 @@
 #pragma once
 
 enum class dist_ { Euclidean, correlation, cityblock };
-
+// this enum holds available distance metrics
 
 class vectors
+// this class holds matrices with the data and enables operations on them
 {
 public:
-	int n_samples = 0;
-	int n_features = 0;
-	double* coords;
+	int n_samples = 0; // number of rows
+	int n_features = 0; // number of columns
+	double* coords; // pointer to memory holding the values within matrix
 
 	vectors() = default;
+	// default constructor. Creates NULL pointer
 
 	vectors(int samples, int features, double* data)
+	// constructor creating the matrix of given dimensions:
+	// samples - number of rows
+	// features - number of columns
+	// data - a deep copy of a given array is created. The memory used by this parameter should be freed later on, this constructor doesn't free it 
 	{
 		n_features = features;
 		n_samples = samples;
@@ -32,6 +38,7 @@ public:
 	}
 
 	vectors(int samples, int features)
+	// constructor allocating the memory of the given size (samples*features) and setting the dimensions.
 	{
 		n_features = features;
 		n_samples = samples;
@@ -39,6 +46,7 @@ public:
 	}
 
 	vectors(int square_dim)
+	// convenience constructor for square matrices
 	{
 		n_features = square_dim;
 		n_samples = square_dim;
@@ -46,6 +54,7 @@ public:
 	}
 
 	vectors(const vectors& v1)
+	// copy constructor. Creates a deep copy of a given object - doesn't only copy a pointer coordinates but creates a new one and copies the values in the array
 	{
 		n_samples = v1.n_samples;
 		n_features = v1.n_features;
@@ -60,6 +69,10 @@ public:
 	}
 
 	vectors(std::ifstream& datafile)
+	// constructor for loading the vectors from given stream. 
+	// The data file should contain only numbers, no letters nor comas. The values should be separated by space.
+	// Remember to end the file, as well as each row, with space.
+	// For optimisation's sake it doesn't check the correctness of input - errors may occur.
 	{
 		get_dimensions(datafile);
 		coords = (double*)malloc(n_samples*n_features*sizeof(double));
@@ -69,11 +82,15 @@ public:
 	}
 
 	~vectors()
+	// destructor, frees the memory
 	{
 		free(coords);
 	}
 
 	vectors& operator=(const vectors& v)
+	// Assignment operator for the calculations and swap needs. Changes the values of dimensions of the current vector to the same as the given one.
+	// If the memory was previously unallocated or was of a different size than expected, allocates or reallocates it.
+	// Assigns the values of coordinates, not the pointer
 	{
 		if (n_features != v.n_features || n_samples != v.n_samples)
 		{
@@ -98,42 +115,14 @@ public:
 		return *this;
 	}
 
-	void get_dimensions(std::ifstream& datafile)
-	{
-		char c;
-		while (datafile.get(c))
-		{
-			if (c == '\n')
-			{
-				n_samples += 1;
-				n_features += 1;
-			}
-			else if (c == ' ')
-			{
-				n_features += 1;
-			}
-		}
-		n_features /= n_samples;
-	}
-
-	void load_data(std::ifstream& datafile)
-	{
-		double c=1;
-		for (int i = 0; i < n_samples; i++)
-		{
-			for (int j = 0; j < n_features; j++)
-			{
-				datafile >> coords[i*n_features+j];
-			}
-		}
-	}
-
-	void shape()
+	void shape_show()
+	// method printing the dimensions of the vector
 	{
 		std::cout << "("<<n_samples << "," << n_features<<")" << std::endl;
 	}
 
 	double sum()
+	// method calculating the sum of all elements of the array
 	{
 		double sum = 0;
 		for (int i = 0; i < n_features*n_samples; i++)
@@ -144,6 +133,7 @@ public:
 	}
 
 	double sum_of_column(int column)
+	// calculates the sum of elements in the column of the given index
 	{
 		if (column >= n_features)
 		{
@@ -159,6 +149,7 @@ public:
 	}
 
 	double sum_of_row(int row) const
+	// calculates the sum of elements in the row of the given index
 	{
 		if (row >= n_samples)
 		{
@@ -174,18 +165,21 @@ public:
 	}
 
 	double mean_of_row(int row) const
+	// calculates the mean of elements in the row of the given index
 	{
 		double s = sum_of_row(row);
 		return s / n_features;
 	}
 
-	double mean_of_column(int column) 
+	double mean_of_column(int column)
+	// calculates the mean of elements in the column of the given index
 	{
 		double s = sum_of_column(column);
 		return s / n_samples;
 	}
 
 	void change_size(int samples, int features)
+	// changes dimensions of the object to given values and reallocates the memory
 	{
 		n_samples = samples;
 		n_features = features;
@@ -193,6 +187,7 @@ public:
 	}
 
 	void substract(double value)
+	// method substracting given value from all the elements of the array
 	{
 		for (int i = 0; i < n_features * n_samples; i++)
 		{
@@ -201,6 +196,7 @@ public:
 	}
 
 	void substract(double value, int column)
+	// method substracting given value from all the elements of the column specified by given index
 	{
 		for (int i = 0; i < n_samples; i++)
 		{
@@ -209,6 +205,8 @@ public:
 	}
 
 	void substract(double* v, int col)
+	// method substracting given vector from the column specified by given index
+	// the length of the vector shouldn't be smaller than the length of the column; if it's longer, the additional coords are skipped
 	{
 		for (int i = 0; i < n_samples; i++)
 		{
@@ -217,6 +215,7 @@ public:
 	}
 	
 	double* substract(double value, int row) const
+	// method calculating vector specified by the row index decreased by the given value
 	{
 		static double* ptr;
 		ptr = (double*)malloc(n_features* sizeof(double));
@@ -229,6 +228,7 @@ public:
 	}
 
 	void divide(double value, int column)
+	// method dividing all elements of the column specified by the given index by given value
 	{
 		if (value == 0)
 		{
@@ -242,6 +242,7 @@ public:
 	}
 
 	void divide(double value)
+	// method dividing all elements of the array by given value
 	{
 		if (value == 0)
 		{
@@ -255,6 +256,7 @@ public:
 	}
 
 	vectors transpose()
+	// method returning the transpose matrix of this one
 	{
 		double* data;
 		data = (double*)malloc(sizeof(double) * size_t(double(n_features) * n_samples));
@@ -270,6 +272,7 @@ public:
 	}
 
 	void leave_n_cols(int col)
+	// method removing the columns that are above given number of desired number of features
 	{
 		vectors temp(n_samples, col);
 		for (int i = 0; i < temp.n_samples; i++)
@@ -281,9 +284,41 @@ public:
 		}
 		*this = temp;
 	}
+private:
+		void get_dimensions(std::ifstream& datafile)
+			// Method counting number of lines and columns in a given file and setting the dimensions of the object accordingly.
+		{
+			char c;
+			while (datafile.get(c))
+			{
+				if (c == '\n')
+				{
+					n_samples += 1;
+					n_features += 1;
+				}
+				else if (c == ' ')
+				{
+					n_features += 1;
+				}
+			}
+			n_features /= n_samples;
+		}
+
+		void load_data(std::ifstream& datafile)
+			// method for loading the data from the given file into the object. The dimensions of the vectors should be specified before the usage.
+		{
+			for (int i = 0; i < n_samples; i++)
+			{
+				for (int j = 0; j < n_features; j++)
+				{
+					datafile >> coords[i * n_features + j];
+				}
+			}
+		}
 };
 
 vectors indices(int l)
+// function returning 1 sample x l features vector filled with indices
 {
 	vectors ind(1, l);
 	for (int i = 0; i < ind.n_features; i++)
@@ -294,6 +329,7 @@ vectors indices(int l)
 }
 
 double length_of_column(const vectors& v1, int column)
+// this function calculates length of column of v1 under given index
 {
 	double distance = 0;
 	for (int i = 0; i < v1.n_samples; i++)
@@ -306,6 +342,7 @@ double length_of_column(const vectors& v1, int column)
 }
 
 double length_of_row(const vectors& v1, int row)
+// this function calculates length of row of v1 under given index
 {
 	double distance = 0;
 	for (int i = 0; i < v1.n_features; i++)
@@ -318,6 +355,8 @@ double length_of_row(const vectors& v1, int row)
 }
 
 double length_of_row(double* v, int dimension)
+// this function calculates length of given array on specified number of dimensions
+// dimension shouldn't be bigger than number of allocated doubles 
 {
 	double distance = 0;
 	for (int i = 0; i < dimension; i++)
@@ -330,12 +369,14 @@ double length_of_row(double* v, int dimension)
 }
 
 void normalise(vectors* v, int col)
+// this function normalises the given column to unit vector
 {
 	double n = length_of_column(*v, col);
 	v->divide(n, col);
 }
 
 void normalise(vectors* v)
+// this function normalises whole array
 {
 	for (int i = 0; i < v->n_features; i++)
 	{
@@ -344,6 +385,7 @@ void normalise(vectors* v)
 }
 
 vectors center(const vectors& v1)
+// this function centres the whole array by substracting from each column its mean
 {
 	vectors temp(v1);
 	double mean;
@@ -355,7 +397,8 @@ vectors center(const vectors& v1)
 	return temp;
 }
 
-vectors standarise(const vectors& v1)
+vectors standardise(const vectors& v1)
+// this function takes vectors object and returns its standardised version
 {
 	vectors temp(v1);
 	double mean;
@@ -371,6 +414,7 @@ vectors standarise(const vectors& v1)
 }
 
 vectors std_base(int dimension)
+// this function returns vectors that form standard base for given dimension - diagonal matrix with ones on the diagonal entries
 {
 	vectors diagonal(dimension);
 	for (int i = 0; i < diagonal.n_samples; i++)
@@ -391,6 +435,7 @@ vectors std_base(int dimension)
 }
 
 bool operator==(const vectors& v1, const vectors& v2)
+// it's used to compare two vectors - their dimensions and the fillings of arrays
 {
 	if (v1.n_features != v2.n_features)
 	{
@@ -416,6 +461,7 @@ bool operator==(const vectors& v1, const vectors& v2)
 }
 
 void operator<<(std::ostream& out, const vectors& some_vector)
+// this operator is for writing chosen vectors in chosen stream, element by element, with maintaining the dimensions
 {
 	for (int i = 0; i < some_vector.n_samples; i++)
 	{
@@ -428,6 +474,8 @@ void operator<<(std::ostream& out, const vectors& some_vector)
 }
 
 double* operator*(const vectors& A, double* x)
+// this operator performs multiplication of single vector x by vectors A
+// x should not have less dimensions than row of A, if it's longer, additional features are skipped
 {
 	static double* ptr;
 	ptr = (double*)calloc(A.n_samples, sizeof(double));
@@ -442,6 +490,9 @@ double* operator*(const vectors& A, double* x)
 }
 
 vectors operator*(const vectors& A, const vectors& B)
+// this operator performs multiplication of vectors
+// the order matters
+// number of features of first one should be equal to number of samples of second one
 {
 	double* c;
 	c = (double*)calloc(size_t(B.n_features * A.n_samples), sizeof(double*));
@@ -460,6 +511,8 @@ vectors operator*(const vectors& A, const vectors& B)
 }
 
 double row_product(double* d1, double* d2, int dimension)
+// this function returns dot product of two 1D given arrays 
+// lengths of both of them should be equal to given dimension
 {
 	double prod = 0;
 	for (int i = 0; i < dimension; i++)
@@ -470,6 +523,7 @@ double row_product(double* d1, double* d2, int dimension)
 }
 
 double col_product(vectors x, int col1, int col2)
+// this function calculates dot product of 2 columns specified by given indices of vectors x
 {
 	double prod = 0;
 	for (int i = 0; i < x.n_samples; i++)

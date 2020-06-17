@@ -645,7 +645,7 @@ namespace test_vectors
 			c[3] = 1;
 			c[4] = 1;
 			c[5] = 1;
-			vectors d = standarise(v);
+			vectors d = standardise(v);
 			for (int i = 0; i < 2; i++)
 			{
 				for (int j = 0; j < 3; j++)
