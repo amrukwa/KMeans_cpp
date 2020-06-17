@@ -6,7 +6,8 @@
 #pragma once
 
 enum class dist_ { Euclidean, correlation, cityblock };
-// this enum holds available distance metrics
+// this enum holds available distance metrics: 
+// Euclidean, correlation and cityblock
 
 class vectors
 // this class holds matrices with the data and enables operations on them
