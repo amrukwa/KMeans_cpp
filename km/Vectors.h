@@ -534,6 +534,7 @@ double col_product(vectors x, int col1, int col2)
 }
 
 double correlation_distance(const vectors& v1, const vectors& v2, int row1, int row2)
+// calculates the correlation distance between specified rows in given vectors
 {
 	double distance = 0;
 	double* u;
@@ -552,6 +553,7 @@ double correlation_distance(const vectors& v1, const vectors& v2, int row1, int 
 }
 
 double Euclidean_distance(const vectors& v1, const vectors& v2, int row1, int row2)
+// calculates the Euclidean distance between specified rows in given vectors
 {
 	double distance = 0;
 	for (int i = 0; i < v1.n_features; i++)
@@ -564,6 +566,7 @@ double Euclidean_distance(const vectors& v1, const vectors& v2, int row1, int ro
 }
 
 double cityblock_distance(const vectors& v1, const vectors& v2, int row1, int row2)
+// calculates the cityblock distance between specified rows in given vectors
 {
 	double distance = 0;
 	for (int i = 0; i < v1.n_features; i++)
@@ -579,6 +582,7 @@ double cityblock_distance(const vectors& v1, const vectors& v2, int row1, int ro
 }
 
 double distance(const vectors& v1, const vectors& v2, int row1, int row2, dist_ metric = dist_::Euclidean)
+// calculates the distance (one of correlation, Euclidean and cityblock) between specified rows in given vectors
 {
 	if (v1.n_features != v2.n_features)
 	{
@@ -605,8 +609,8 @@ double distance(const vectors& v1, const vectors& v2, int row1, int row2, dist_ 
 }
 
 double min_distance(const vectors& v1, const vectors& v2, int row1, dist_ metric = dist_::Euclidean)
+//calculates the distance to the closest member of v2 from row1 of v1 
 {
-	//calculates the distance to the closest member of v2 from row1 of v1 
 	double min_dist = distance(v1, v2, row1, 0, metric);
 	double cur_dist;
 	for (int i = 1; i < v2.n_samples; i++)
@@ -621,8 +625,8 @@ double min_distance(const vectors& v1, const vectors& v2, int row1, dist_ metric
 }
 
 double min_distance(const vectors& v1, const vectors& v2, int row1, int index, dist_ metric = dist_::Euclidean)
+//calculates the distance to the closest member of v2 (up to index, exclusively) from row1 of v1 
 {
-	//calculates the distance to the closest member of v2 (up to index, exclusively) from row1 of v1 
 	double min_dist = distance(v1, v2, row1, 0, metric);
 	double cur_dist;
 	for (int i = 1; i < index; i++)
@@ -637,8 +641,8 @@ double min_distance(const vectors& v1, const vectors& v2, int row1, int index, d
 }
 
 int argmin_distance(const vectors& v1, const vectors& v2, int row1, dist_ metric = dist_::Euclidean)
+//calculates the index of the closest member of v2 from row1 of v1 
 {
-	//calculates the index of the closest member of v2 from row1 of v1 
 	double min_dist = distance(v1, v2, row1, 0, metric);
 	double cur_dist;
 	int index = 0;
@@ -655,6 +659,7 @@ int argmin_distance(const vectors& v1, const vectors& v2, int row1, dist_ metric
 }
 
 double abs(double a, double b)
+// returns absolute difference between a and b
 {
 	if (a - b > 0)
 		return a - b;
@@ -662,6 +667,7 @@ double abs(double a, double b)
 }
 
 bool are_same(const vectors& v1, const vectors& v2, double tol = 1e-4)
+// checks whether the vectors are the same up to some tolerance
 {
 	if (v1.n_features != v2.n_features || v1.n_samples != v2.n_samples)
 	{
@@ -683,6 +689,7 @@ bool are_same(const vectors& v1, const vectors& v2, double tol = 1e-4)
 }
 
 void orthogonalise(vectors* x, int col1, int col2)
+// orthogonalises col2 with respect to col1
 // col1 is the vector we project onto
 {
 	double* proj = (double*)malloc(sizeof(double) * x->n_samples);
@@ -696,6 +703,7 @@ void orthogonalise(vectors* x, int col1, int col2)
 }
 
 vectors Gram_Schmidt(vectors x)
+// returns orthonormalised version of vectors x
 // we assume the vectors are in columns, not rows, while using this function - check your matrix before orthonormalisation
 // using MGS for numerical stability
 {
