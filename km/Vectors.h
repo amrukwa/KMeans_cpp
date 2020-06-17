@@ -318,6 +318,7 @@ private:
 };
 
 vectors indices(int l)
+// function returning 1 sample x l features vector filled with indices
 {
 	vectors ind(1, l);
 	for (int i = 0; i < ind.n_features; i++)
@@ -328,6 +329,7 @@ vectors indices(int l)
 }
 
 double length_of_column(const vectors& v1, int column)
+// this function calculates length of column of v1 under given index
 {
 	double distance = 0;
 	for (int i = 0; i < v1.n_samples; i++)
@@ -340,6 +342,7 @@ double length_of_column(const vectors& v1, int column)
 }
 
 double length_of_row(const vectors& v1, int row)
+// this function calculates length of row of v1 under given index
 {
 	double distance = 0;
 	for (int i = 0; i < v1.n_features; i++)
@@ -352,6 +355,8 @@ double length_of_row(const vectors& v1, int row)
 }
 
 double length_of_row(double* v, int dimension)
+// this function calculates length of given array on specified number of dimensions
+// dimension shouldn't be bigger than number of allocated doubles 
 {
 	double distance = 0;
 	for (int i = 0; i < dimension; i++)
@@ -364,12 +369,14 @@ double length_of_row(double* v, int dimension)
 }
 
 void normalise(vectors* v, int col)
+// this function normalises the given column to unit vector
 {
 	double n = length_of_column(*v, col);
 	v->divide(n, col);
 }
 
 void normalise(vectors* v)
+// this function normalises whole array
 {
 	for (int i = 0; i < v->n_features; i++)
 	{
@@ -378,6 +385,7 @@ void normalise(vectors* v)
 }
 
 vectors center(const vectors& v1)
+// this function centres the whole array by substracting from each column its mean
 {
 	vectors temp(v1);
 	double mean;
@@ -389,7 +397,8 @@ vectors center(const vectors& v1)
 	return temp;
 }
 
-vectors standarise(const vectors& v1)
+vectors standardise(const vectors& v1)
+// this function takes vectors object and returns its standardised version
 {
 	vectors temp(v1);
 	double mean;
@@ -405,6 +414,7 @@ vectors standarise(const vectors& v1)
 }
 
 vectors std_base(int dimension)
+// this function returns vectors that form standard base for given dimension - diagonal matrix with ones on the diagonal entries
 {
 	vectors diagonal(dimension);
 	for (int i = 0; i < diagonal.n_samples; i++)
@@ -425,6 +435,7 @@ vectors std_base(int dimension)
 }
 
 bool operator==(const vectors& v1, const vectors& v2)
+// it's used to compare two vectors - their dimensions and the fillings of arrays
 {
 	if (v1.n_features != v2.n_features)
 	{
@@ -450,6 +461,7 @@ bool operator==(const vectors& v1, const vectors& v2)
 }
 
 void operator<<(std::ostream& out, const vectors& some_vector)
+// this operator is for writing chosen vectors in chosen stream, element by element, with maintaining the dimensions
 {
 	for (int i = 0; i < some_vector.n_samples; i++)
 	{
@@ -462,6 +474,8 @@ void operator<<(std::ostream& out, const vectors& some_vector)
 }
 
 double* operator*(const vectors& A, double* x)
+// this operator performs multiplication of single vector x by vectors A
+// x should not have less dimensions than row of A, if it's longer, additional features are skipped
 {
 	static double* ptr;
 	ptr = (double*)calloc(A.n_samples, sizeof(double));
@@ -476,6 +490,9 @@ double* operator*(const vectors& A, double* x)
 }
 
 vectors operator*(const vectors& A, const vectors& B)
+// this operator performs multiplication of vectors
+// the order matters
+// number of features of first one should be equal to number of samples of second one
 {
 	double* c;
 	c = (double*)calloc(size_t(B.n_features * A.n_samples), sizeof(double*));
@@ -494,6 +511,8 @@ vectors operator*(const vectors& A, const vectors& B)
 }
 
 double row_product(double* d1, double* d2, int dimension)
+// this function returns dot product of two 1D given arrays 
+// lengths of both of them should be equal to given dimension
 {
 	double prod = 0;
 	for (int i = 0; i < dimension; i++)
@@ -504,6 +523,7 @@ double row_product(double* d1, double* d2, int dimension)
 }
 
 double col_product(vectors x, int col1, int col2)
+// this function calculates dot product of 2 columns specified by given indices of vectors x
 {
 	double prod = 0;
 	for (int i = 0; i < x.n_samples; i++)
