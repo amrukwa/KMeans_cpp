@@ -49,8 +49,8 @@ class PCA
 public:
 	int reduced_dims; // number of features data should have left after the transformation 
 	std::string reduce; // if not "YES", keeps all features
-	vectors eigenvectors; // eigenvectors of the covariance matrix of data used to fit
-	vectors eigenvalues; // eigenvalues of the covariance matrix of data used to fit
+	vectors eigenvectors; // reduced eigenvectors of the covariance matrix of data used to fit
+	vectors eigenvalues; // reduced eigenvalues of the covariance matrix of data used to fit
 	double tol; // tolerance for singular values of coords of eigenvectors
 	int n_iter = 1000; // number of iterations for the QR method 
 
