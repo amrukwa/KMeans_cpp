@@ -3,6 +3,7 @@
 # include <algorithm>
 
 double avg_to_cluster(vectors labels, vectors data, int sample, int c, dist_ metric)
+// calculates the average distance of the sample in data to samples in cluster c in metric 
 {
 	double dist = 0;
 	int count = 0;
@@ -19,6 +20,7 @@ double avg_to_cluster(vectors labels, vectors data, int sample, int c, dist_ met
 }
 
 double min_avg(vectors labels, vectors data, int sample, int n_clusters, dist_ metric)
+// calculates the distance of the sample in data to closest cluster it doesn't belong to, in metric
 {
 	double cur, min_dist = LONG_MAX;
 	for (int i = 0; i < n_clusters; i++)
@@ -33,6 +35,7 @@ double min_avg(vectors labels, vectors data, int sample, int n_clusters, dist_ m
 }
 
 double _for_sample(kmeans* est, vectors data, int sample)
+// calculates Silhouette score for specified sample in data
 {
 	double a= avg_to_cluster(est->labels, data, sample, est->labels.coords[sample], est->metric);
 	double b = min_avg(est->labels, data, sample, est->n_clusters, est->metric);
@@ -41,6 +44,7 @@ double _for_sample(kmeans* est, vectors data, int sample)
 }
 
 double silhouette(kmeans* est, vectors data)
+// calculates average Silhouette score for data after clustering
 {
 	if (est->centroids.n_samples == 1)
 		est->fit(data);
@@ -53,20 +57,24 @@ double silhouette(kmeans* est, vectors data)
 }
 
 class SilhouetteSearch
+// choose the best number of clusters for k-means with Silhouette Score
 {
 public:
-	kmeans estimator;
-	int max_clusters = 20;
-	int min_clusters = 2;
-	double coefficient = 0.0;
+	kmeans estimator;  // estimator of the greatest Silhouette Score from min_clusters to max_clusters interval
+	int max_clusters = 20; // biggest number of clusters for estimator
+	int min_clusters = 2; // smallest number of clusters for estimator
+	double coefficient = 0.0; // Silhouette Score value for estimator
 
 	SilhouetteSearch(kmeans est, int min = 2, int max = 20) :
 		estimator(est),
 		max_clusters{ max },
 		min_clusters{ min }
+		// constructor
+		// makes a deep copy of the given estimator
 	{}
 
 	~SilhouetteSearch()
+	// destructor
 	{}
 
 	SilhouetteSearch(const SilhouetteSearch& estim) :
@@ -74,9 +82,13 @@ public:
 		max_clusters{ estim.max_clusters },
 		min_clusters{ estim.min_clusters },
 		coefficient{ estim.coefficient }
+	// copy constructor
+	// creates a deep copy of the other object
 	{}
 
 	double single_coefficient(kmeans* est, vectors data, int clusters_n)
+	// calculates a single Silhouette Score for *est
+	// automatically fits *est and changes its number of clusters
 	{
 		if (est->n_clusters != clusters_n)
 			est->n_clusters = clusters_n;
@@ -85,6 +97,8 @@ public:
 	}
 
 	void fit(vectors data)
+	// performs k-means clustering for kmeans estimators with n_cluster between max_clusters and min_clusters
+	// chooses the estimator with the highest Silhouette Score
 	{
 		double coef;
 		kmeans temp;
