@@ -8,7 +8,7 @@ enum class inter_ {centroid, closest, furthest, avg}; // distance between cluste
 // inter_::avg - average distance between  all of the samples of two distinct clusters
 enum class intra_ {centroid, furthest, avg }; // distance within cluster
 // intra_::centroid - average distance from all the samples in the cluster to its centroid
-// intra_::furthest - distance between furthest samples of within the cluster
+// intra_::furthest - distance between furthest samples of the cluster
 // intra_::avg - average distance between  all of the samples within cluster
 
 double single_linkage(vectors labels, vectors data, int c1, int c2, dist_ metric)
