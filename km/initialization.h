@@ -67,7 +67,6 @@ int weighted_random(vectors weights)
 void next_centroid(vectors* centres, vectors x, vectors* weights, int c_index, dist_ metric)
 {
 	// c_index is the index where next centroid will be appended
-	double distance;
 	for (int j = 0; j < x.n_samples; j++) // calculate the dist of vector to the closest centre and square it
 	{
 		weights->coords[j] = min_distance(x, *centres, j, c_index, metric);
